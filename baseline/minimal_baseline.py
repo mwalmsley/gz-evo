@@ -62,20 +62,21 @@ if __name__ == "__main__":
     if os.path.isdir('/project/def-bovy/walml'):
         hf_cache_dir = '/project/def-bovy/walml/cache/huggingface/datasets'
         node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
+        subset_name = 'default'
     elif os.path.isdir('/share/nas2'):
         hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
         node_cache_dir = '/state/partition1/huggingface_tmp'
+        subset_name = 'default'
         # node_cache_dir = hf_cache_dir
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
+        subset_name = 'tiny'
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
             dataset_name='gz_evo',
-            # dataset_name='gz_h2o',
-            # subset_name='default',
-            subset_name='tiny',
+            subset_name=subset_name,
             hf_cache_dir=hf_cache_dir,
             node_cache_dir=node_cache_dir,
             save_dir="results/minimal/debug",  # relative
