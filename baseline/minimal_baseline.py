@@ -63,15 +63,18 @@ if __name__ == "__main__":
         hf_cache_dir = '/project/def-bovy/walml/cache/huggingface/datasets'
         node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
         subset_name = 'default'
+        num_workers = 12
     elif os.path.isdir('/share/nas2'):
         hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
         node_cache_dir = '/state/partition1/huggingface_tmp'
         subset_name = 'default'
         # node_cache_dir = hf_cache_dir
+        num_workers = 12
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
         subset_name = 'tiny'
+        num_workers = 4
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
@@ -85,7 +88,7 @@ if __name__ == "__main__":
             download_mode="reuse_dataset_if_exists",
             batch_size=32,
             # batch_size=512,  # 32 for local desktop
-            num_workers=4,  # 4 for local desktop
+            num_workers=num_workers,  # 4 for local desktop
             architecture_name="convnext_nano",
             drop_path_rate=0.4,  # for timm_kwargs
             channels=3,
@@ -143,7 +146,13 @@ if __name__ == "__main__":
     # print(dataset['train'][0]['image'].max())
     # exit()
 
-    transform_to_wrap = transforms.default_transforms(pytorch_greyscale=False, to_float=True, to_tensor=True) # - these are older albumentation transforms, now deprecated for torchvision + omegaconf
+    # - these are older albumentation transforms, now deprecated for torchvision + omegaconf
+    transform_to_wrap = transforms.default_transforms(
+        initial_center_crop=400,
+        pytorch_greyscale=False, 
+        to_float=True, 
+        to_tensor=True
+    ) 
     # hf dataset format returens CHW tensor, albumentations expects HWC numpy
     # to_tensor=True triggers ToTensorV2, which converts back to CHW tensor
     # isn't data loading fun?
@@ -167,7 +176,7 @@ if __name__ == "__main__":
     )
 
     # log a few images to make sure the transforms look good
-    # log_images(wandb_logger, datamodule)
+    log_images(wandb_logger, datamodule)
 
     lightning_model = define_model.ZoobotTree(
         output_dim=len(schema.label_cols),
@@ -200,7 +209,7 @@ if __name__ == "__main__":
         max_epochs=cfg.epochs,
         default_root_dir=cfg.save_dir,
         plugins=cfg.plugins,
-        gradient_clip_val=0.3,  # reduced from 1 to .3, having some nan issues
+        gradient_clip_val=0.3,
     )
 
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
