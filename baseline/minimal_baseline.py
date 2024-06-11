@@ -64,17 +64,20 @@ if __name__ == "__main__":
         node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
         subset_name = 'default'
         num_workers = 12
+        batch_size = 512
     elif os.path.isdir('/share/nas2'):
         hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
         node_cache_dir = '/state/partition1/huggingface_tmp'
         subset_name = 'default'
         # node_cache_dir = hf_cache_dir
         num_workers = 12
+        batch_size = 512
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
         subset_name = 'tiny'
         num_workers = 4
+        batch_size = 32
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
@@ -86,8 +89,7 @@ if __name__ == "__main__":
 
             # download_mode="force_redownload",
             download_mode="reuse_dataset_if_exists",
-            batch_size=32,
-            # batch_size=512,  # 32 for local desktop
+            batch_size=batch_size,
             num_workers=num_workers,  # 4 for local desktop
             architecture_name="convnext_nano",
             drop_path_rate=0.4,  # for timm_kwargs
