@@ -1,0 +1,9 @@
+galaxy-datasets
+einops
+albumentations
+webdataset
+omegaconf
+hydra-core
+
+# and then
+# pip install -e "zoobot[pytorch-cu121]" --extra-index-url https://download.pytorch.org/whl/cu121
