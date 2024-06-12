@@ -93,6 +93,7 @@ if __name__ == "__main__":
             num_workers=num_workers,  # 4 for local desktop
             architecture_name="convnext_nano",
             drop_path_rate=0.4,  # for timm_kwargs
+            pretrained=True, #imagenet 12k, for timm kwargs
             channels=3,
             dropout_rate=0.5,
             learning_rate=1e-4,
@@ -107,6 +108,9 @@ if __name__ == "__main__":
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=8,
+            accumulate_grad_batches=4,
+            grad_clip_val=0.3,
+            sync_batchnorm=False  # only one device
         )
     )
     logging.info(f'using config:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
@@ -189,7 +193,7 @@ if __name__ == "__main__":
         test_time_dropout=True,
         dropout_rate=cfg.dropout_rate,
         learning_rate=cfg.learning_rate,
-        timm_kwargs={'drop_path_rate': cfg.drop_path_rate},
+        timm_kwargs={'drop_path_rate': cfg.drop_path_rate, 'pretrained': cfg.pretrained},
         compile_encoder=cfg.compile_encoder,
         weight_decay=cfg.weight_decay
     )
@@ -211,7 +215,9 @@ if __name__ == "__main__":
         max_epochs=cfg.epochs,
         default_root_dir=cfg.save_dir,
         plugins=cfg.plugins,
-        gradient_clip_val=0.3,
+        gradient_clip_val=cfg.grad_clip_val,
+        accumulate_grad_batches=cfg.accumulate_grad_batches,
+        sync_batchnorm=cfg.sync_batchnorm,
     )
 
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
