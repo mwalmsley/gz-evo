@@ -11,7 +11,7 @@ import datasets
 from galaxy_datasets.pytorch import galaxy_datamodule
 
 from galaxy_datasets import transforms
-# from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, fast_view_config
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, fast_view_config
 
 from zoobot.shared import schemas
 from zoobot.pytorch.estimators import define_model
@@ -96,7 +96,7 @@ if __name__ == "__main__":
             pretrained=True, #imagenet 12k, for timm kwargs
             channels=3,
             dropout_rate=0.5,
-            learning_rate=1e-3,
+            learning_rate=1e-4,
             compile_encoder=False,
             weight_decay=0.05,
             accelerator="gpu",
@@ -110,7 +110,9 @@ if __name__ == "__main__":
             patience=8,
             accumulate_grad_batches=4,
             grad_clip_val=0.3,
-            sync_batchnorm=False  # only one device
+            sync_batchnorm=False,  # only one device
+            transform_mode='default'
+            # transform_mode='albumentations'
         )
     )
     logging.info(f'using config:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
@@ -152,24 +154,24 @@ if __name__ == "__main__":
     # print(dataset['train'][0]['image'].max())
     # exit()
 
-    # - these are older albumentation transforms, now deprecated for torchvision + omegaconf
-    transform_to_wrap = transforms.default_transforms(
-        initial_center_crop=400,
-        pytorch_greyscale=False, 
-        to_float=True, 
-        to_tensor=True
-    ) 
-    # hf dataset format returens CHW tensor, albumentations expects HWC numpy
-    # to_tensor=True triggers ToTensorV2, which converts back to CHW tensor
-    # isn't data loading fun?
-    transform = lambda x: transform_to_wrap(image=x.numpy().transpose(2, 1, 0))['image']
-    
-    
-    # dataset.set_format("torch")
-    # transform_config = default_view_config()
-    # transform_config = fast_view_config()
-    # transform_config.erase_iterations = 0  # disable masking small patches
-    # transform = GalaxyViewTransform(transform_config)
+    if cfg.transform_mode == 'albumentations':
+        # - these are older albumentation transforms, now deprecated for torchvision + omegaconf
+        transform_to_wrap = transforms.default_transforms(
+            initial_center_crop=400,
+            pytorch_greyscale=False, 
+            to_float=True, 
+            to_tensor=True
+        ) 
+        # hf dataset format returens CHW tensor, albumentations expects HWC numpy
+        # to_tensor=True triggers ToTensorV2, which converts back to CHW tensor
+        # isn't data loading fun?
+        transform = lambda x: transform_to_wrap(image=x.numpy().transpose(2, 1, 0))['image']
+    else:
+        transform_config = default_view_config()
+        # transform_config = fast_view_config()
+        transform_config.random_affine['scale'] = (1.25, 1.45)  # touch more zoom to compensate for loosing 24px crop
+        transform_config.erase_iterations = 0  # disable masking small patches for now
+        transform = GalaxyViewTransform(transform_config)
 
     datamodule = galaxy_datamodule.HF_GalaxyDataModule(
         dataset=dataset,
