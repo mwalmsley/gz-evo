@@ -71,7 +71,7 @@ if __name__ == "__main__":
         subset_name = 'default'
         # node_cache_dir = hf_cache_dir
         num_workers = 12
-        batch_size = 64
+        batch_size = 512
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
@@ -96,7 +96,7 @@ if __name__ == "__main__":
             pretrained=True, #imagenet 12k, for timm kwargs
             channels=3,
             dropout_rate=0.5,
-            learning_rate=1e-4,
+            learning_rate=1e-3,
             compile_encoder=False,
             weight_decay=0.05,
             accelerator="gpu",
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=8,
-            accumulate_grad_batches=1,
+            accumulate_grad_batches=4,
             grad_clip_val=0.3,
             sync_batchnorm=False  # only one device
         )
