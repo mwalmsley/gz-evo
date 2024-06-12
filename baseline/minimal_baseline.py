@@ -71,7 +71,7 @@ if __name__ == "__main__":
         subset_name = 'default'
         # node_cache_dir = hf_cache_dir
         num_workers = 12
-        batch_size = 512
+        batch_size = 64
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=8,
-            accumulate_grad_batches=4,
+            accumulate_grad_batches=1,
             grad_clip_val=0.3,
             sync_batchnorm=False  # only one device
         )
@@ -219,6 +219,9 @@ if __name__ == "__main__":
         accumulate_grad_batches=cfg.accumulate_grad_batches,
         sync_batchnorm=cfg.sync_batchnorm,
     )
+
+    logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
+
 
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
 
