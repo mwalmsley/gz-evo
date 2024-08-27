@@ -33,5 +33,5 @@ PYTHON=/home/walml/envs/zoobot39_dev/bin/python
 source ~/envs/zoobot39_dev/bin/activate
 REPO_DIR=/project/def-bovy/walml/repos/gz-evo
 
-echo 'Running minimal baseline'
-srun $PYTHON $REPO_DIR/baseline/minimal_baseline.py 
+echo 'Running classification baseline'
+srun $PYTHON $REPO_DIR/baseline/classification_baseline.py 
