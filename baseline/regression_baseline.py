@@ -8,13 +8,10 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 import datasets
 
-from galaxy_datasets.pytorch import galaxy_datamodule
+from galaxy_datasets.shared import label_metadata
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
 
-from galaxy_datasets import transforms
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, fast_view_config
-
-# from zoobot.shared import schemas
-from zoobot.pytorch.estimators import define_model
+from zoobot.shared import schemas
 from zoobot.pytorch.training import train_with_pytorch_lightning
 
 import baseline_models  # relative import
@@ -137,6 +134,7 @@ if __name__ == "__main__":
     # schema = schemas.gz_hubble_ortho_schema
     # schema = schemas.cosmic_dawn_ortho_schema
     # label_cols = schema.label_cols
+    question_answer_pairs = label_metadata.hubble_ortho_pairs
 
     dataset_dict = datasets.load_dataset(
         f"mwalmsley/{cfg.dataset_name}", 
@@ -162,20 +160,22 @@ if __name__ == "__main__":
     transform = GalaxyViewTransform(transform_config)
 
     # any callable that takes an HF example (row) and returns a label
-    # target_transform = None  
-    # load the summary column as integers
-    from baseline_datamodules import LABEL_ORDER_DICT
-    def target_transform(example):
-        example['label'] = LABEL_ORDER_DICT[example['summary']]
-        # optionally could delete the other keys besides image and id_str
-        return example
+
+    # lazy duplicate
+    question_totals_keys = [question + '_total-votes' for question in question_answer_pairs.keys()]
+    answer_keys = [q + a + '_fraction' for q, a_list in question_answer_pairs.items() for a in a_list]
+    label_cols = question_totals_keys + answer_keys
+    # def target_transform(example):
+    #     example = dict([example[k] for k in answer_keys + question_totals_keys + ['id_str', 'image'])
+    #     # optionally could delete the other keys besides image and id_str
+    #     return example
 
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
         train_transform=transform,
         test_transform=transform,
-        target_transform=target_transform,
+        # target_transform=target_transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
         seed=seed
@@ -184,7 +184,8 @@ if __name__ == "__main__":
     # log a few images to make sure the transforms look good
     # log_images(wandb_logger, datamodule)
 
-    lightning_model = baseline_models.ClassificationBaseline(
+    lightning_model = baseline_models.RegressionBaseline(
+        label_cols=label_cols,
         architecture_name=cfg.architecture_name,
         channels=cfg.channels,
         timm_kwargs={
@@ -193,7 +194,8 @@ if __name__ == "__main__":
         },
         head_kwargs={
             'dropout_rate': cfg.dropout_rate,
-            'num_classes': len(LABEL_ORDER_DICT.keys())
+            # 'num_classes': len(LABEL_ORDER_DICT.keys())
+            'question_answer_pairs': question_answer_pairs
         },
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay
