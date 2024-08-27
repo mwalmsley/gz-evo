@@ -8,13 +8,13 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 import datasets
 
-from galaxy_datasets.pytorch import galaxy_datamodule
+# from galaxy_datasets.pytorch import galaxy_datamodule
 
-from galaxy_datasets import transforms
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, fast_view_config
+# from galaxy_datasets import transforms
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
 
 # from zoobot.shared import schemas
-from zoobot.pytorch.estimators import define_model
+# from zoobot.pytorch.estimators import define_model
 from zoobot.pytorch.training import train_with_pytorch_lightning
 
 import baseline_models  # relative import
