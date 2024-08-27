@@ -29,8 +29,8 @@ export WANDB_MODE=offline
 
 # SEED=1  # don't change this when dividing up dataset
 
-PYTHON=/home/walml/envs/zoobot39_dev/bin/python
-source ~/envs/zoobot39_dev/bin/activate
+PYTHON=/home/walml/zoobot_311_venv/bin/python
+source /home/walml/zoobot_311_venv/bin/activate
 REPO_DIR=/project/def-bovy/walml/repos/gz-evo
 
 echo 'Running classification baseline'

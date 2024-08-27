@@ -1,8 +1,14 @@
-from datasets import load_dataset
-from torch.utils.data import DataLoader
+
+import os
 
 
 if __name__ == '__main__':
+
+    os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
+    os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
+
+    from datasets import load_dataset
+    from torch.utils.data import DataLoader
 
     # ds = load_dataset("mwalmsley/gz_evo", split="train", name='tiny')
     # ds = load_dataset("mwalmsley/gz_hubble", name='tiny')

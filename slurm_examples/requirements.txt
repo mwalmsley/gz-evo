@@ -1,0 +1,33 @@
+# module load StdEnv/2023 python/3.11 gcc arrow opencv cuda/11.2 
+
+torch 
+torchvision 
+torchtext 
+torchaudio
+lightning 
+albumentations
+pyro-ppl 
+timm 
+seaborn 
+h5py 
+tqdm 
+pillow 
+numpy 
+pandas 
+scipy 
+astropy 
+scikit-learn 
+matplotlib 
+wandb 
+webdataset 
+huggingface_hub 
+datasets  # huggingface datasets, cheeky name
+setuptools
+einops 
+hydra-core 
+omegaconf
+
+
+zoobot
+galaxy-datasets
+# pip install --no-deps -e .
