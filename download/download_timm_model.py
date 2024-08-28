@@ -43,4 +43,4 @@ if __name__ == '__main__':
 
     ]:
         # timm.create_model(model, pretrained=True)
-        huggingface_hub.snapshot_download('hf_hub:timm/' + model, cache_dir='/project/def-bovy/walml/cache/huggingface')
+        huggingface_hub.snapshot_download('timm/' + model, repo_type='model', cache_dir='/project/def-bovy/walml/cache/huggingface')
