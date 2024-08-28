@@ -1,12 +1,13 @@
 
 import os
 
+import huggingface_hub
 
 if __name__ == '__main__':
 
     os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
 
-    import timm
+    # import timm
 
     for model in [
         'resnet18',
@@ -19,7 +20,7 @@ if __name__ == '__main__':
         'convnext_tiny',
         'convnext_small', 
         'convnext_base',
-        'convnext_large',
+        # 'convnext_large',
         # 'convnext_xlarge',
 
         # 'laion/CLIP-convnext_base_w-laion2B-s13B-b82K-augreg'
@@ -31,14 +32,15 @@ if __name__ == '__main__':
 
         'efficientnet_b0',
         'tf_efficientnetv2_s',
-        'tf_efficientnetv2_l',
+        # 'tf_efficientnetv2_l',
         # 'tf_efficientnetv2_xl'
 
         'maxvit_tiny_rw_224',
         'maxvit_rmlp_small_rw_224', 
         'maxvit_rmlp_base_rw_224',
-        'maxvit_large_tf_224',
+        # 'maxvit_large_tf_224',
         # 'maxvit_xlarge_tf_224'
 
     ]:
-        model = timm.create_model(model, pretrained=True)
+        # timm.create_model(model, pretrained=True)
+        huggingface_hub.snapshot_download('timm/' + model, revision='main', cache_dir='/project/def-bovy/walml/cache/huggingface')
