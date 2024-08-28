@@ -11,7 +11,7 @@ import datasets
 from galaxy_datasets.shared import label_metadata
 from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
 
-from zoobot.shared import schemas
+# from zoobot.shared import schemas
 from zoobot.pytorch.training import train_with_pytorch_lightning
 
 import baseline_models  # relative import
@@ -86,7 +86,8 @@ if __name__ == "__main__":
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
             # dataset_name='gz_evo',
-            dataset_name='gz_hubble',
+            # dataset_name='gz_hubble',
+            dataset_name='gz2',
             subset_name=subset_name,
             hf_cache_dir=hf_cache_dir,
             node_cache_dir=node_cache_dir,
@@ -138,7 +139,8 @@ if __name__ == "__main__":
     # schema = schemas.gz_hubble_ortho_schema
     # schema = schemas.cosmic_dawn_ortho_schema
     # label_cols = schema.label_cols
-    question_answer_pairs = label_metadata.hubble_ortho_pairs
+    # question_answer_pairs = label_metadata.hubble_ortho_pairs
+    question_answer_pairs = label_metadata.gz2_ortho_pairs
 
     dataset_dict = datasets.load_dataset(
         f"mwalmsley/{cfg.dataset_name}", 
