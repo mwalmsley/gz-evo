@@ -1,19 +1,23 @@
 
 import os
 
-import huggingface_hub
 
 if __name__ == '__main__':
 
     os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
 
-    # import timm
+    # import huggingface_hub
+    import timm
 
     for model in [
-        'resnet50.a1_in1k',
-        'resnet50.a1_in1k',
-        'resnet50_clip.openai',
-        'resnet101.a1h_in1k',
+        # 'resnet50.a1_in1k',
+        # 'resnet50.a1_in1k',
+        # 'resnet50_clip.openai',
+        # 'resnet101.a1h_in1k',
+        'resnet50',
+        'resnet50',
+        'resnet50_clip',
+        'resnet101',
 
         'convnext_pico', 
         'convnext_nano',
@@ -42,5 +46,5 @@ if __name__ == '__main__':
         # 'maxvit_xlarge_tf_224'
 
     ]:
-        # timm.create_model(model, pretrained=True)
-        huggingface_hub.snapshot_download('timm/' + model, repo_type='model', cache_dir='/project/def-bovy/walml/cache/huggingface')
+        timm.create_model(model, pretrained=True)
+        # huggingface_hub.snapshot_download('timm/' + model, repo_type='model', cache_dir='/project/def-bovy/walml/cache/huggingface')
