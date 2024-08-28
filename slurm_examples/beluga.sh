@@ -33,5 +33,9 @@ PYTHON=/home/walml/zoobot_311_venv/bin/python
 source /home/walml/zoobot_311_venv/bin/activate
 REPO_DIR=/project/def-bovy/walml/repos/gz-evo
 
-echo 'Running classification baseline'
-srun $PYTHON $REPO_DIR/baseline/classification_baseline.py 
+# echo 'Running classification baseline'
+# srun $PYTHON $REPO_DIR/baseline/classification_baseline.py 
+
+
+echo 'Running regression baseline'
+srun $PYTHON $REPO_DIR/baseline/regression_baseline.py 
