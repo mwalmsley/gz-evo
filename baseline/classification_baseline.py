@@ -66,7 +66,8 @@ if __name__ == "__main__":
         node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
         subset_name = 'default'
         num_workers = 12
-        batch_size = 512
+        # batch_size = 512  # A100
+        batch_size = 128  # V100
     elif os.path.isdir('/share/nas2'):
         hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
         node_cache_dir = '/state/partition1/huggingface_tmp'
