@@ -26,8 +26,3 @@ setuptools
 einops 
 hydra-core 
 omegaconf
-
-
-zoobot
-galaxy-datasets
-# pip install --no-deps -e .

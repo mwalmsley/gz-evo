@@ -11,6 +11,7 @@ if __name__ == '__main__':
     for model in [
         'resnet18',
         'resnet50',
+        'resnet50_clip.openai',
         'resnet101',
 
         'convnext_pico', 
@@ -21,10 +22,12 @@ if __name__ == '__main__':
         'convnext_large',
         # 'convnext_xlarge',
 
+        # 'laion/CLIP-convnext_base_w-laion2B-s13B-b82K-augreg'
+
         'convnextv2_nano.fcmae',
         'convnextv2_nano.fcmae_ft_in22k_in1k',
         'convnextv2_base.fcmae_ft_in22k_in1k',
-        'convnext_base.clip_laion2b_augreg_ft_in12k_in1',
+        'convnext_base.clip_laion2b_augreg_ft_in12k',
 
         'efficientnet_b0',
         'tf_efficientnetv2_s',

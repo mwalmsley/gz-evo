@@ -11,20 +11,26 @@ Load your standard modules (CUDA, Python, etc.). Depends on cluster, but e.g.
 
     module load StdEnv/2023 gcc cuda/12.2 arrow python/3.11 opencv
 
-Make a new venv
+Make a new venv (anywhere, for example my venv dir)
 
-    virtualenv gz-evo
-    source venv/bin/activate
+    virtualenv /project/def-bovy/walml/envs/gz-evo
+    source /project/def-bovy/walml/envs/gz-evo/bin/activate
 
-Install Python pip dependencies (and deal with any failed installs)
+Clone this repo (to anywhere, for example my repo directory), install Python pip dependencies (and deal with any failed installs)
 
-    pip install -r slurm_examples/requirements.txt
+    cd /project/def-bovy/walml/repos
 
-Clone (to anywhere) and editable-install these repos
+    git clone -b derived-tasks git@github.com:mwalmsley/gz-evo.git
+    pip install -r gz-evo/slurm_examples/requirements.txt
 
-    cd repos
+Clone  and editable-install these repos
+
 
     git clone -b dev git@github.com:mwalmsley/galaxy-datasets.git
     git clone -b dev git@github.com:mwalmsley/zoobot.git
     pip install --no-deps -e galaxy-datasets
     pip install --no-deps -e zoobot
+
+Download the dataset and models (useful for clusters with offline worker nodes, like ours). Adjust the paths in each script as you like.
+
+    python 
