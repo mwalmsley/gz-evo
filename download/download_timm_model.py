@@ -10,10 +10,10 @@ if __name__ == '__main__':
     # import timm
 
     for model in [
-        'resnet18',
-        'resnet50',
+        'resnet50.a1_in1k',
+        'resnet50.a1_in1k',
         'resnet50_clip.openai',
-        'resnet101',
+        'resnet101.a1h_in1k',
 
         'convnext_pico', 
         'convnext_nano',
