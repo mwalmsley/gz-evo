@@ -90,7 +90,7 @@ if __name__ == "__main__":
         dict(
             # dataset_name='gz_evo',
             # dataset_name='gz_hubble',
-            dataset_dict='gz2',
+            dataset_name='gz2',
             subset_name=subset_name,
             hf_cache_dir=hf_cache_dir,
             node_cache_dir=node_cache_dir,
