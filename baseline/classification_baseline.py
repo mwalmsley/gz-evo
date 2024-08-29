@@ -52,6 +52,7 @@ def set_up_task_data(cfg):
 
     # naively, only train on examples with labels, from all telescopes
     dataset_dict = dataset_dict.filter(
+        has_labels,
         input_columns=['summary'],
         num_proc=cfg.num_workers,
         load_from_cache_file=True,
