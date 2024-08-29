@@ -21,4 +21,4 @@ export HYDRA_FULL_ERROR=1
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
-$PYTHON $REPO_DIR/baseline/minimal_baseline.py 
+$PYTHON $REPO_DIR/baseline/classification_baseline.py 
