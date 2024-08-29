@@ -91,8 +91,6 @@ def get_config(architecture_name, dataset_name, save_dir):
         cfg.batch_size = cfg[cfg.batch_size_key]
         cfg.accumulate_grad_batches = 2048 // cfg.batch_size
         cfg.debug = debug
-        # TEMP
-        cfg.epochs = 10
 
     logging.info(f'using config:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
