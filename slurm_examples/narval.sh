@@ -32,7 +32,7 @@ export HF_DATASETS_CACHE=/project/def-bovy/walml/cache/huggingface/datasets
 # no internet on worker nodes
 export HF_DATASETS_OFFLINE=1
 export WANDB_MODE=offline
-export WANDB__SERVICE_WAIT = "300"
+export WANDB__SERVICE_WAIT="300"
 
 
 # SEED=1  # don't change this when dividing up dataset
