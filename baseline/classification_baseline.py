@@ -13,14 +13,15 @@ def main():
     # these are all good to be run on gz evo on galahad (although filter takes ages)
     # do not raise the learning rate, it seems to break training (strangely)
 
-    # architecture_name = 'resnet50'
+    architecture_name = 'resnet50'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_atto'
-    architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
     # base evo now started as 7222, long filtering step, others waiting for this
     # filtering completed but epoch is pretty long, 1 hour
-    # starting another with atto for quick check
+    # starting another with atto for quick check, 7263
+    # and starting one with nano and a filter, 7278
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -55,7 +56,7 @@ def set_up_task_data(cfg):
         num_proc=cfg.num_workers,
         load_from_cache_file=True,
         keep_in_memory=False,
-        cache_file_name=f'{cfg.dataset_name}_with_clf_summaries'
+        cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
     )  # remove examples without labels
     # example = dataset_dict['train'][0]
     # print(example['summary'], type(example['summary']))
