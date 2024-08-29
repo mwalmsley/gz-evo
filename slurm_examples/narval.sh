@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=rrg-bovy
-#SBATCH --time=00:10:00  
+#SBATCH --time=23:10:00  
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --job-name=1gpu_bas
