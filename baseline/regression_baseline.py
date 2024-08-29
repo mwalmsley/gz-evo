@@ -74,9 +74,17 @@ def get_lightning_model(cfg):
 
     if cfg.dataset_name == 'gz2':
         # if cfg.debug:
-        logging.warning("Using debug question_answer_pairs, first GZ2 question only")
-            # only use the first question, should be easy for GZ2
-        question_answer_pairs =  {'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact']}
+        # only use the first question, should be easy for GZ2
+        # logging.warning("Using debug question_answer_pairs, first GZ2 question only")
+        # question_answer_pairs =  {'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact']}
+        logging.warning("Using debug question_answer_pairs, first four GZ2 questions only")
+        question_answer_pairs =  {
+            'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact'],
+            'disk-edge-on-gz2': ['_yes', '_no'],
+            'has-spiral-arms-gz2': ['_yes', '_no'],
+            'bar-gz2': ['_yes', '_no']
+        }
+
         # else:
         # question_answer_pairs = label_metadata.gz2_ortho_pairs
     elif cfg.dataset_name == 'gz_hubble':
