@@ -13,9 +13,11 @@ import baseline_training  # relative import
 
 
 def main():
+
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_pico'
+    # architecture_name = 'convnext_pico'
+    architecture_name = 'convnext_atto'
 
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -41,8 +43,8 @@ def set_up_task_data(cfg):
     )
     
     dataset_dict.set_format("torch")
-    print(dataset_dict['train'][0]['image'])
-    print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
+    # print(dataset_dict['train'][0]['image'])
+    # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
     # unlike classification, no need to filter to only a few galaxies
 
@@ -67,7 +69,12 @@ def set_up_task_data(cfg):
 def get_lightning_model(cfg):
 
     if cfg.dataset_name == 'gz2':
-        question_answer_pairs = label_metadata.gz2_ortho_pairs
+        # if cfg.debug:
+        logging.warning("Using debug question_answer_pairs, first GZ2 question only")
+            # only use the first question, should be easy for GZ2
+        question_answer_pairs =  {'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact']}
+        # else:
+        # question_answer_pairs = label_metadata.gz2_ortho_pairs
     elif cfg.dataset_name == 'gz_hubble':
         question_answer_pairs = label_metadata.hubble_ortho_pairs
     elif cfg.dataset_name == 'gz_evo':

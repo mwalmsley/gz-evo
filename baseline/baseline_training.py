@@ -15,7 +15,7 @@ import baseline_datamodules
 import baseline_configs
 
 
-def get_config(architecture_name, dataset_name, save_dir):
+def get_config(architecture_name, dataset_name, save_dir, debug=False):
     # some path management, adjust to your system as needed 
 
     # TODO may refactor as argparse or omegaconf
@@ -30,7 +30,6 @@ def get_config(architecture_name, dataset_name, save_dir):
         num_workers = 8
         batch_size_key = 'v100_batch_size'
         accelerator="gpu"
-        debug = False
     elif os.path.isdir('/share/nas2'):
         hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
         node_cache_dir = '/state/partition1/huggingface_tmp'
@@ -39,14 +38,13 @@ def get_config(architecture_name, dataset_name, save_dir):
         num_workers = 12
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
-        debug = False
     else:
         hf_cache_dir = None
         node_cache_dir = hf_cache_dir
         subset_name = 'tiny'
         # subset_name = 'default'
         num_workers = 4
-        debug = True
+        debug = True  # always
         accelerator="auto"
         batch_size_key = 'debug'
 
