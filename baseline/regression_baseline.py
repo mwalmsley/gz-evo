@@ -16,6 +16,7 @@ def main():
 
     # with just gz2 first question and no weighting, model seems to learn pretty well
     # now try gz2 and weighting
+    # currently running as 7232 atto regression, possible duplicate with 7208
 
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'

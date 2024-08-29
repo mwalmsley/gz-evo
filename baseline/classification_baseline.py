@@ -18,6 +18,7 @@ def main():
     # architecture_name = 'convnext_atto'
     architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
+    # base evo now started as 7222, long filtering step, others waiting for this
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -47,7 +48,12 @@ def set_up_task_data(cfg):
     # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
     # naively, only train on examples with labels, from all telescopes
-    dataset_dict = dataset_dict.filter(lambda example: example['summary'] != '')  # remove examples without labels
+    dataset_dict = dataset_dict.filter(
+        lambda example: example['summary'] != '', 
+        num_proc=cfg.num_workers,
+        load_from_cache_file=True,
+        keep_in_memory=False
+    )  # remove examples without labels
     # example = dataset_dict['train'][0]
     # print(example['summary'], type(example['summary']))
 
