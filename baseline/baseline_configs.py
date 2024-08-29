@@ -142,6 +142,7 @@ MODEL_CONFIGS = {
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
     "convnext_nano_fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),
     "convnext_nano_fcmae_ftim": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE_FTIM),
+    "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
     "resnet50": ModelConfig(**CFG_RESNET50),
     "resnet50_clip": ModelConfig(**CFG_RESNET50_CLIP),
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
