@@ -1,6 +1,7 @@
 import logging
 import pytorch_lightning as pl
 import datasets
+import numpy as np
 
 from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
 
@@ -9,13 +10,13 @@ import baseline_datamodules  # relative import
 import baseline_training  # relative import
 
 def main():
-    architecture_name = 'resnet50'
+    # architecture_name = 'resnet50'
     architecture_name = 'convnext_pico'
 
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     dataset_name='gz2'
-    save_dir = "results/baselines/classification/debug"  # relative
+    save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
     datamodule = set_up_task_data(cfg)
