@@ -285,8 +285,8 @@ class CustomWeightedMSELoss(torch.nn.Module):
         total_loss = 0
         
         for question, answers in self.question_answer_pairs.items():
-            # question_total_key = question + '_total-votes'
-            # question_total = targets[question_total_key]
+            question_total_key = question + '_total-votes'
+            question_total = targets[question_total_key]
             for answer in answers:
                 answer_key = question + answer + '_fraction'
                 # TODO maybe predict dict not tensor?
@@ -297,13 +297,13 @@ class CustomWeightedMSELoss(torch.nn.Module):
                 
 
                 # apply weighting
-                # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
+                answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
 
-                # masked_answer_loss = torch.where(question_total > 0, answer_loss, torch.tensor(0.0))  # only apply loss if labelled
-                # total_loss += masked_answer_loss
+                masked_answer_loss = torch.where(question_total > 0, answer_loss, torch.tensor(0.0))  # only apply loss if labelled
 
                 # before reduction, loss is (always) summed across answers to give shape (B)
-                total_loss += answer_loss
+                total_loss += masked_answer_loss
+                # total_loss += answer_loss
 
         return torch.mean(total_loss)  # and then with reduction, mean across batch. Never do mean across answers.
 

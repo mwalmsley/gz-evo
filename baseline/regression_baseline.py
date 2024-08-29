@@ -14,6 +14,9 @@ import baseline_training  # relative import
 
 def main():
 
+    # with just gz2 first question and no weighting, model seems to learn pretty well
+    # now try gz2 and weighting
+
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_pico'
