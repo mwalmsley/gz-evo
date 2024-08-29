@@ -35,7 +35,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         node_cache_dir = '/state/partition1/huggingface_tmp'
         subset_name = 'default'
         # node_cache_dir = hf_cache_dir
-        num_workers = 12
+        num_workers = 8  # of 16 per node
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
     else:

@@ -8,7 +8,7 @@ CFG_CONVNEXT_ATTO = dict(
     v100_batch_size=512,
     a100_batch_size=2048,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4
 )
@@ -18,7 +18,7 @@ CFG_CONVNEXT_PICO = dict(
     v100_batch_size=256,
     a100_batch_size=1024,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4
 )
@@ -29,7 +29,7 @@ CFG_CONVNEXT_NANO = dict(
     v100_batch_size=128,
     a100_batch_size=512,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4
 )
@@ -70,7 +70,7 @@ CFG_RESNET50 = dict(
     v100_batch_size=512,
     a100_batch_size=512,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05
 )
 
