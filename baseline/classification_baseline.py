@@ -1,21 +1,8 @@
 import logging
-import omegaconf
-import os
-
-import wandb
 import pytorch_lightning as pl
-from pytorch_lightning.loggers import WandbLogger
-import torch
 import datasets
 
-# from galaxy_datasets.pytorch import galaxy_datamodule
-
-# from galaxy_datasets import transforms
 from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
-
-# from zoobot.shared import schemas
-# from zoobot.pytorch.estimators import define_model
-
 
 import baseline_models  # relative import
 import baseline_datamodules  # relative import
@@ -26,19 +13,17 @@ def main():
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     dataset_name='gz2'
+    save_dir = "results/baselines/classification/debug"  # relative
 
-    cfg = baseline_training.get_config(architecture_name, dataset_name)
-    datamodule = set_up_data(cfg)
-    baseline_training.run_training(cfg, datamodule)
+    cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
+    datamodule = set_up_task_data(cfg)
+
+    lightning_model = get_lightning_model(cfg)
+
+    baseline_training.run_training(cfg, lightning_model, datamodule)
 
 
-def set_up_data(cfg):
-
-
-    # schema = schemas.gz_evo_v1_public_schema
-    # schema = schemas.gz_hubble_ortho_schema
-    # schema = schemas.cosmic_dawn_ortho_schema
-    # label_cols = schema.label_cols
+def set_up_task_data(cfg):
 
     dataset_dict = datasets.load_dataset(
         f"mwalmsley/{cfg.dataset_name}", 
@@ -64,14 +49,11 @@ def set_up_data(cfg):
     transform = GalaxyViewTransform(transform_config)
 
     # any callable that takes an HF example (row) and returns a label
-    # target_transform = None  
     # load the summary column as integers
-
     def target_transform(example):
         example['label'] = baseline_datamodules.LABEL_ORDER_DICT[example['summary']]
         # optionally could delete the other keys besides image and id_str
         return example
-
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
@@ -99,6 +81,23 @@ def set_up_data(cfg):
     return datamodule
 
 
+def get_lightning_model(cfg):
+    lightning_model = baseline_models.ClassificationBaseline(
+        architecture_name=cfg.architecture_name,
+        channels=cfg.channels,
+        timm_kwargs={
+            'drop_path_rate': cfg.drop_path_rate, 
+            'pretrained': cfg.pretrained
+        },
+        head_kwargs={
+            'dropout_rate': cfg.dropout_rate,
+            'num_classes': len(baseline_datamodules.LABEL_ORDER_DICT.keys())
+        },
+        learning_rate=cfg.learning_rate,
+        weight_decay=cfg.weight_decay
+    )
+    
+    return lightning_model
 
 if __name__ == "__main__":
 

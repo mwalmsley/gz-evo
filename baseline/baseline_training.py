@@ -15,7 +15,7 @@ import baseline_datamodules
 import baseline_configs
 
 
-def get_config(architecture_name, dataset_name):
+def get_config(architecture_name, dataset_name, save_dir):
     # some path management, adjust to your system as needed 
 
     # TODO may refactor as argparse or omegaconf
@@ -52,11 +52,12 @@ def get_config(architecture_name, dataset_name):
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
+            architecture_name=architecture_name,
             dataset_name=dataset_name,
             subset_name=subset_name,
             hf_cache_dir=hf_cache_dir,
             node_cache_dir=node_cache_dir,
-            save_dir="results/baselines/classification/debug",  # relative
+            save_dir=save_dir,
 
             # download_mode="force_redownload",
             download_mode="reuse_dataset_if_exists",
@@ -78,8 +79,7 @@ def get_config(architecture_name, dataset_name):
             sync_batchnorm=False,  # only one device
             transform_mode='default',
             debug=debug,
-            batch_size_key=batch_size_key,
-            architecture_name=architecture_name
+            batch_size_key=batch_size_key
         )
     )
     cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, etc.
@@ -97,7 +97,7 @@ def get_config(architecture_name, dataset_name):
 
 
 
-def run_training(cfg, datamodule):
+def run_training(cfg, lightning_model, datamodule):
 
     torch.set_float32_matmul_precision("medium")
 
@@ -111,21 +111,6 @@ def run_training(cfg, datamodule):
 
     # log a few images to make sure the transforms look good
     # log_images(wandb_logger, datamodule)
-
-    lightning_model = baseline_models.ClassificationBaseline(
-        architecture_name=cfg.architecture_name,
-        channels=cfg.channels,
-        timm_kwargs={
-            'drop_path_rate': cfg.drop_path_rate, 
-            'pretrained': cfg.pretrained
-        },
-        head_kwargs={
-            'dropout_rate': cfg.dropout_rate,
-            'num_classes': len(baseline_datamodules.LABEL_ORDER_DICT.keys())
-        },
-        learning_rate=cfg.learning_rate,
-        weight_decay=cfg.weight_decay
-    )
 
     checkpoint_callback, callbacks = train_with_pytorch_lightning.get_default_callbacks(
         cfg.save_dir, cfg.patience
@@ -165,6 +150,7 @@ def run_training(cfg, datamodule):
             datamodule=datamodule,
             ckpt_path=checkpoint_callback.best_model_path,  # can optionally point to a specific checkpoint here e.g. "/share/nas2/walml/repos/gz-decals-classifiers/results/early_stopping_1xgpu_greyscale/checkpoints/epoch=26-step=16847.ckpt"
         )
+
 
 def log_images(wandb_logger, datamodule):
     datamodule.setup()
