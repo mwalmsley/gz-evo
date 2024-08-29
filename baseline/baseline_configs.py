@@ -2,6 +2,16 @@ from typing import Optional
 
 from dataclasses import dataclass
 
+# weak baseline
+CFG_CONVNEXT_ATTO = dict(
+    architecture_name="convnext_atto",
+    v100_batch_size=512,
+    a100_batch_size=2048,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
 
 CFG_CONVNEXT_PICO = dict(
     architecture_name="convnext_pico",
@@ -116,6 +126,7 @@ class ModelConfig:
     drop_path_rate: Optional[float] = 0.
 
 MODEL_CONFIGS = {
+    "convnext_atto": ModelConfig(**CFG_CONVNEXT_ATTO),
     "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
     "convnext_nano_fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),

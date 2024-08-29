@@ -11,7 +11,8 @@ import baseline_training  # relative import
 
 def main():
     # architecture_name = 'resnet50'
-    architecture_name = 'convnext_pico'
+    # architecture_name = 'convnext_pico'
+    architecture_name = 'convnext_atto'
 
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'

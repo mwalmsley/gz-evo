@@ -44,10 +44,7 @@ def set_up_task_data(cfg):
     print(dataset_dict['train'][0]['image'])
     print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
-    # naively, only train on examples with labels, from all telescopes
-    dataset_dict = dataset_dict.filter(lambda example: example['summary'] != '')  # remove examples without labels
-    # example = dataset_dict['train'][0]
-    # print(example['summary'], type(example['summary']))
+    # unlike classification, no need to filter to only a few galaxies
 
     transform_config = default_view_config()
     # transform_config = fast_view_config()

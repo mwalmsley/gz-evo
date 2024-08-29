@@ -113,7 +113,7 @@ def run_training(cfg, lightning_model, datamodule):
     )
 
     # log a few images to make sure the transforms look good
-    # log_images(wandb_logger, datamodule)
+    log_images(wandb_logger, datamodule)
 
     checkpoint_callback, callbacks = train_with_pytorch_lightning.get_default_callbacks(
         cfg.save_dir, cfg.patience
