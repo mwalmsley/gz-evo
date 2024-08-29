@@ -33,4 +33,5 @@ Clone  and editable-install these repos
 
 Download the dataset and models (useful for clusters with offline worker nodes, like ours). Adjust the paths in each script as you like.
 
-    python 
+    python download/download_wds_from_hub.py
+    python download/download_timm_model.py
