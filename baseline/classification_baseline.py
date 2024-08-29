@@ -15,8 +15,8 @@ def main():
 
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_pico'
-    architecture_name = 'convnext_atto'
-    # architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_atto'
+    architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
     # base evo now started as 7222, long filtering step, others waiting for this
     # filtering completed but epoch is pretty long, 1 hour
@@ -54,7 +54,8 @@ def set_up_task_data(cfg):
         lambda example: example['summary'] != '', 
         num_proc=cfg.num_workers,
         load_from_cache_file=True,
-        keep_in_memory=False
+        keep_in_memory=False,
+        cache_file_name=f'{cfg.dataset_name}_with_clf_summaries'
     )  # remove examples without labels
     # example = dataset_dict['train'][0]
     # print(example['summary'], type(example['summary']))
