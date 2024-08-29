@@ -116,10 +116,14 @@ class ModelConfig:
     drop_path_rate: Optional[float] = 0.
 
 MODEL_CONFIGS = {
+    "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
+    "convnext_nano_fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),
+    "convnext_nano_fcmae_ftim": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE_FTIM),
     "resnet50": ModelConfig(**CFG_RESNET50),
     "resnet50_clip": ModelConfig(**CFG_RESNET50_CLIP),
+    "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
+    "efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
+    "maxvit_tiny": ModelConfig(**CFG_MAXVIT_TINY),
+    "vit_small_dino": ModelConfig(**CFG_VIT_SMALL_DINO)
 }
-
-
-
