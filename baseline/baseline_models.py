@@ -208,10 +208,14 @@ class RegressionBaseline(GenericBaseline):
 
 
     def setup_other_metrics(self):
+        # without weighting, supervised loss (above) is the sum of the mean squared errors across all answers
+
+        # also have manually-calculated MSE across all answers?
+
         regression_metrics = {
-            'train/supervised_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),  # ignore nans via MeanMetric
-            'validation/supervised_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),
-            'test/supervised_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore')
+            'train/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),  # ignore nans via MeanMetric
+            'validation/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),
+            'test/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore')
         }
         question_answer_pairs = self.head_kwargs['question_answer_pairs']
         answer_fraction_keys = [q + a + '_fraction' for q, a_list in question_answer_pairs.items() for a in a_list]
@@ -231,13 +235,15 @@ class RegressionBaseline(GenericBaseline):
     def update_other_metrics(self, outputs, step_name):
         predictions = outputs['prediction']
         targets = torch.stack([outputs['label'][answer_col] for answer_col in self.answer_fraction_keys], dim=1)
-        self.regression_metrics[f'{step_name}/supervised_unweighted_mse'](
-            torch.abs(predictions - targets) ** 2  # mean squared error
+        self.regression_metrics[f'{step_name}/supervised_total_unweighted_mse'](
+            # mean squared error, summed across answers, then averaged by MeanMetric
+            torch.sum(torch.abs(predictions - targets) ** 2, dim=1)  
         )
 
         for answer_col in self.answer_fraction_keys:
             answer_index = self.answer_fraction_keys.index(answer_col)
             self.regression_metrics[f'{step_name}/supervised_unweighted_mse_{answer_col}'](
+                # mean squared error, for one answer, averaged by MeanMetric
                 torch.abs(predictions[:, answer_index] - outputs['label'][answer_col]) ** 2
             )
 
@@ -296,8 +302,9 @@ class CustomWeightedMSELoss(torch.nn.Module):
                 # masked_answer_loss = torch.where(question_total > 0, answer_loss, torch.tensor(0.0))  # only apply loss if labelled
                 # total_loss += masked_answer_loss
 
+                # before reduction, loss is (always) summed across answers to give shape (B)
                 total_loss += answer_loss
 
-        return torch.mean(total_loss)
+        return torch.mean(total_loss)  # and then with reduction, mean across batch. Never do mean across answers.
 
         
