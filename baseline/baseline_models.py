@@ -245,8 +245,7 @@ class RegressionBaseline(GenericBaseline):
     def log_all_metrics(self, split):
         assert split is not None
         for metric_collection in (self.loss_metrics, self.regression_metrics):
-            # prog_bar = metric_collection == self.loss_metrics
-            prog_bar = True
+            prog_bar = metric_collection == self.loss_metrics  # don't log all
             for name, metric in metric_collection.items():
                 if split in name:
                     # logging.info(name)

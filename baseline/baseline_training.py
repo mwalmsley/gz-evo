@@ -159,7 +159,7 @@ def log_images(wandb_logger, datamodule):
     datamodule.setup()
 
     batch = next(iter(datamodule.train_dataloader()))
-    images, _ = batch
+    images = batch['image']
     np_images = [image.numpy().transpose(2, 1, 0) for image in images[:5]]
     # print([x.shape for x in np_images])
     # print([(x.min(), x.max()) for x in np_images])
