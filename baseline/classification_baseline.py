@@ -52,14 +52,23 @@ def set_up_task_data(cfg):
 
     # naively, only train on examples with labels, from all telescopes
     dataset_dict = dataset_dict.filter(
-        lambda example: example['summary'] != '', 
+        input_columns=['summary'],
         num_proc=cfg.num_workers,
         load_from_cache_file=True,
         keep_in_memory=False,
-        cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
-    )  # remove examples without labels
-    # example = dataset_dict['train'][0]
-    # print(example['summary'], type(example['summary']))
+        cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
+    )
+
+    # dataset_dict = dataset_dict.filter(
+    #     lambda example: example['summary'] != '', 
+    #     num_proc=cfg.num_workers,
+    #     load_from_cache_file=True,
+    #     keep_in_memory=False,
+    #     cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
+    # )
+
+
+
 
     transform_config = default_view_config()
     # transform_config = fast_view_config()
@@ -117,6 +126,9 @@ def get_lightning_model(cfg):
     )
     
     return lightning_model
+
+def has_labels(summary):
+    return summary != ''
 
 if __name__ == "__main__":
 
