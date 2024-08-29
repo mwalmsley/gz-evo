@@ -1,5 +1,6 @@
 import logging
 
+import numpy as np
 import pytorch_lightning as pl
 import datasets
 
@@ -12,11 +13,14 @@ import baseline_training  # relative import
 
 
 def main():
-    architecture_name = 'resnet50'
+    # architecture_name = 'resnet50'
+    architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_pico'
+
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     dataset_name='gz2'
-    save_dir = "results/baselines/regression/debug"  # relative
+    save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
     datamodule = set_up_task_data(cfg)
