@@ -55,7 +55,7 @@ CFG_CONVNEXT_NANO_FCMAE_FTIM = dict(
 )
 
 CFG_CONVNEXT_BASE = dict(
-    architecture_name="convnext_nano",
+    architecture_name="convnext_base",
     v100_batch_size=64,
     a100_batch_size=256,
     dropout_rate=0.5,
