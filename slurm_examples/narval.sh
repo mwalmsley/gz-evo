@@ -39,8 +39,8 @@ export WANDB__SERVICE_WAIT = "300"
 
 # PYTHON=/home/walml/zoobot_311_venv/bin/python
 # source /home/walml/zoobot_311_venv/bin/activate
-PYTHON=/home/walml/envs/zoobot_311_venv/bin/python
-source /home/walml/envs/zoobot_311_venv/bin/activate
+PYTHON=/project/def-bovy/walml/envs/gz-evo/bin/python
+source /project/def-bovy/walml/envs/gz-evo/bin/activate
 REPO_DIR=/project/def-bovy/walml/repos/gz-evo
 
 echo 'Running classification baseline'
