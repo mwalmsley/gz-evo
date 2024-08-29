@@ -16,11 +16,14 @@ if __name__ == '__main__':
         # 'resnet101.a1h_in1k',
         'resnet50',
         'resnet50',
-        'resnet50_clip',
+        'resnet50_clip.openai',
         'resnet101',
 
+        'convnext_atto', 
         'convnext_pico', 
         'convnext_nano',
+        "convnextv2_nano.fcmae",
+        "convnextv2_nano.fcmae_ft_in22k_in1k",
         'convnext_tiny',
         'convnext_small', 
         'convnext_base',
@@ -44,6 +47,8 @@ if __name__ == '__main__':
         'maxvit_rmlp_base_rw_224',
         # 'maxvit_large_tf_224',
         # 'maxvit_xlarge_tf_224'
+
+        "vit_small_patch14_reg4_dinov2.lvd142m"
 
     ]:
         timm.create_model(model, pretrained=True)
