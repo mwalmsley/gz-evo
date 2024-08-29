@@ -10,7 +10,7 @@ if __name__ == '__main__':
         os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
         os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
     else:
-        assert os.path.isdir('/share/nas2/walml', 'Please add your own path')
+        assert os.path.isdir('/share/nas2/walml'), 'Please add your own path'
         os.environ['HF_HOME']="/share/nas2/walml/cache/huggingface"
         os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
 
