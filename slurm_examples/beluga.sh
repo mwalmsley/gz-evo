@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=20:15:00  
+#SBATCH --time=00:15:00  
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
@@ -26,6 +26,8 @@ export HF_DATASETS_CACHE=/project/def-bovy/walml/cache/huggingface/datasets
 # no internet on worker nodes
 export HF_DATASETS_OFFLINE=1
 export WANDB_MODE=offline
+export WANDB__SERVICE_WAIT = "300"
+
 
 # SEED=1  # don't change this when dividing up dataset
 
