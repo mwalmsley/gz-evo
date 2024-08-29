@@ -54,6 +54,17 @@ CFG_CONVNEXT_NANO_FCMAE_FTIM = dict(
     drop_path_rate=0.4
 )
 
+CFG_CONVNEXT_BASE = dict(
+    architecture_name="convnext_nano",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
+
+
 CFG_RESNET50 = dict(
     architecture_name="resnet50",
     v100_batch_size=512,
