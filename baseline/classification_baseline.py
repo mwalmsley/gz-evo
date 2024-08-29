@@ -16,9 +16,9 @@ def main():
     architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
 
-    # dataset_name='gz_evo'
+    dataset_name='gz_evo'
     # dataset_name='gz_hubble'
-    dataset_name='gz2'
+    # dataset_name='gz2'
     save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
