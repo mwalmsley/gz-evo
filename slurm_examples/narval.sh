@@ -3,15 +3,14 @@
 #SBATCH --time=00:10:00  
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=6
-#SBATCH --mem=60G
-#SBATCH --gres=gpu:a100_4g.20gb:1
 #SBATCH --job-name=1gpu_bas
+#SBATCH --cpus-per-task=12
+#SBATCH --mem-per-cpu 4G
+#SBATCH --gres=gpu:a100:1
 
-
-### SBATCH --cpus-per-task=12
-### SBATCH --mem-per-cpu 4G
-### SBATCH --gres=gpu:a100:1
+### SBATCH --cpus-per-task=6
+### SBATCH --mem=60G
+### SBATCH --gres=gpu:a100_4g.20gb:1
 
 pwd; hostname; date
 
