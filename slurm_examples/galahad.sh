@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=71:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --mem=30G
 #SBATCH --ntasks 1
+#SBATCH --mem=100G
 #SBATCH --cpus-per-task=8
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
