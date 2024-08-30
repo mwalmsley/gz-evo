@@ -31,17 +31,21 @@ if __name__ == '__main__':
     
     # s all downloaded files are also cached on your local disk
 
-    snapshot_download(
-        repo_id="mwalmsley/gz_evo", 
-        repo_type="dataset", 
-        cache_dir=gz_evo_only_cache
-    )
+    # snapshot_download(
+    #     repo_id="mwalmsley/gz_evo", 
+    #     repo_type="dataset", 
+    #     cache_dir=gz_evo_only_cache
+    # )
     load_dataset(
-        'mwalmsley/gz-evo',
-        name='default', 
-        # cache_dir=gz_evo_only_cache,
-        download_config=DownloadConfig(
-            cache_dir=gz_evo_only_cache,
-            local_files_only=True
-        )
-    )  # may run out of mem on head node, that's okay
+        path=gz_evo_only_cache + '/gz-evo',
+        data_dir='data'
+    )
+    # load_dataset(
+    #     'mwalmsley/gz-evo',
+    #     name='default', 
+    #     # cache_dir=gz_evo_only_cache,
+    #     download_config=DownloadConfig(
+    #         cache_dir=gz_evo_only_cache,
+    #         local_files_only=True
+    #     )
+    # )  # may run out of mem on head node, that's okay
