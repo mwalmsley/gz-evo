@@ -67,7 +67,7 @@ CFG_CONVNEXT_BASE = dict(
 
 CFG_RESNET50 = dict(
     architecture_name="resnet50",
-    v100_batch_size=512,
+    v100_batch_size=256,
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
@@ -77,7 +77,7 @@ CFG_RESNET50 = dict(
 # https://huggingface.co/timm/resnet50_clip.openai
 CFG_RESNET50_CLIP = dict(
     architecture_name="resnet50_clip.openai",
-    v100_batch_size=512,
+    v100_batch_size=256,
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
@@ -86,7 +86,7 @@ CFG_RESNET50_CLIP = dict(
 
 CFG_EFFICIENTNET_B0 = dict(
     architecture_name="efficientnet_b0",
-    v100_batch_size=512,
+    v100_batch_size=256,
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
@@ -96,7 +96,7 @@ CFG_EFFICIENTNET_B0 = dict(
 
 CFG_EFFICIENTNETV2_S = dict(
     architecture_name="tf_efficientnetv2_s",
-    v100_batch_size=256,
+    v100_batch_size=128,
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
