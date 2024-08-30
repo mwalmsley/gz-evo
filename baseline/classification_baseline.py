@@ -53,7 +53,7 @@ def set_up_task_data(cfg):
     # naively, only train on examples with labels, from all telescopes
     dataset_dict = dataset_dict.filter(
         has_labels,
-        input_columns=['summary'],
+        input_columns='summary',
         num_proc=cfg.num_workers,
         load_from_cache_file=True,
         keep_in_memory=False,
@@ -131,6 +131,7 @@ def get_lightning_model(cfg):
     return lightning_model
 
 def has_labels(summary):
+    assert isinstance(summary, str), f"summary is not a string, but a {type(summary), {summary}}"
     return summary != ''
 
 if __name__ == "__main__":
