@@ -39,7 +39,7 @@ if __name__ == '__main__':
     load_dataset(
         'mwalmsley/gz-evo',
         name='default', 
-        cache_dir=gz_evo_only_cache,
+        # cache_dir=gz_evo_only_cache,
         download_config=DownloadConfig(
             cache_dir=gz_evo_only_cache,
             local_files_only=True
