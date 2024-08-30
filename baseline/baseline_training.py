@@ -1,6 +1,7 @@
 import os
 import logging
 from dataclasses import asdict
+import glob
 
 import omegaconf
 import wandb
@@ -9,6 +10,8 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 
 from zoobot.pytorch.training import train_with_pytorch_lightning
+
+from datasets import load_dataset
 
 import baseline_models
 import baseline_datamodules
@@ -149,6 +152,20 @@ def run_training(cfg, lightning_model, datamodule):
             datamodule=datamodule,
             ckpt_path=checkpoint_callback.best_model_path,  # can optionally point to a specific checkpoint here e.g. "/share/nas2/walml/repos/gz-decals-classifiers/results/early_stopping_1xgpu_greyscale/checkpoints/epoch=26-step=16847.ckpt"
         )
+
+
+def manually_load_gz_evo():
+    gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
+    train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
+    test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
+    assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
+    return load_dataset(
+        path=gz_evo_manual_download_loc,
+        # data_files must be explicit paths seemingly, not just glob strings. Weird.
+        data_files={'train': train_locs, 'test': test_locs},
+        # load LOCALLY to this machine
+        cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
+    )
 
 
 def log_images(wandb_logger, datamodule):

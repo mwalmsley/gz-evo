@@ -40,19 +40,20 @@ def main():
 
 def set_up_task_data(cfg):
 
-    if cfg.dataset_name == 'gz_evo':
-        dataset_loc = os.environ.get('GZ_EVO_LOCAL_CACHE',  f"mwalmsley/{cfg.dataset_name}")
+    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_LOCAL_CACHE'):
+        dataset_dict=baseline_training.manually_load_gz_evo()
     else:
         dataset_loc = f"mwalmsley/{cfg.dataset_name}"
-    logging.info(f"Loading dataset from {dataset_loc}")
-    print(f"Loading dataset from {dataset_loc}")
-    dataset_dict = datasets.load_dataset(
-        dataset_loc, 
-        name=cfg.subset_name, 
-        keep_in_memory=cfg.keep_in_memory, 
-        cache_dir=cfg.hf_cache_dir,
-        download_mode=cfg.download_mode,
-    )
+        logging.info(f"Loading dataset from {dataset_loc}")
+        print(f"Loading dataset from {dataset_loc}")
+        dataset_dict = datasets.load_dataset(
+            dataset_loc, 
+            name=cfg.subset_name, 
+            keep_in_memory=cfg.keep_in_memory, 
+            cache_dir=cfg.hf_cache_dir,
+            download_mode=cfg.download_mode,
+        )
+
     
     # dataset_dict.set_format("torch")
     # print(dataset_dict['train'][0]['image'])

@@ -9,12 +9,14 @@ if __name__ == '__main__':
     if os.path.isdir("/project/def-bovy/walml"):
         os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
         os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
-        gz_evo_only_cache = '/project/def-bovy/walml/tmp'
+        os.environ["HF_LOCAL_DATASETS_CACHE"] = os.environ['SLURM_TMPDIR'] + '/cache/huggingface/datasets'
+        os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC'] = '/project/def-bovy/walml/tmp/gz-evo'
     else:
         assert os.path.isdir('/share/nas2/walml'), 'Please add your own path'
         os.environ['HF_HOME']="/share/nas2/walml/cache/huggingface"
         os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
-        gz_evo_only_cache = '/share/nas2/walml/tmp'
+        os.environ["HF_LOCAL_DATASETS_CACHE"] = '/state/partition1/cache/huggingface/datasets'
+        os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC'] = '/share/nas2/walml/tmp/gz-evo'
 
     from datasets import load_dataset, DownloadConfig
     from huggingface_hub import snapshot_download
@@ -31,17 +33,24 @@ if __name__ == '__main__':
     
     # s all downloaded files are also cached on your local disk
 
-    # snapshot_download(
-    #     repo_id="mwalmsley/gz_evo", 
-    #     repo_type="dataset", 
-    #     cache_dir=gz_evo_only_cache
-    # )
-    train_locs = glob.glob(gz_evo_only_cache + '/gz-evo/data/train*.parquet')
-    test_locs = glob.glob(gz_evo_only_cache + '/gz-evo/data/test*.parquet')
+    gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
+    # saves here, simple folder with /data/train*.parquet files
+    # should be on shared filesystem to ensure internet access
+    snapshot_download(
+        repo_id="mwalmsley/gz_evo", 
+        repo_type="dataset", 
+        local_dir=gz_evo_manual_download_loc 
+    )
+
+    # point to those parquet files
+    train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
+    test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
     load_dataset(
-        path=gz_evo_only_cache + '/gz-evo',
-        # data_dir='data'
-        data_files={'train': train_locs, 'test': test_locs}
+        path=gz_evo_manual_download_loc,
+        # data_files must be explicit paths seemingly, not just glob strings. Weird.
+        data_files={'train': train_locs, 'test': test_locs},
+        # and place in LOCAL cache
+        cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
     )
     # load_dataset(
     #     'mwalmsley/gz-evo',
