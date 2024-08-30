@@ -23,9 +23,9 @@ def main():
     # starting another with atto for quick check, 7263
     # and starting one with nano and a filter, 7278
 
-    dataset_name='gz_evo'
+    # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
-    # dataset_name='gz2'
+    dataset_name='gz2'
     save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
@@ -54,7 +54,8 @@ def set_up_task_data(cfg):
     print(dataset_dict['train'].num_rows)
     dataset_dict = dataset_dict.filter(
         has_labels,
-        input_columns='summary'
+        input_columns='summary',
+        load_from_cache_file=False
         # num_proc=cfg.num_workers
         # load_from_cache_file=True,
         # keep_in_memory=False,
