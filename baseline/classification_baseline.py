@@ -51,16 +51,21 @@ def set_up_task_data(cfg):
     # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
     # naively, only train on examples with labels, from all telescopes
+    print(dataset_dict['train'].num_rows)
     dataset_dict = dataset_dict.filter(
         has_labels,
-        input_columns='summary',
-        num_proc=cfg.num_workers
+        input_columns='summary'
+        # num_proc=cfg.num_workers
         # load_from_cache_file=True,
         # keep_in_memory=False,
         # cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
     )
+    print(dataset_dict['train'].num_rows)
     # print(dataset_dict)
     print(dataset_dict['train'][0]['summary'], 'is the example summary')
+    print(dataset_dict['train'][1]['summary'], 'is the example summary')
+    print(dataset_dict['train'][2]['summary'], 'is the example summary')
+    print(dataset_dict['train'][3]['summary'], 'is the example summary')
 
     # dataset_dict = dataset_dict.filter(
     #     lambda example: example['summary'] != '', 
