@@ -54,13 +54,14 @@ def set_up_task_data(cfg):
     dataset_dict = dataset_dict.filter(
         has_labels,
         input_columns='summary',
-        num_proc=cfg.num_workers,
-        load_from_cache_file=True,
-        keep_in_memory=False,
-        cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
+        num_proc=cfg.num_workers
+        # load_from_cache_file=True,
+        # keep_in_memory=False,
+        # cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
     )
     # print(dataset_dict)
-    print(dataset_dict['train'][0]['summary'], 'summary')
+    print(dataset_dict['train'][4]['summary'], 'summary')
+    exit()
 
     # dataset_dict = dataset_dict.filter(
     #     lambda example: example['summary'] != '', 
@@ -131,6 +132,7 @@ def get_lightning_model(cfg):
     return lightning_model
 
 def has_labels(summary):
+    # raise ValueError(summary)
     assert isinstance(summary, str), f"summary is not a string, but a {type(summary), {summary}}"
     return summary != ''
 
