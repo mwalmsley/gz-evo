@@ -282,7 +282,9 @@ class CustomWeightedMSELoss(torch.nn.Module):
         # inputs is B x N, where N is the number of answer keys (fractions)
         # targets is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
 
-        total_loss = 0
+        loss = torch.zeros(inputs.shape, device=inputs.device)
+
+        # for question_n, question in enumerate(self.question_answer_pairs.keys()):
         
         for question, answers in self.question_answer_pairs.items():
             question_total_key = question + '_total-votes'
@@ -290,21 +292,21 @@ class CustomWeightedMSELoss(torch.nn.Module):
             for answer in answers:
                 answer_key = question + answer + '_fraction'
                 # TODO maybe predict dict not tensor?
-                answer_index_in_preds = self.answer_fraction_keys.index(answer_key)
-                answer_predicted_fraction = inputs[:, answer_index_in_preds]
+                # index of both preds and loss
+                answer_index = self.answer_fraction_keys.index(answer_key)
+                answer_predicted_fraction = inputs[:, answer_index]
                 answer_true_fraction = targets[answer_key]
                 answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
-                
 
                 # apply weighting
                 answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
+                
+                masked_answer_loss = torch.where(question_total > 5, answer_loss, torch.nan)  # only apply loss if labelled
 
-                masked_answer_loss = torch.where(question_total > 0, answer_loss, torch.tensor(0.0))  # only apply loss if labelled
+                loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
 
-                # before reduction, loss is (always) summed across answers to give shape (B)
-                total_loss += masked_answer_loss
-                # total_loss += answer_loss
-
-        return torch.mean(total_loss)  # and then with reduction, mean across batch. Never do mean across answers.
+                
+        # treating all answers equally, take a nanmean of everything
+        return torch.nanmean(loss)  # and then with reduction, mean across batch. Never do mean across answers.
 
         
