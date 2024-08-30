@@ -19,6 +19,8 @@ def main():
     # currently running as 7232 atto regression, possible duplicate with 7208
     # looks okay, training well still
     # continuing on to first four gz2 questions, with weighting/atto, 7261
+    # horribly broken
+    # now adjusted loss
 
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'
@@ -48,7 +50,7 @@ def set_up_task_data(cfg):
         download_mode=cfg.download_mode,
     )
     
-    dataset_dict.set_format("torch")
+
     # print(dataset_dict['train'][0]['image'])
     # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
@@ -58,6 +60,8 @@ def set_up_task_data(cfg):
     #     has_minimal_votes,
     #     input_columns=['smooth-or-featured-gz2_total-votes']
     # )
+
+    dataset_dict.set_format("torch")
 
     transform_config = default_view_config()
     # transform_config = fast_view_config()
