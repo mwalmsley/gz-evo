@@ -1,4 +1,6 @@
 import logging
+import os
+
 import pytorch_lightning as pl
 import datasets
 import numpy as np
@@ -38,8 +40,14 @@ def main():
 
 def set_up_task_data(cfg):
 
+    if cfg.dataset_name == 'gz_evo':
+        dataset_loc = os.environ.get('GZ_EVO_LOCAL_CACHE',  f"mwalmsley/{cfg.dataset_name}")
+    else:
+        dataset_loc = f"mwalmsley/{cfg.dataset_name}"
+    logging.info(f"Loading dataset from {dataset_loc}")
+    print(f"Loading dataset from {dataset_loc}")
     dataset_dict = datasets.load_dataset(
-        f"mwalmsley/{cfg.dataset_name}", 
+        dataset_loc, 
         name=cfg.subset_name, 
         keep_in_memory=cfg.keep_in_memory, 
         cache_dir=cfg.hf_cache_dir,

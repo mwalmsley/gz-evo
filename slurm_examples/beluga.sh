@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=22:15:00  
+#SBATCH --time=00:15:00  
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
@@ -17,7 +17,12 @@ nvidia-smi
 echo 'Loading arrow'
 module load arrow
 
-# mkdir $SLURM_TMPDIR/cache
+echo 'SLURM_TMPDIR'
+echo $SLURM_TMPDIR
+
+mkdir $SLURM_TMPDIR/cache
+cp /project/def-bovy/walml/tmp/gz-evo $SLURM_TMPDIR/cache/gz-evo
+export GZ_EVO_LOCAL_CACHE=$SLURM_TMPDIR/cache/gz-evo
 
 export NCCL_BLOCKING_WAIT=1
 
