@@ -25,7 +25,7 @@ def main():
     # architecture_name = 'tf_efficientnetv2_s'
     # architecture_name = 'maxvit_tiny_rw_224'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
-    architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
+    # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
 
 
     # base evo now started as 7222, long filtering step, others waiting for this

@@ -51,19 +51,16 @@ if __name__ == '__main__':
 
         'vit_base_patch16_224.augreg2_in21k_ft_in1k',
 
-
         'convnext_base.clip_laion2b_augreg_ft_in12k',
 
         'vit_medium_patch32_clip_224.tinyclip_laion400m',
-
 
         'vit_base_patch16_clip_224.openai',
         'vit_base_patch32_clip_224.openai',
         'vit_base_patch16_clip_224.laion2b_ft_in12k',
 
-
-        # not pretrained?
-        'vit_base_patch32_clip_224.laion2b_ft_in12k'
+        # seems to not have pretrained weights available
+        # 'vit_base_patch32_clip_224.laion2b_ft_in12k'
 
 
     ]:
