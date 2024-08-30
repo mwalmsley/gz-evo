@@ -259,13 +259,43 @@ class RegressionBaseline(GenericBaseline):
 
 
     def create_head(self):
-        num_answers = len([a for answer_list in self.head_kwargs['question_answer_pairs'].values() for a in answer_list])
-        return torch.nn.Sequential(
-            # TODO global pooling layer?
-            torch.nn.Dropout(self.head_kwargs['dropout_rate']),
-            torch.nn.Linear(self.encoder.num_features, num_answers), 
-            torch.nn.Sigmoid()
+        num_features = self.encoder.num_features
+        question_answer_pairs = self.head_kwargs['question_answer_pairs']
+        # return torch.nn.Sequential(
+        #     # TODO global pooling layer?
+        #     torch.nn.Dropout(self.head_kwargs['dropout_rate']),
+        #     torch.nn.Linear(self.encoder.num_features, num_answers), 
+        #     torch.nn.Sigmoid()
+        # )
+        return FractionalHead(num_features, question_answer_pairs)
+    
+
+# Q heads, each one making softmax predictions for the answers to a question
+
+
+def SoftmaxHead(num_features, num_answers):
+    return torch.nn.Sequential(
+            torch.nn.Linear(num_features, num_answers), 
+            torch.nn.Softmax(dim=1)
         )
+
+
+#         self.dropout = torch.nn.Dropout(self.head_kwargs['dropout_rate'])
+
+class FractionalHead(torch.nn.Module):
+
+    def __init__(self, num_features: int, question_answer_pairs: dict):
+        super().__init__()
+
+        self.question_answer_pairs = question_answer_pairs
+        self.heads = torch.nn.ModuleDict({
+            question: SoftmaxHead(num_features, len(answers)) for question, answers in question_answer_pairs.items()
+        })
+
+    def forward(self, x):
+        # x = torch.nn.Dropout(self.head_kwargs['dropout_rate'])(x)
+        preds = [head(x) for head in self.heads.values()]
+        return torch.cat(preds, dim=1)
         
 
 class CustomWeightedMSELoss(torch.nn.Module):
@@ -282,31 +312,59 @@ class CustomWeightedMSELoss(torch.nn.Module):
         # inputs is B x N, where N is the number of answer keys (fractions)
         # targets is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
 
-        loss = torch.zeros(inputs.shape, device=inputs.device)
+        # loss = torch.zeros(inputs.shape, device=inputs.device)
+        # loss = torch.zeros(
+        #     (inputs.shape[0], len(self.question_totals_keys)),
+        #     device=inputs.device
+        # )
+        loss = 0
 
         # for question_n, question in enumerate(self.question_answer_pairs.keys()):
         
         for question, answers in self.question_answer_pairs.items():
             question_total_key = question + '_total-votes'
             question_total = targets[question_total_key]
-            for answer in answers:
-                answer_key = question + answer + '_fraction'
-                # TODO maybe predict dict not tensor?
-                # index of both preds and loss
-                answer_index = self.answer_fraction_keys.index(answer_key)
-                answer_predicted_fraction = inputs[:, answer_index]
-                answer_true_fraction = targets[answer_key]
-                answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
+            # for answer in answers:
+            #     answer_key = question + answer + '_fraction'
+            #     # TODO maybe predict dict not tensor?
+            #     # index of both preds and loss
+            #     answer_index = self.answer_fraction_keys.index(answer_key)
 
-                # apply weighting
-                answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
                 
-                masked_answer_loss = torch.where(question_total > 5, answer_loss, torch.nan)  # only apply loss if labelled
+            #     answer_predicted_fraction = inputs[:, answer_index]
+            #     answer_true_fraction = targets[answer_key]
+            #     answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
 
-                loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
+            #     # apply weighting
+            #     # TEMP removed
+            #     # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
+                
+            #     # masked_answer_loss = torch.where(question_total > 10, answer_loss, torch.nan)  # only apply loss if labelled
 
+            #     loss[:, answer_index] = answer_loss
+            #     # loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
+
+
+            fraction_keys = [question + answer + '_fraction' for answer in answers]
+            target_fractions = torch.stack([targets[key] for key in fraction_keys], dim=1)
+            counts = (target_fractions * question_total.reshape(-1, 1)).int()
+
+            answer_indices = [self.answer_fraction_keys.index(key) for key in fraction_keys]
+            predicted_probs = inputs[:, answer_indices]
+            # total counts is implicit from counts, nice one torch :)
+            # question_loss = torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
+            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # negative log likelihood
+            loss += question_loss
                 
         # treating all answers equally, take a nanmean of everything
         return torch.nanmean(loss)  # and then with reduction, mean across batch. Never do mean across answers.
 
-        
+
+
+def get_multinomial_log_prob(probs, counts):
+        logits = torch.distributions.utils.probs_to_logits(probs)
+        log_factorial_n = torch.lgamma(counts.sum(-1) + 1)
+        log_factorial_xs = torch.lgamma(counts + 1).sum(-1)
+        logits[(counts == 0) & (logits == -torch.inf)] = 0
+        log_powers = (logits * counts).sum(-1)
+        return log_factorial_n - log_factorial_xs + log_powers

@@ -24,8 +24,8 @@ def main():
 
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'
-    # architecture_name = 'convnext_pico'
-    architecture_name = 'convnext_atto'
+    architecture_name = 'convnext_pico'
+    # architecture_name = 'convnext_atto'
 
     # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -34,9 +34,6 @@ def main():
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
     datamodule = set_up_task_data(cfg)
-
-    # TEMP maybe it's just the learning rate?
-    cfg.learning_rate = 1e-3
 
     lightning_model = get_lightning_model(cfg)
 
@@ -53,6 +50,13 @@ def set_up_task_data(cfg):
     #     has_minimal_votes,
     #     input_columns=['smooth-or-featured-gz2_total-votes']
     # )
+
+    # print(dataset_dict['train'].num_rows)
+    # dataset_dict = dataset_dict.filter(
+    #     has_minimal_votes,
+    #     input_columns=['has-spiral-arms-gz2_total-votes']
+    # )
+    # print(dataset_dict['train'].num_rows)
 
     dataset_dict.set_format("torch")
 
@@ -81,7 +85,7 @@ def get_lightning_model(cfg):
         # only use the first question, should be easy for GZ2
         # logging.warning("Using debug question_answer_pairs, first GZ2 question only")
         # question_answer_pairs =  {'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact']}
-        logging.warning("Using debug question_answer_pairs, first four GZ2 questions only")
+        logging.warning("Using debug question_answer_pairs, four GZ2 question only")
         question_answer_pairs =  {
             'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact'],
             'disk-edge-on-gz2': ['_yes', '_no'],

@@ -110,8 +110,8 @@ CFG_RESNET50_CLIP = dict(
     architecture_name="resnet50_clip.openai",
     v100_batch_size=256,
     a100_batch_size=512,
-    dropout_rate=0.5,
-    learning_rate=1e-4,
+    dropout_rate=0.5, 
+    learning_rate=2e-5,  # reduced
     weight_decay=0.05
 )
 
