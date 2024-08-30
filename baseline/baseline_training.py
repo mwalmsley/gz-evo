@@ -168,6 +168,26 @@ def manually_load_gz_evo():
     )
 
 
+def get_dataset_dict(cfg):
+    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
+        logging.info('Loading gz evo from manual download')
+        # will load to HF_LOCAL_DATASETS_CACHE
+        dataset_dict=manually_load_gz_evo()
+    else:
+        dataset_loc = f"mwalmsley/{cfg.dataset_name}"
+        logging.info(f"Loading dataset from {dataset_loc}")
+        print(f"Loading dataset from {dataset_loc}")
+        dataset_dict = load_dataset(
+            dataset_loc, 
+            name=cfg.subset_name, 
+            keep_in_memory=cfg.keep_in_memory, 
+            cache_dir=cfg.hf_cache_dir,
+            download_mode=cfg.download_mode,
+        )
+        
+    return dataset_dict
+
+
 def log_images(wandb_logger, datamodule):
     datamodule.setup()
 

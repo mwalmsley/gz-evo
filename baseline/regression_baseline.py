@@ -35,6 +35,9 @@ def main():
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
     datamodule = set_up_task_data(cfg)
 
+    # TEMP maybe it's just the learning rate?
+    cfg.learning_rate = 1e-3
+
     lightning_model = get_lightning_model(cfg)
 
     baseline_training.run_training(cfg, lightning_model, datamodule)
@@ -42,17 +45,7 @@ def main():
 
 def set_up_task_data(cfg):
 
-    dataset_dict = datasets.load_dataset(
-        f"mwalmsley/{cfg.dataset_name}", 
-        name=cfg.subset_name, 
-        keep_in_memory=cfg.keep_in_memory, 
-        cache_dir=cfg.hf_cache_dir,
-        download_mode=cfg.download_mode,
-    )
-    
-
-    # print(dataset_dict['train'][0]['image'])
-    # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
+    dataset_dict = baseline_training.get_dataset_dict(cfg)
 
     # TODO for evo, filter like this but each column
     # for GZ2 filter not yet needed, masking is enough

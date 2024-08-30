@@ -48,37 +48,15 @@ def main():
 
 def set_up_task_data(cfg):
 
-    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
-        logging.info('Loading gz evo from manual download')
-        # will load to HF_LOCAL_DATASETS_CACHE
-        dataset_dict=baseline_training.manually_load_gz_evo()
-    else:
-        dataset_loc = f"mwalmsley/{cfg.dataset_name}"
-        logging.info(f"Loading dataset from {dataset_loc}")
-        print(f"Loading dataset from {dataset_loc}")
-        dataset_dict = datasets.load_dataset(
-            dataset_loc, 
-            name=cfg.subset_name, 
-            keep_in_memory=cfg.keep_in_memory, 
-            cache_dir=cfg.hf_cache_dir,
-            download_mode=cfg.download_mode,
-        )
-
-    
-    # dataset_dict.set_format("torch")
-    # print(dataset_dict['train'][0]['image'])
-    # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
+    dataset_dict = baseline_training.get_dataset_dict(cfg)
 
     # naively, only train on examples with labels, from all telescopes
     print(dataset_dict['train'].num_rows)
     dataset_dict = dataset_dict.filter(
         has_labels,
         input_columns='summary',
-        load_from_cache_file=False
-        # num_proc=cfg.num_workers
-        # load_from_cache_file=True,
-        # keep_in_memory=False,
-        # cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
+        # load_from_cache_file=False
+        num_proc=cfg.num_workers
     )
     print(dataset_dict['train'].num_rows)
     # print(dataset_dict)
