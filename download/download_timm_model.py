@@ -33,6 +33,7 @@ if __name__ == '__main__':
         # 'laion/CLIP-convnext_base_w-laion2B-s13B-b82K-augreg'
 
         'convnextv2_nano.fcmae',
+        'convnextv2_base.fcmae',
         'convnextv2_nano.fcmae_ft_in22k_in1k',
         'convnextv2_base.fcmae_ft_in22k_in1k',
         'convnext_base.clip_laion2b_augreg_ft_in12k',
@@ -48,7 +49,16 @@ if __name__ == '__main__':
         # 'maxvit_large_tf_224',
         # 'maxvit_xlarge_tf_224'
 
-        "vit_small_patch14_reg4_dinov2.lvd142m"
+        'vit_base_patch16_clip_224.openai',
+        'vit_base_patch32_clip_224.openai',
+
+        'vit_base_patch16_224.augreg2_in21k_ft_in1k',
+
+        'vit_base_patch16_clip_224.laion2b_ft_in12k',
+        'vit_base_patch32_clip_224.laion2b_ft_in12k',
+        'convnext_base.clip_laion2b_augreg_ft_in12k',
+
+        'vit_medium_patch32_clip_224.tinyclip_laion400m'
 
     ]:
         timm.create_model(model, pretrained=True)

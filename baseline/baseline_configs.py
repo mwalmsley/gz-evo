@@ -65,6 +65,16 @@ CFG_CONVNEXT_BASE = dict(
     drop_path_rate=0.4
 )
 
+CFG_CONVNEXT_BASE_LAION = dict(
+    architecture_name="convnext_base.clip_laion2b_augreg_ft_in12k",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
+
 CFG_CONVNEXTV2_BASE_FCMAE= dict(
     architecture_name="convnextv2_base.fcmae",
     v100_batch_size=64,
@@ -137,12 +147,30 @@ CFG_MAXVIT_TINY = dict(
 
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
-CFG_VIT_SMALL_DINO = dict(
-    architecture_name="vit_small_patch14_reg4_dinov2.lvd142m",
-    v100_batch_size=64,
-    a100_batch_size=256,
+# CFG_VIT_SMALL_DINO = dict(
+#     architecture_name="vit_small_patch14_reg4_dinov2.lvd142m",
+#     v100_batch_size=64,
+#     a100_batch_size=256,
+#     dropout_rate=0.5,
+#     learning_rate=1e-5,  # lower
+#     weight_decay=0.05
+# )
+
+CFG_VIT_BASE_CLIP = dict(
+    architecture_name="vit_base_patch16_clip_224.openai",
+    v100_batch_size=32,
+    a100_batch_size=128,
     dropout_rate=0.5,
-    learning_rate=1e-5,  # lower
+    learning_rate=1e-4,
+    weight_decay=0.05
+)
+
+CFG_VIT_MEDIUM_TINYCLIP = dict(
+    architecture_name="vit_medium_patch32_clip_224.tinyclip_laion400m",
+    v100_batch_size=32,
+    a100_batch_size=128,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
     weight_decay=0.05
 )
 
@@ -163,6 +191,8 @@ MODEL_CONFIGS = {
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
 
+    "convnext_base.clip_laion2b_augreg_ft_in12k": ModelConfig(**CFG_CONVNEXT_BASE_LAION),
+
     "convnextv2_nano.fcmae": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE),
     "convnextv2_nano.fcmae_ft_in22k_in1k": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE_FTIM),
     "convnextv2_base.fcmae": ModelConfig(**CFG_CONVNEXTV2_BASE_FCMAE),
@@ -170,9 +200,38 @@ MODEL_CONFIGS = {
 
     "resnet50": ModelConfig(**CFG_RESNET50),
     "resnet50_clip.openai": ModelConfig(**CFG_RESNET50_CLIP),
-    
+
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
     "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
     "maxvit_tiny_rw_224": ModelConfig(**CFG_MAXVIT_TINY),
-    "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
+    # "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
+    "vit_base_patch16_clip_224.openai": ModelConfig(**CFG_VIT_BASE_CLIP),
+    "vit_medium_patch32_clip_224.tinyclip_laion400m": ModelConfig(**CFG_VIT_MEDIUM_TINYCLIP)
+
+
 }
+
+
+"""
+
+Options
+
+https://huggingface.co/models?search=timm/vit_base
+
+
+timm/vit_base_patch16_clip_224.openai
+timm/vit_base_patch32_clip_224.openai
+
+21k only
+timm/vit_base_patch16_224.augreg2_in21k_ft_in1k
+(no larger patch version)
+
+timm/vit_base_patch16_clip_224.laion2b_ft_in12k
+timm/vit_base_patch32_clip_224.laion2b_ft_in12k
+
+added
+timm/convnext_base.clip_laion2b_augreg_ft_in12k
+
+timm/vit_medium_patch32_clip_224.tinyclip_laion400m
+
+"""
