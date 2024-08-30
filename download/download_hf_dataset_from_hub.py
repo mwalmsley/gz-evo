@@ -40,5 +40,8 @@ if __name__ == '__main__':
         'mwalmsley/gz-evo',
         name='default', 
         cache_dir=gz_evo_only_cache,
-        download_config=DownloadConfig(local_files_only=True)
+        download_config=DownloadConfig(
+            cache_dir=gz_evo_only_cache,
+            local_files_only=True
+        )
     )  # may run out of mem on head node, that's okay
