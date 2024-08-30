@@ -15,6 +15,11 @@ export HF_HOME="/share/nas2/walml/cache/huggingface"
 export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets"
 export HYDRA_FULL_ERROR=1
 
+SLURM_TMPDIR='/state/partition1/walml/cache'
+mkdir -p $SLURM_TMPDIR
+export GZ_EVO_LOCAL_CACHE=${SLURM_TMPDIR}/gz-evo
+cp -r '/share/nas2/walml/tmp/gz-evo' $GZ_EVO_LOCAL_CACHE
+
 # SEED=$RANDOM
 # echo Using seed $SEED
 
