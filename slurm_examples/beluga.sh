@@ -20,14 +20,14 @@ module load arrow
 echo 'SLURM_TMPDIR'
 echo $SLURM_TMPDIR
 
-mkdir $SLURM_TMPDIR/cache
-cp /project/def-bovy/walml/tmp/gz-evo $SLURM_TMPDIR/cache/gz-evo
-export GZ_EVO_LOCAL_CACHE=$SLURM_TMPDIR/cache/gz-evo
-
 export NCCL_BLOCKING_WAIT=1
 
 export HF_HOME=/project/def-bovy/walml/cache/huggingface
 export HF_DATASETS_CACHE=/project/def-bovy/walml/cache/huggingface/datasets
+
+export HF_LOCAL_DATASETS_CACHE=$SLURM_TMPDIR/cache/huggingface/datasets
+export GZ_EVO_MANUAL_DOWNLOAD_LOC='/project/def-bovy/walml/tmp/gz-evo'
+
 # no internet on worker nodes
 export HF_DATASETS_OFFLINE=1
 export WANDB_MODE=offline
