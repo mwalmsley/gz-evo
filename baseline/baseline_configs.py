@@ -140,13 +140,13 @@ MODEL_CONFIGS = {
     "convnext_atto": ModelConfig(**CFG_CONVNEXT_ATTO),
     "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
-    "convnext_nano_fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),
+    "convnextv2_nano.fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),
     "convnext_nano_fcmae_ftim": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE_FTIM),
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
     "resnet50": ModelConfig(**CFG_RESNET50),
-    "resnet50_clip": ModelConfig(**CFG_RESNET50_CLIP),
+    "resnet50_clip.openai": ModelConfig(**CFG_RESNET50_CLIP),
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
-    "efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
-    "maxvit_tiny": ModelConfig(**CFG_MAXVIT_TINY),
-    "vit_small_dino": ModelConfig(**CFG_VIT_SMALL_DINO)
+    "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
+    "maxvit_tiny_rw_224": ModelConfig(**CFG_MAXVIT_TINY),
+    "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
 }
