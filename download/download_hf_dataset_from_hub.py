@@ -21,6 +21,7 @@ if __name__ == '__main__':
     # ds = load_dataset("mwalmsley/gz_hubble", name='tiny')
     # ds = load_dataset("mwalmsley/gz_hubble", name='default')
     # ds = load_dataset("mwalmsley/gz2", name='default')
-    ds = load_dataset("mwalmsley/gz_evo", name='default')
-    ds.set_format("torch")  # also supports numpy, jax, etc
-    dataloader = DataLoader(ds['train'], batch_size=4, num_workers=1)
+    load_dataset("mwalmsley/gz_evo", name='default', split='test')
+    load_dataset("mwalmsley/gz_evo", name='default', split='train')
+    # ds.set_format("torch")  # also supports numpy, jax, etc
+    # dataloader = DataLoader(ds['train'], batch_size=4, num_workers=1)
