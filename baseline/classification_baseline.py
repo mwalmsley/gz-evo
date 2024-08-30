@@ -20,7 +20,7 @@ def main():
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
-    # architecture_name = 'resnet50_clip.openai'
+    architecture_name = 'resnet50_clip.openai'
     # architecture_name = 'efficientnet_b0'
     # architecture_name = 'tf_efficientnetv2_s'
     # architecture_name = 'maxvit_tiny_rw_224'

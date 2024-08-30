@@ -49,8 +49,9 @@ if __name__ == '__main__':
         # 'maxvit_large_tf_224',
         # 'maxvit_xlarge_tf_224'
 
-        'vit_base_patch16_clip_224.openai',
-        'vit_base_patch32_clip_224.openai',
+        # not pretrained :(
+        # 'vit_base_patch16_clip_224.openai',
+        # 'vit_base_patch32_clip_224.openai',
 
         'vit_base_patch16_224.augreg2_in21k_ft_in1k',
 
