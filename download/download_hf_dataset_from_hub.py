@@ -32,4 +32,4 @@ if __name__ == '__main__':
     # s all downloaded files are also cached on your local disk
 
     snapshot_download(repo_id="mwalmsley/gz_evo", repo_type="dataset", local_dir=gz_evo_shared_filesystem_loc)
-    load_dataset(gz_evo_shared_filesystem_loc, name='default')  # may run out of mem on head node, that's okay
+    load_dataset(gz_evo_shared_filesystem_loc+'/data')  # may run out of mem on head node, that's okay
