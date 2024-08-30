@@ -54,13 +54,15 @@ if __name__ == '__main__':
 
         'convnext_base.clip_laion2b_augreg_ft_in12k',
 
-        'vit_medium_patch32_clip_224.tinyclip_laion400m'
+        'vit_medium_patch32_clip_224.tinyclip_laion400m',
 
 
-        # not pretrained?
         'vit_base_patch16_clip_224.openai',
         'vit_base_patch32_clip_224.openai',
         'vit_base_patch16_clip_224.laion2b_ft_in12k',
+
+
+        # not pretrained?
         'vit_base_patch32_clip_224.laion2b_ft_in12k'
 
 
