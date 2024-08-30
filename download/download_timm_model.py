@@ -55,12 +55,14 @@ if __name__ == '__main__':
 
         'vit_base_patch16_224.augreg2_in21k_ft_in1k',
 
-        'vit_base_patch16_clip_224.laion2b_ft_in12k',
-        'vit_base_patch32_clip_224.laion2b_ft_in12k',
+        # 'vit_base_patch16_clip_224.laion2b_ft_in12k',
+        # 'vit_base_patch32_clip_224.laion2b_ft_in12k',
+        
         'convnext_base.clip_laion2b_augreg_ft_in12k',
 
         'vit_medium_patch32_clip_224.tinyclip_laion400m'
 
     ]:
+        print(model)
         timm.create_model(model, pretrained=True)
         # huggingface_hub.snapshot_download('timm/' + model, repo_type='model', cache_dir='/project/def-bovy/walml/cache/huggingface')
