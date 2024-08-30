@@ -24,7 +24,8 @@ def main():
     # architecture_name = 'efficientnet_b0'
     # architecture_name = 'tf_efficientnetv2_s'
     # architecture_name = 'maxvit_tiny_rw_224'
-    architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
+    # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
+    architecture_name = 'vit_small_patch14_reg4_dinov2.lvd142m'
 
 
     # base evo now started as 7222, long filtering step, others waiting for this
@@ -86,7 +87,7 @@ def set_up_task_data(cfg):
     print(dataset_dict['train'][2]['summary'], 'is the example summary')
     print(dataset_dict['train'][3]['summary'], 'is the example summary')
 
-    dataset_dict = dataset_dict.flatten_indices() #num_proc=cfg.num_workers)
+    # dataset_dict = dataset_dict.flatten_indices() #num_proc=cfg.num_workers)
 
     dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
 
