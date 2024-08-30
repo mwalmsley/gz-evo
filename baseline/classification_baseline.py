@@ -59,7 +59,7 @@ def set_up_task_data(cfg):
         keep_in_memory=False,
         cache_file_names={split: f"{cfg.dataset_name}_singlecol_{split}.arrow" for split in dataset_dict.keys()}
     )
-    print(dataset_dict)
+    # print(dataset_dict)
     print(dataset_dict['train'][0]['summary'], 'summary')
 
     # dataset_dict = dataset_dict.filter(
