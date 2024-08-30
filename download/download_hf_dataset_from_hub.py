@@ -28,6 +28,6 @@ if __name__ == '__main__':
     # dataloader = DataLoader(ds['train'], batch_size=4, num_workers=1)
     
     # s all downloaded files are also cached on your local disk
-    tmp_loc = '/projects/def-bovy/walml/tmp/gz-evo'
+    tmp_loc = '/project/def-bovy/walml/tmp/gz-evo'
     snapshot_download(repo_id="mwalmsley/gz_evo", repo_type="dataset", local_dir=tmp_loc)
     ds = load_dataset(tmp_loc, name='default')
