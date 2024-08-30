@@ -34,7 +34,7 @@ CFG_CONVNEXT_NANO = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_NANO_FCMAE = dict(
+CFG_CONVNEXTV2_NANO_FCMAE = dict(
     architecture_name="convnextv2_nano.fcmae",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -44,7 +44,7 @@ CFG_CONVNEXT_NANO_FCMAE = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_NANO_FCMAE_FTIM = dict(
+CFG_CONVNEXTV2_NANO_FCMAE_FTIM = dict(
     architecture_name="convnextv2_nano.fcmae_ft_in22k_in1k",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -54,8 +54,29 @@ CFG_CONVNEXT_NANO_FCMAE_FTIM = dict(
     drop_path_rate=0.4
 )
 
+
 CFG_CONVNEXT_BASE = dict(
     architecture_name="convnext_base",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
+
+CFG_CONVNEXTV2_BASE_FCMAE= dict(
+    architecture_name="convnextv2_base.fcmae",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
+
+CFG_CONVNEXTV2_BASE_FCMAE_FTIM = dict(
+    architecture_name="convnextv2_base.fcmae_ft_in22k_in1k",
     v100_batch_size=64,
     a100_batch_size=256,
     dropout_rate=0.5,
@@ -140,11 +161,16 @@ MODEL_CONFIGS = {
     "convnext_atto": ModelConfig(**CFG_CONVNEXT_ATTO),
     "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
-    "convnextv2_nano.fcmae": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE),
-    "convnext_nano_fcmae_ftim": ModelConfig(**CFG_CONVNEXT_NANO_FCMAE_FTIM),
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
+
+    "convnextv2_nano.fcmae": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE),
+    "convnextv2_nano.fcmae_ft_in22k_in1k": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE_FTIM),
+    "convnextv2_base.fcmae": ModelConfig(**CFG_CONVNEXTV2_BASE_FCMAE),
+    "convnextv2_base.fcmae_ft_in22k_in1k": ModelConfig(**CFG_CONVNEXTV2_BASE_FCMAE_FTIM),
+
     "resnet50": ModelConfig(**CFG_RESNET50),
     "resnet50_clip.openai": ModelConfig(**CFG_RESNET50_CLIP),
+    
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
     "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
     "maxvit_tiny_rw_224": ModelConfig(**CFG_MAXVIT_TINY),
