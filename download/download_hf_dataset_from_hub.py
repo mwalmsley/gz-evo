@@ -1,6 +1,6 @@
 
 import os
-
+import glob
 
 if __name__ == '__main__':
 
@@ -36,10 +36,12 @@ if __name__ == '__main__':
     #     repo_type="dataset", 
     #     cache_dir=gz_evo_only_cache
     # )
+    train_locs = glob.glob(gz_evo_only_cache + '/gz-evo/data/train*.parquet')
+    test_locs = glob.glob(gz_evo_only_cache + '/gz-evo/data/test*.parquet')
     load_dataset(
         path=gz_evo_only_cache + '/gz-evo',
         # data_dir='data'
-        data_files={'train': 'data/train*.parquet', 'test': 'data/test*.parquet'}
+        data_files={'train': train_locs, 'test': test_locs}
     )
     # load_dataset(
     #     'mwalmsley/gz-evo',
