@@ -77,8 +77,8 @@ CFG_CONVNEXT_BASE_LAION = dict(
 
 CFG_CONVNEXTV2_BASE_FCMAE= dict(
     architecture_name="convnextv2_base.fcmae",
-    v100_batch_size=64,
-    a100_batch_size=256,
+    v100_batch_size=32,
+    a100_batch_size=128,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -87,8 +87,8 @@ CFG_CONVNEXTV2_BASE_FCMAE= dict(
 
 CFG_CONVNEXTV2_BASE_FCMAE_FTIM = dict(
     architecture_name="convnextv2_base.fcmae_ft_in22k_in1k",
-    v100_batch_size=64,
-    a100_batch_size=256,
+    v100_batch_size=32,
+    a100_batch_size=128,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
