@@ -46,7 +46,7 @@ def set_up_task_data(cfg):
         download_mode=cfg.download_mode,
     )
     
-    dataset_dict.set_format("torch")
+    # dataset_dict.set_format("torch")
     # print(dataset_dict['train'][0]['image'])
     # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
@@ -69,6 +69,8 @@ def set_up_task_data(cfg):
     print(dataset_dict['train'][3]['summary'], 'is the example summary')
 
     dataset_dict = dataset_dict.flatten_indices() #num_proc=cfg.num_workers)
+
+    dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
 
     # dataset_dict = dataset_dict.filter(
     #     lambda example: example['summary'] != '', 
