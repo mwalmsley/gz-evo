@@ -7,13 +7,13 @@ if __name__ == '__main__':
     # adjust these as you like
 
     if os.path.isdir("/project/def-bovy/walml"):
-        # os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
-        # os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
+        os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
+        os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
         gz_evo_only_cache = '/project/def-bovy/walml/tmp'
     else:
         assert os.path.isdir('/share/nas2/walml'), 'Please add your own path'
-        # os.environ['HF_HOME']="/share/nas2/walml/cache/huggingface"
-        # os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
+        os.environ['HF_HOME']="/share/nas2/walml/cache/huggingface"
+        os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
         gz_evo_only_cache = '/share/nas2/walml/tmp'
 
     from datasets import load_dataset, DownloadConfig
