@@ -38,7 +38,8 @@ if __name__ == '__main__':
     # )
     load_dataset(
         path=gz_evo_only_cache + '/gz-evo',
-        data_dir='data'
+        # data_dir='data'
+        data_files={'train': 'data/train*.parquet', 'test': 'data/test*.parquet'}
     )
     # load_dataset(
     #     'mwalmsley/gz-evo',
