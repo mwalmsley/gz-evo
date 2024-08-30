@@ -9,7 +9,7 @@ if __name__ == '__main__':
     if os.path.isdir("/project/def-bovy/walml"):
         os.environ["HF_HOME"] = "/project/def-bovy/walml/cache/huggingface"
         os.environ["HF_DATASETS_CACHE"] = "/project/def-bovy/walml/cache/huggingface/datasets"
-        os.environ["HF_LOCAL_DATASETS_CACHE"] = os.environ['SLURM_TMPDIR'] + '/cache/huggingface/datasets'
+        os.environ["HF_LOCAL_DATASETS_CACHE"] = os.environ.get('SLURM_TMPDIR', '') + '/cache/huggingface/datasets'
         os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC'] = '/project/def-bovy/walml/tmp/gz-evo'
     else:
         assert os.path.isdir('/share/nas2/walml'), 'Please add your own path'
@@ -42,16 +42,16 @@ if __name__ == '__main__':
         local_dir=gz_evo_manual_download_loc 
     )
 
-    # point to those parquet files
-    train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
-    test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
-    load_dataset(
-        path=gz_evo_manual_download_loc,
-        # data_files must be explicit paths seemingly, not just glob strings. Weird.
-        data_files={'train': train_locs, 'test': test_locs},
-        # and place in LOCAL cache
-        cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
-    )
+    # # point to those parquet files
+    # train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
+    # test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
+    # load_dataset(
+    #     path=gz_evo_manual_download_loc,
+    #     # data_files must be explicit paths seemingly, not just glob strings. Weird.
+    #     data_files={'train': train_locs, 'test': test_locs},
+    #     # and place in LOCAL cache
+    #     cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
+    # )
     # load_dataset(
     #     'mwalmsley/gz-evo',
     #     name='default', 

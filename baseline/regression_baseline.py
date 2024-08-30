@@ -52,7 +52,12 @@ def set_up_task_data(cfg):
     # print(dataset_dict['train'][0]['image'])
     # print(dataset_dict['train'][0]['image'].min(), dataset_dict['train'][0]['image'].max())
 
-    # unlike classification, no need to filter to only a few galaxies
+    # TODO for evo, filter like this but each column
+    # for GZ2 filter not yet needed, masking is enough
+    # dataset_dict = dataset_dict.filter(
+    #     has_minimal_votes,
+    #     input_columns=['smooth-or-featured-gz2_total-votes']
+    # )
 
     transform_config = default_view_config()
     # transform_config = fast_view_config()
@@ -123,6 +128,8 @@ def get_lightning_model(cfg):
 
     return lightning_model
 
+def has_minimal_votes(gz2_votes, threshold=10):
+    return gz2_votes >= threshold
 
 if __name__ == "__main__":
 
