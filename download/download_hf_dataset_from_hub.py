@@ -16,7 +16,7 @@ if __name__ == '__main__':
         os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
         gz_evo_only_cache = '/share/nas2/walml/tmp'
 
-    from datasets import load_dataset
+    from datasets import load_dataset, DownloadConfig
     from huggingface_hub import snapshot_download
     # from torch.utils.data import DataLoader
 
@@ -32,4 +32,4 @@ if __name__ == '__main__':
     # s all downloaded files are also cached on your local disk
 
     snapshot_download(repo_id="mwalmsley/gz_evo", repo_type="dataset", cache_dir=gz_evo_only_cache)
-    load_dataset('mwalmsley/gz-evo', name='default', cache_dir='gz_evo_only_cache')  # may run out of mem on head node, that's okay
+    load_dataset('mwalmsley/gz-evo', name='default', cache_dir=gz_evo_only_cache, download_config=DownloadConfig(local_files_only=True))  # may run out of mem on head node, that's okay
