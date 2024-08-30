@@ -40,7 +40,8 @@ def main():
 
 def set_up_task_data(cfg):
 
-    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_LOCAL_CACHE'):
+    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
+        logging.info('Loading gz evo from manual download')
         dataset_dict=baseline_training.manually_load_gz_evo()
     else:
         dataset_loc = f"mwalmsley/{cfg.dataset_name}"
