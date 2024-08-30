@@ -14,7 +14,8 @@ if __name__ == '__main__':
         os.environ['HF_HOME']="/share/nas2/walml/cache/huggingface"
         os.environ['HF_DATASETS_CACHE']="/share/nas2/walml/cache/huggingface/datasets"
 
-    from datasets import load_dataset, snapshot_download
+    from datasets import load_dataset
+    from huggingface_hub import snapshot_download
     from torch.utils.data import DataLoader
 
     # ds = load_dataset("mwalmsley/gz_evo", split="train", name='tiny')
