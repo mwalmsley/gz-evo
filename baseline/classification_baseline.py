@@ -23,9 +23,9 @@ def main():
     # starting another with atto for quick check, 7263
     # and starting one with nano and a filter, 7278
 
-    # dataset_name='gz_evo'
+    dataset_name='gz_evo'
     # dataset_name='gz_hubble'
-    dataset_name='gz2'
+    # dataset_name='gz2'
     save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
