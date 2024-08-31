@@ -160,11 +160,11 @@ def manually_load_gz_evo():
     train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
     test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
     assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
-    logging.warning('HACK ENGAGED - HALF OF GZ EVO only')
+    # logging.warning('HACK ENGAGED - HALF OF GZ EVO only')
     return load_dataset(
         path=gz_evo_manual_download_loc,
         # data_files must be explicit paths seemingly, not just glob strings. Weird.
-        data_files={'train': train_locs[:len(train_locs)//2], 'test': test_locs},
+        data_files={'train': train_locs, 'test': test_locs},
         # load LOCALLY to this machine
         cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
     )
