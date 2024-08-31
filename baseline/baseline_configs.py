@@ -98,7 +98,7 @@ CFG_CONVNEXTV2_BASE_FCMAE_FTIM = dict(
 
 CFG_RESNET50 = dict(
     architecture_name="resnet50",
-    v100_batch_size=256,
+    v100_batch_size=128,
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
@@ -108,7 +108,7 @@ CFG_RESNET50 = dict(
 # https://huggingface.co/timm/resnet50_clip.openai
 CFG_RESNET50_CLIP = dict(
     architecture_name="resnet50_clip.openai",
-    v100_batch_size=256,
+    v100_batch_size=128,
     a100_batch_size=512,
     dropout_rate=0.5, 
     learning_rate=2e-5,  # reduced
