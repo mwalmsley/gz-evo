@@ -32,6 +32,8 @@ def main():
     # architecture_name = 'tf_efficientnetv2_s'
     # architecture_name = 'maxvit_tiny_rw_224'
 
+    # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
+
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     # dataset_name='gz2'
