@@ -165,3 +165,5 @@ wandb
 to_ignore
 *.ckpt
 *.tar
+*.yaml
+*.csv

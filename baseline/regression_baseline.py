@@ -1,5 +1,9 @@
 import logging
+import  time
+import glob
 
+import omegaconf
+import pandas as pd
 import torch
 import numpy as np
 import pytorch_lightning as pl
@@ -37,7 +41,7 @@ def main():
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     # dataset_name='gz2'
-    save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}"  # relative
+    save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}_{int(time.time())}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
 
@@ -46,6 +50,58 @@ def main():
     datamodule = set_up_task_data(cfg)
 
     baseline_training.run_training(cfg, lightning_model, datamodule)
+
+
+def evaluate():
+
+
+    architecture_name = 'convnextv2_base.fcmae'  # only sets batch size, this is smallest at 32 so works for all models
+
+    # dataset_name = 'gz2'  #
+    # checkpoint_dir = '/home/walml/repos/gz-evo/results/baselines/regression/convnext_pico_534895718'
+
+    dataset_name = 'gz_evo'  # this one matters
+    checkpoint_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/convnext_nano_534895718/'
+
+    checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
+    # checkpoints = list(glob.glob('checkpoints/*.ckpt'))
+    checkpoints.sort()
+    print(checkpoints)
+    checkpoint_loc = checkpoints[-1]
+
+    from baseline_models import RegressionBaseline
+    model = RegressionBaseline.load_from_checkpoint(checkpoint_loc)
+
+
+    save_dir = 'bar'  # no effect
+    cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
+    datamodule = set_up_task_data(cfg)
+    datamodule.setup()  # all stages
+
+    trainer = pl.Trainer(
+        accelerator=cfg.accelerator,
+        devices=cfg.devices,  # per node
+        num_nodes=cfg.nodes,
+        precision=cfg.precision,
+        max_epochs=cfg.epochs,
+        default_root_dir=cfg.save_dir,
+        gradient_clip_val=cfg.grad_clip_val
+    )
+
+
+    for name, dataloader in [('train', datamodule.train_dataloader()), ('val', datamodule.val_dataloader()), ('test', datamodule.test_dataloader())]:
+        print(name)
+
+        predictions = trainer.predict(model=model, dataloaders=dataloader)
+        # list of batches
+        predictions = torch.cat(predictions, dim=0)
+        header = model.answer_fraction_keys
+
+        df = pd.DataFrame(predictions.numpy(), columns=header)
+
+        predictions_save_loc = checkpoint_dir + f'/{name}_predictions.csv'
+        df.to_csv(predictions_save_loc, index=False)
+
 
 
 def set_up_task_data(cfg):
@@ -152,4 +208,5 @@ if __name__ == "__main__":
     seed = 42
     pl.seed_everything(seed)
 
-    main()
+    # main()
+    evaluate()
