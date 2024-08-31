@@ -4,7 +4,7 @@ import torch
 import torchmetrics
 import pytorch_lightning as pl
 import timm
-
+import pandas as pd
 # from zoobot.shared import schemas
 
 class GenericBaseline(pl.LightningModule):
@@ -114,8 +114,9 @@ class GenericBaseline(pl.LightningModule):
         # https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html#inference
         # this calls forward, while avoiding the need for e.g. model.eval(), torch.no_grad()
         # x, y = batch  # would be usual format, but here, batch does not include labels
-        x = batch['image']
-        return self(x)
+        # x = batch['image']
+        # return {'id_str': batch['id_str'], 'prediction': self(x)}
+        raise NotImplementedError('predict_step must be subclassed')
     
     # subclassed below for the various tasks, or extend yourself
 
@@ -257,6 +258,14 @@ class RegressionBaseline(GenericBaseline):
                 if split in name:
                     # logging.info(name)
                     self.log(name, metric, on_epoch=True, on_step=False, prog_bar=prog_bar, logger=True)
+
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        preds =  self(batch['image'])
+        header = self.answer_fraction_keys
+        df = pd.DataFrame(preds.cpu().numpy(), columns=header)
+        df['id_str'] = batch['id_str']  # str, no need to cast
+        return df
 
 
     def create_head(self):

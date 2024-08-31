@@ -54,14 +54,24 @@ def main():
 
 def evaluate():
 
-
-    architecture_name = 'convnextv2_base.fcmae'  # only sets batch size, this is smallest at 32 so works for all models
-
-    # dataset_name = 'gz2'  #
+    # dataset_name = 'gz2'
+    # architecture_name = 'convnext_pico'
     # checkpoint_dir = '/home/walml/repos/gz-evo/results/baselines/regression/convnext_pico_534895718'
+    # evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
 
-    dataset_name = 'gz_evo'  # this one matters
     checkpoint_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/convnext_nano_534895718/'
+    architecture_name = 'convnext_nano'
+    dataset_name = 'gz_evo'  # this one matters
+    evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
+
+    # checkpoint_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/convnext_nano_534895718/'
+    # architecture_name = 'convnextv2_base.fcmae'  # only sets batch size, this is smallest at 32 so works for all models
+    # dataset_name = 'gz_evo'  # this one matters
+    # evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
+
+
+
+def evaluate_single_model(checkpoint_dir, architecture_name, dataset_name):
 
     checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
     # checkpoints = list(glob.glob('checkpoints/*.ckpt'))
@@ -89,20 +99,22 @@ def evaluate():
     )
 
 
-    for name, dataloader in [('train', datamodule.train_dataloader()), ('val', datamodule.val_dataloader()), ('test', datamodule.test_dataloader())]:
+    # for name, dataloader in [('train', datamodule.train_dataloader()), ('val', datamodule.val_dataloader()), ('test', datamodule.test_dataloader())]:
+    for name, dataloader in [('test', datamodule.test_dataloader())]:
         print(name)
 
-        predictions = trainer.predict(model=model, dataloaders=dataloader)
-        # list of batches
-        predictions = torch.cat(predictions, dim=0)
-        header = model.answer_fraction_keys
-
-        df = pd.DataFrame(predictions.numpy(), columns=header)
+        dfs = trainer.predict(model=model, dataloaders=dataloader)
+        # list of dfs, each is batch like {'id_str': ..., 'answer_a_fraction': ..., ...}
+        df = pd.concat(dfs, ignore_index=True)
 
         predictions_save_loc = checkpoint_dir + f'/{name}_predictions.csv'
         df.to_csv(predictions_save_loc, index=False)
 
-
+def safe_cpu_cast(x):
+    try:
+        return x.cpu()
+    except AttributeError:
+        return x
 
 def set_up_task_data(cfg):
 
