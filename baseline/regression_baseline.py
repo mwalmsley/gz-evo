@@ -76,50 +76,23 @@ def evaluate():
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
         cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar')
 
-        evaluate_single_model(checkpoint_dir, cfg, model_lightning_class=baseline_models.RegressionBaseline, task_data_func=set_up_task_data)
+        baseline_training.evaluate_single_model(
+            checkpoint_dir, cfg, model_lightning_class=baseline_models.RegressionBaseline, task_data_func=set_up_task_data
+            )
 
     logging.info('Test predictions complete for all models. Exiting.')
+    
+    """
+    rsync -avz walml@beluga.alliancecan.ca:"/project/def-bovy/walml/repos/gz-evo/results/baselines/regression" --exclude="*.ckpt" results/baselines
+    """
 
 
 
-def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_func):
-
-    checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
-    checkpoints.sort()
-    assert checkpoints, checkpoint_dir
-    checkpoint_loc = checkpoints[-1]
-    model = model_lightning_class.load_from_checkpoint(checkpoint_loc)
-
-    datamodule = task_data_func(cfg)
-    datamodule.setup()  # all stages
-
-    trainer = pl.Trainer(
-        accelerator=cfg.accelerator,
-        devices=cfg.devices,  # per node
-        num_nodes=cfg.nodes,
-        precision=cfg.precision,
-        max_epochs=cfg.epochs,
-        default_root_dir=cfg.save_dir,
-        gradient_clip_val=cfg.grad_clip_val
-    )
-
-
-    # for name, dataloader in [('train', datamodule.train_dataloader()), ('val', datamodule.val_dataloader()), ('test', datamodule.test_dataloader())]:
-    for name, dataloader in [('test', datamodule.test_dataloader())]:
-        print(name)
-
-        dfs = trainer.predict(model=model, dataloaders=dataloader)
-        # list of dfs, each is batch like {'id_str': ..., 'answer_a_fraction': ..., ...}
-        df = pd.concat(dfs, ignore_index=True)
-
-        predictions_save_loc = checkpoint_dir + f'/{name}_predictions.csv'
-        df.to_csv(predictions_save_loc, index=False)
-
-def safe_cpu_cast(x):
-    try:
-        return x.cpu()
-    except AttributeError:
-        return x
+# def safe_cpu_cast(x):
+#     try:
+#         return x.cpu()
+#     except AttributeError:
+#         return x
 
 def set_up_task_data(cfg):
 

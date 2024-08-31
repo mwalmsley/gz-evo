@@ -2,6 +2,7 @@ import os
 import logging
 from dataclasses import asdict
 import glob
+import pandas as pd
 
 import omegaconf
 import wandb
@@ -206,3 +207,38 @@ def log_images(wandb_logger, datamodule):
             ]  # , caption=f'label: {label}') for image, label in zip(images, labels)]
         }
     )
+
+
+
+def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_func):
+
+    checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
+    checkpoints.sort()
+    assert checkpoints, checkpoint_dir
+    checkpoint_loc = checkpoints[-1]
+    model = model_lightning_class.load_from_checkpoint(checkpoint_loc)
+
+    datamodule = task_data_func(cfg)
+    datamodule.setup()  # all stages
+
+    trainer = pl.Trainer(
+        accelerator=cfg.accelerator,
+        devices=cfg.devices,  # per node
+        num_nodes=cfg.nodes,
+        precision=cfg.precision,
+        max_epochs=cfg.epochs,
+        default_root_dir=cfg.save_dir,
+        gradient_clip_val=cfg.grad_clip_val
+    )
+
+
+    # for name, dataloader in [('train', datamodule.train_dataloader()), ('val', datamodule.val_dataloader()), ('test', datamodule.test_dataloader())]:
+    for name, dataloader in [('test', datamodule.test_dataloader())]:
+        print(name)
+
+        dfs = trainer.predict(model=model, dataloaders=dataloader)
+        # list of dfs, each is batch like {'id_str': ..., 'answer_a_fraction': ..., ...}
+        df = pd.concat(dfs, ignore_index=True)
+
+        predictions_save_loc = checkpoint_dir + f'/{name}_predictions.csv'
+        df.to_csv(predictions_save_loc, index=False)

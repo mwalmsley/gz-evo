@@ -167,3 +167,4 @@ to_ignore
 *.tar
 *.yaml
 *.csv
+*.DS_Store
