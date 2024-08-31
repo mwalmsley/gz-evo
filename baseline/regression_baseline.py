@@ -23,8 +23,8 @@ def main():
     # horribly broken
     # now adjusted loss
 
-    # architecture_name = 'resnet50'
-    architecture_name = 'convnext_nano'
+    architecture_name = 'resnet50'
+    # architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_base'
