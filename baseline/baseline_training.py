@@ -73,12 +73,12 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             devices=1,
             nodes=1,
             epochs=1000,
-            strategy="auto",
+            # strategy="auto",
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,
             grad_clip_val=0.3,
-            sync_batchnorm=False,  # only one device
+            # sync_batchnorm=False,  # only one device
             transform_mode='default',
             debug=debug,
             batch_size_key=batch_size_key
@@ -125,7 +125,7 @@ def run_training(cfg, lightning_model, datamodule):
         accelerator=cfg.accelerator,
         devices=cfg.devices,  # per node
         num_nodes=cfg.nodes,
-        strategy=cfg.strategy,
+        # strategy=cfg.strategy,
         precision=cfg.precision,
         logger=wandb_logger,
         callbacks=callbacks,
@@ -134,7 +134,7 @@ def run_training(cfg, lightning_model, datamodule):
         plugins=cfg.plugins,
         gradient_clip_val=cfg.grad_clip_val,
         accumulate_grad_batches=cfg.accumulate_grad_batches,
-        sync_batchnorm=cfg.sync_batchnorm,
+        # sync_batchnorm=cfg.sync_batchnorm,
     )
 
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
