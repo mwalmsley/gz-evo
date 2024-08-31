@@ -7,6 +7,8 @@ import timm
 import pandas as pd
 # from zoobot.shared import schemas
 
+import baseline_datamodules
+
 class GenericBaseline(pl.LightningModule):
     """
     All Zoobot models use the lightningmodule API and so share this structure
@@ -170,6 +172,16 @@ class ClassificationBaseline(GenericBaseline):
                 if split in name:
                     # logging.info(name)
                     self.log(name, metric, on_epoch=True, on_step=False, prog_bar=prog_bar, logger=True)
+
+
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        preds =  self(batch['image'])
+        # TODO semi-lazy hardcoding for the moment
+        header = baseline_datamodules.LABEL_ORDER
+        df = pd.DataFrame(preds.cpu().numpy(), columns=header)
+        df['id_str'] = batch['id_str']  # str, no need to cast
+        return df
 
 
     def create_head(self):

@@ -55,37 +55,41 @@ def main():
 def evaluate():
 
     # dataset_name = 'gz2'
-    # architecture_name = 'convnext_pico'
-    # checkpoint_dir = '/home/walml/repos/gz-evo/results/baselines/regression/convnext_pico_534895718'
+    # architecture_name = 'convnext_atto'
+    # checkpoint_dir = '/home/walml/repos/gz-evo/results/baselines/regression/convnext_atto_534895718'
     # evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
 
-    checkpoint_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/convnext_nano_534895718/'
-    architecture_name = 'convnext_nano'
-    dataset_name = 'gz_evo'  # this one matters
-    evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
+    # debug_dir = '/home/walml/repos/gz-evo/results/baselines/regression'
+    beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression'
 
-    # checkpoint_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/convnext_nano_534895718/'
-    # architecture_name = 'convnextv2_base.fcmae'  # only sets batch size, this is smallest at 32 so works for all models
-    # dataset_name = 'gz_evo'  # this one matters
-    # evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
+    for dataset_name, architecture_name, checkpoint_dir in [
+        #  ('gz2', 'convnext_pico', debug_dir + '/convnext_pico_534895718')
+        ('gz_evo', 'convnext_atto', beluga_dir + 'convnext_atto_534895718'),
+        # ('gz_evo', 'convnext_pico',  beluga_dir + 'convnext_pico_534895718'),
+        # ('gz_evo', 'convnext_nano',  beluga_dir + 'convnext_nano_534895718'),
+        # ('gz_evo', 'convnext_base',  beluga_dir + 'convnext_base_534895718'),
+        # ('gz_evo', 'maxvit_tiny_rw_224',  beluga_dir + 'maxvit_tiny_rw_224_534895718'),
+        # ('gz_evo', 'tf_efficientnetv2_s',  beluga_dir + 'tf_efficientnetv2_s_534895718')
+    ]:
+
+        logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
+        cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar')
+
+        evaluate_single_model(checkpoint_dir, cfg, model_lightning_class=baseline_models.RegressionBaseline, task_data_func=set_up_task_data)
+
+    logging.info('Test predictions complete for all models. Exiting.')
 
 
 
-def evaluate_single_model(checkpoint_dir, architecture_name, dataset_name):
+def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_func):
 
     checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
-    # checkpoints = list(glob.glob('checkpoints/*.ckpt'))
     checkpoints.sort()
-    print(checkpoints)
+    assert checkpoints, checkpoint_dir
     checkpoint_loc = checkpoints[-1]
+    model = model_lightning_class.load_from_checkpoint(checkpoint_loc)
 
-    from baseline_models import RegressionBaseline
-    model = RegressionBaseline.load_from_checkpoint(checkpoint_loc)
-
-
-    save_dir = 'bar'  # no effect
-    cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
-    datamodule = set_up_task_data(cfg)
+    datamodule = task_data_func(cfg)
     datamodule.setup()  # all stages
 
     trainer = pl.Trainer(
