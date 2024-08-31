@@ -30,7 +30,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         # num_workers = 12
         # batch_size_factor = 4 
         # V100 on beluga
-        num_workers = 6  # even with 10 cpu, throws warning if 8 workers
+        # num_workers = 6  # even with 10 cpu, throws warning if 8 workers
+        num_workers = 10  # even with 10 cpu, throws warning if 8 workers
         batch_size_key = 'v100_batch_size'
         accelerator="gpu"
     elif os.path.isdir('/share/nas2'):
