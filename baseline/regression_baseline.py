@@ -35,9 +35,10 @@ def main():
     save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
-    datamodule = set_up_task_data(cfg)
 
     lightning_model = get_lightning_model(cfg)
+    
+    datamodule = set_up_task_data(cfg)
 
     baseline_training.run_training(cfg, lightning_model, datamodule)
 
@@ -129,7 +130,7 @@ def get_lightning_model(cfg):
         weight_decay=cfg.weight_decay
     )
 
-    if cfg.compile_model:
+    if cfg.compile_encoder:
         logging.info('Compiling model')
         lightning_model = torch.compile(lightning_model, mode="reduce-overhead")
 
