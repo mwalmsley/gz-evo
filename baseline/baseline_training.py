@@ -64,7 +64,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             # download_mode="force_redownload",
             download_mode="reuse_dataset_if_exists",
             num_workers=num_workers,  # 4 for local desktop
-            compile_encoder=True,
+            compile_encoder=False,  # beluga, ModuleNotFoundError: No module named 'triton.common'
             pretrained=True, #imagenet 12k, for timm kwargs
             channels=3,
 
@@ -160,10 +160,11 @@ def manually_load_gz_evo():
     train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
     test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
     assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
+    logging.warning('HACK ENGAGED - HALF OF GZ EVO only')
     return load_dataset(
         path=gz_evo_manual_download_loc,
         # data_files must be explicit paths seemingly, not just glob strings. Weird.
-        data_files={'train': train_locs, 'test': test_locs},
+        data_files={'train': train_locs[:len(train_locs)//2], 'test': test_locs},
         # load LOCALLY to this machine
         cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
     )
