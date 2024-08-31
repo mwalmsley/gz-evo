@@ -30,7 +30,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         # num_workers = 12
         # batch_size_factor = 4 
         # V100 on beluga
-        num_workers = 8
+        num_workers = 6  # even with 10 cpu, throws warning if 8 workers
         batch_size_key = 'v100_batch_size'
         accelerator="gpu"
     elif os.path.isdir('/share/nas2'):
@@ -75,7 +75,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             strategy="auto",
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
-            patience=8,
+            patience=5,
             grad_clip_val=0.3,
             sync_batchnorm=False,  # only one device
             transform_mode='default',
