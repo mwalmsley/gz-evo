@@ -64,7 +64,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             # download_mode="force_redownload",
             download_mode="reuse_dataset_if_exists",
             num_workers=num_workers,  # 4 for local desktop
-            compile_encoder=False,
+            compile_encoder=True,
             pretrained=True, #imagenet 12k, for timm kwargs
             channels=3,
 

@@ -1,5 +1,6 @@
 import logging
 
+import torch
 import numpy as np
 import pytorch_lightning as pl
 # import datasets
@@ -24,8 +25,9 @@ def main():
 
     # architecture_name = 'resnet50'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_pico'
+    # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_atto'
+    architecture_name = 'convnext_base'
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -126,6 +128,10 @@ def get_lightning_model(cfg):
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay
     )
+
+    if cfg.compile_model:
+        logging.info('Compiling model')
+        torch.compile(lightning_model, mode="reduce-overhead")
 
     return lightning_model
 
