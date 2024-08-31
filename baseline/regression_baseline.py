@@ -131,7 +131,7 @@ def get_lightning_model(cfg):
 
     if cfg.compile_model:
         logging.info('Compiling model')
-        torch.compile(lightning_model, mode="reduce-overhead")
+        lightning_model = torch.compile(lightning_model, mode="reduce-overhead")
 
     return lightning_model
 
