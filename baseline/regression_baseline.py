@@ -27,9 +27,9 @@ def main():
     architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_atto'
 
-    dataset_name='gz_evo'
+    # dataset_name='gz_evo'
     # dataset_name='gz_hubble'
-    # dataset_name='gz2'
+    dataset_name='gz2'
     save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
@@ -85,16 +85,16 @@ def get_lightning_model(cfg):
         # only use the first question, should be easy for GZ2
         # logging.warning("Using debug question_answer_pairs, first GZ2 question only")
         # question_answer_pairs =  {'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact']}
-        logging.warning("Using debug question_answer_pairs, four GZ2 question only")
-        question_answer_pairs =  {
-            'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact'],
-            'disk-edge-on-gz2': ['_yes', '_no'],
-            'has-spiral-arms-gz2': ['_yes', '_no'],
-            'bar-gz2': ['_yes', '_no']
-        }
+        # logging.warning("Using debug question_answer_pairs, four GZ2 question only")
+        # question_answer_pairs =  {
+        #     'smooth-or-featured-gz2': ['_smooth', '_featured-or-disk', '_artifact'],
+        #     'disk-edge-on-gz2': ['_yes', '_no'],
+        #     'has-spiral-arms-gz2': ['_yes', '_no'],
+        #     'bar-gz2': ['_yes', '_no']
+        # }
 
         # else:
-        # question_answer_pairs = label_metadata.gz2_ortho_pairs
+        question_answer_pairs = label_metadata.gz2_ortho_pairs
     elif cfg.dataset_name == 'gz_hubble':
         question_answer_pairs = label_metadata.hubble_ortho_pairs
     elif cfg.dataset_name == 'gz_evo':
