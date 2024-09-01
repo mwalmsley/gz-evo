@@ -168,3 +168,5 @@ to_ignore
 *.yaml
 *.csv
 *.DS_Store
+*.pdf
+*.png
