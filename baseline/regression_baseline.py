@@ -63,7 +63,7 @@ def evaluate():
     beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/'
 
     for dataset_name, architecture_name, checkpoint_dir in [
-        ('gz_evo', 'resnet_50',  beluga_dir + 'resnet_50_534895718')
+        ('gz_evo', 'resnet50',  beluga_dir + 'resnet50_534895718')
         #  ('gz2', 'convnext_pico', debug_dir + 'convnext_pico_534895718')
         # ('gz_evo', 'convnext_atto', beluga_dir + 'convnext_atto_534895718'),  # old, doesn't load properly
         # ('gz_evo', 'convnext_pico',  beluga_dir + 'convnext_pico_534895718'),
