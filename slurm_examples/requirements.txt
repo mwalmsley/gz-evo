@@ -1,0 +1,28 @@
+# module load StdEnv/2023 python/3.11 gcc arrow opencv cuda/11.2 
+
+torch 
+torchvision 
+torchtext 
+torchaudio
+lightning 
+albumentations
+pyro-ppl 
+timm 
+seaborn 
+h5py 
+tqdm 
+pillow==9.4.0  # https://github.com/huggingface/datasets/pull/6883
+numpy 
+pandas 
+scipy 
+astropy 
+scikit-learn 
+matplotlib 
+wandb 
+webdataset 
+huggingface_hub 
+datasets  # huggingface datasets, cheeky name
+setuptools
+einops 
+hydra-core 
+omegaconf
