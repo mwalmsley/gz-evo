@@ -16,7 +16,7 @@ def main():
     # do not raise the learning rate, it seems to break training (strangely)
 
     # architecture_name = 'resnet50'
-    architecture_name = 'resnet50_clip.openai'
+    # architecture_name = 'resnet50_clip.openai'
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
@@ -27,7 +27,7 @@ def main():
 
     # architecture_name = 'efficientnet_b0'
 
-    # architecture_name = 'tf_efficientnetv2_s'
+    architecture_name = 'tf_efficientnetv2_s'
 
     # architecture_name = 'maxvit_tiny_rw_224'
 
