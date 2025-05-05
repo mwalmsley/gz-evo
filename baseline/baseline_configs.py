@@ -79,7 +79,7 @@ CFG_CONVNEXT_BASE = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_BASE = dict(
+CFG_CONVNEXT_BASE_FINETUNE = dict(
     architecture_name="convnext_base",
     v100_batch_size=64,
     a100_batch_size=256,
@@ -223,6 +223,7 @@ MODEL_CONFIGS = {
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
 
     "convnext_nano_finetune": ModelConfig(**CFG_CONVNEXT_NANO_FINETUNE),
+    "convnext_base_finetune": ModelConfig(**CFG_CONVNEXT_BASE_FINETUNE),
 
     "convnext_base.clip_laion2b_augreg_ft_in12k": ModelConfig(**CFG_CONVNEXT_BASE_LAION),
 
