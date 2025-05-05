@@ -59,7 +59,7 @@ def set_up_task_data(cfg):
     print(dataset_dict['train'].num_rows)
     dataset_dict = dataset_dict.filter(
         has_labels,
-        input_columns='summary',
+        input_columns='summary',  # important to specify, for speed
         # load_from_cache_file=False
         num_proc=cfg.num_workers
     )
@@ -73,15 +73,6 @@ def set_up_task_data(cfg):
     # dataset_dict = dataset_dict.flatten_indices() #num_proc=cfg.num_workers)
 
     dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
-
-    # new - remove where summary is empty
-    dataset_dict = dataset_dict.filter(
-        lambda example: example['summary'] != '', 
-        num_proc=cfg.num_workers,
-        load_from_cache_file=True,
-        keep_in_memory=False,
-        cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
-    )
 
     train_transform_config = default_view_config()
     test_transform_config = minimal_view_config()
