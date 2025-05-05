@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 import datasets
 import numpy as np
 
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config
 
 import baseline_models  # relative import
 import baseline_datamodules  # relative import
@@ -16,16 +16,21 @@ def main():
     # do not raise the learning rate, it seems to break training (strangely)
 
     # architecture_name = 'resnet50'
-    # architecture_name = 'convnext_atto'
-    architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
-    # architecture_name = 'convnext_base'
     # architecture_name = 'resnet50_clip.openai'
-    # architecture_name = 'efficientnet_b0'
-    # architecture_name = 'tf_efficientnetv2_s'
-    # architecture_name = 'maxvit_tiny_rw_224'
+
+    # architecture_name = 'convnext_atto'
+    # architecture_name = 'convnext_pico'
+    architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
     # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
+
+    # architecture_name = 'efficientnet_b0'
+
+    # architecture_name = 'tf_efficientnetv2_s'
+
+    # architecture_name = 'maxvit_tiny_rw_224'
+
 
 
     # base evo now started as 7222, long filtering step, others waiting for this
@@ -69,22 +74,23 @@ def set_up_task_data(cfg):
 
     dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
 
-    # dataset_dict = dataset_dict.filter(
-    #     lambda example: example['summary'] != '', 
-    #     num_proc=cfg.num_workers,
-    #     load_from_cache_file=True,
-    #     keep_in_memory=False,
-    #     cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
-    # )
+    # new - remove where summary is empty
+    dataset_dict = dataset_dict.filter(
+        lambda example: example['summary'] != '', 
+        num_proc=cfg.num_workers,
+        load_from_cache_file=True,
+        keep_in_memory=False,
+        cache_file_names={split: f"{cfg.dataset_name}_{split}.arrow" for split in dataset_dict.keys()}
+    )
 
-
-
-
-    transform_config = default_view_config()
+    train_transform_config = default_view_config()
+    test_transform_config = minimal_view_config()
     # transform_config = fast_view_config()
-    transform_config.random_affine['scale'] = (1.25, 1.45)  # touch more zoom to compensate for loosing 24px crop
-    transform_config.erase_iterations = 0  # disable masking small patches for now
-    transform = GalaxyViewTransform(transform_config)
+    train_transform_config.random_affine['scale'] = (1.0, 1.4)
+    train_transform_config.erase_iterations = 0  # disable masking small patches for now
+
+    train_transform = GalaxyViewTransform(train_transform_config)
+    test_transform = GalaxyViewTransform(test_transform_config)
 
     # any callable that takes an HF example (row) and returns a label
     # load the summary column as integers
@@ -95,8 +101,8 @@ def set_up_task_data(cfg):
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
-        train_transform=transform,
-        test_transform=transform,
+        train_transform=train_transform,
+        test_transform=test_transform,
         target_transform=target_transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
@@ -136,7 +142,7 @@ def evaluate():
         # ('gz_evo', 'resnet50', beluga_dir + 'resnet50_534895718'),
         # ('gz_evo', 'resnet50_clip.openai', beluga_dir + 'resnet50_clip.openai_534895718'),
         # ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k', beluga_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718')
-        ('gz_evo', 'convnext_pico', results_dir + 'convnext_pico_534895718')
+        # ('gz_evo', 'convnext_pico', results_dir + 'convnext_pico_534895718')
     ]:
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
@@ -193,5 +199,5 @@ if __name__ == "__main__":
     seed = 42
     pl.seed_everything(seed)
 
-    # main()
-    evaluate()
+    main()
+    # evaluate()
