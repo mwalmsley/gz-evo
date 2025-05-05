@@ -27,9 +27,9 @@ def main():
 
     # architecture_name = 'efficientnet_b0'
 
-    architecture_name = 'tf_efficientnetv2_s'
+    # architecture_name = 'tf_efficientnetv2_s'
 
-    # architecture_name = 'maxvit_tiny_rw_224'
+    architecture_name = 'maxvit_tiny_rw_224'
 
 
 
