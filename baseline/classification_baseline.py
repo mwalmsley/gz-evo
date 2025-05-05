@@ -15,8 +15,8 @@ def main():
     # these are all good to be run on gz evo on galahad (although filter takes ages)
     # do not raise the learning rate, it seems to break training (strangely)
 
-    architecture_name = 'resnet50'
-    # architecture_name = 'resnet50_clip.openai'
+    # architecture_name = 'resnet50'
+    architecture_name = 'resnet50_clip.openai'
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
