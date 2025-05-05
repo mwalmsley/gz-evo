@@ -141,6 +141,10 @@ def evaluate():
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
         cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar') # save_dir is not used
+
+        # overrride batch size
+        cfg.batch_size = 256
+
         try:
             baseline_training.evaluate_single_model(
                 checkpoint_dir, cfg, model_lightning_class=baseline_models.ClassificationBaseline, task_data_func=set_up_task_data
