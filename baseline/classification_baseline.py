@@ -123,7 +123,8 @@ def set_up_task_data(cfg):
 def evaluate():
 
     # debug_dir = '/home/walml/repos/gz-evo/results/baselines/classification/'
-    beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/classification/'
+    # beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/classification/'
+    results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/classification/'
 
     for dataset_name, architecture_name, checkpoint_dir in [
         #  ('gz2', 'convnext_pico', debug_dir + 'convnext_pico_534895718')
@@ -132,13 +133,14 @@ def evaluate():
         # ('gz_evo', 'maxvit_tiny_rw_224',  beluga_dir + 'maxvit_tiny_rw_224_534895718'),
         # ('gz_evo', 'tf_efficientnetv2_s',  beluga_dir + 'tf_efficientnetv2_s_534895718'),
         # ('gz_evo', 'convnext_base.clip_laion2b_augreg_ft_in12k', beluga_dir + 'convnext_base.clip_laion2b_augreg_ft_in12k_534895718'),
-        ('gz_evo', 'resnet50', beluga_dir + 'resnet50_534895718'),
+        # ('gz_evo', 'resnet50', beluga_dir + 'resnet50_534895718'),
         # ('gz_evo', 'resnet50_clip.openai', beluga_dir + 'resnet50_clip.openai_534895718'),
         # ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k', beluga_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718')
+        ('gz_evo', 'convnext_pico', results_dir + 'convnext_pico_534895718')
     ]:
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
-        cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar')
+        cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar') # save_dir is not used
         try:
             baseline_training.evaluate_single_model(
                 checkpoint_dir, cfg, model_lightning_class=baseline_models.ClassificationBaseline, task_data_func=set_up_task_data
