@@ -16,7 +16,7 @@ def main():
     # do not raise the learning rate, it seems to break training (strangely)
 
     # architecture_name = 'resnet50'
-    architecture_name = 'resnet50_clip.openai'
+    # architecture_name = 'resnet50_clip.openai'  # timm looks for "resnet50_clip" and doesn't find it, probaly as it is designed for openclip
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
@@ -31,7 +31,7 @@ def main():
 
     # architecture_name = 'maxvit_tiny_rw_224'
 
-
+    architecture_name = 'convnext_nano_finetune'
 
     # base evo now started as 7222, long filtering step, others waiting for this
     # filtering completed but epoch is pretty long, 1 hour
@@ -188,7 +188,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
-    seed = 42
+    # seed = 42
+    seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
     main()

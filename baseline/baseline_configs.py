@@ -34,6 +34,20 @@ CFG_CONVNEXT_NANO = dict(
     drop_path_rate=0.4
 )
 
+CFG_CONVNEXT_NANO_FINETUNE = dict(
+    architecture_name="convnext_nano",
+    v100_batch_size=128,
+    a100_batch_size=512,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4,
+    n_blocks=-1, # still all blocks, but...
+    lr_decay=0.7, # meaningful (aggressive) decay
+    from_scratch=False
+)
+
+
 CFG_CONVNEXTV2_NANO_FCMAE = dict(
     architecture_name="convnextv2_nano.fcmae",
     v100_batch_size=128,
@@ -184,12 +198,18 @@ class ModelConfig:
     learning_rate: float
     weight_decay: float
     drop_path_rate: Optional[float] = 0.
+    n_blocks: Optional[int] = -1  # all blocks (no effect)
+    lr_decay: Optional[float] = 1.  # no effect
+    from_scratch: Optional[bool] = False  # no effect
+
 
 MODEL_CONFIGS = {
     "convnext_atto": ModelConfig(**CFG_CONVNEXT_ATTO),
     "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
+
+    "convnext_nano_finetune": ModelConfig(**CFG_CONVNEXT_NANO_FINETUNE),
 
     "convnext_base.clip_laion2b_augreg_ft_in12k": ModelConfig(**CFG_CONVNEXT_BASE_LAION),
 

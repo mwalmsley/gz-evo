@@ -19,11 +19,17 @@ class GenericBaseline(pl.LightningModule):
     def __init__(
         self,
         label_cols=['label'],
+        # encoder args
         architecture_name: str = 'convnext_nano',
         timm_kwargs = {},
         channels: float = 3,
+        # training/finetuning args
         learning_rate: float = 1e-3,
         weight_decay: float = 0.05,
+        n_blocks: int = -1,
+        lr_decay: float = 0.9,
+        from_scratch: bool = False, # override the above
+        # args for the head
         head_kwargs = {},
         ):
 
@@ -40,6 +46,9 @@ class GenericBaseline(pl.LightningModule):
 
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
+        self.n_blocks = n_blocks
+        self.lr_decay = lr_decay
+        self.from_scratch = from_scratch
 
         self.setup_metrics()
 
@@ -76,13 +85,113 @@ class GenericBaseline(pl.LightningModule):
         self.update_other_metrics(outputs, step_name=step_name)
         return outputs
 
-    def configure_optimizers(self):
-        # reliable simple option for baselines, you may want to subclass this
-         return torch.optim.AdamW(
-            self.parameters(),
-            lr=self.learning_rate,
-            weight_decay=self.weight_decay
-        )  
+    # simple option for baselines, designed for training from scratch
+    # def configure_optimizers(self):
+    #     # reliable simple option for baselines, you may want to subclass this
+    #      return torch.optim.AdamW(
+    #         self.parameters(),
+    #         lr=self.learning_rate,
+    #         weight_decay=self.weight_decay
+    #     )  
+
+    # temporarily copied from Zoobot - plausible that finetuning for core datasets will be important
+    def configure_optimizers(self):  
+        """
+        This controls which parameters get optimized
+
+        self.head is always optimized, with no learning rate decay
+        when self.n_blocks == 0, only self.head is optimized (i.e. frozen* encoder)
+        
+        for self.encoder, we enumerate the blocks (groups of layers) to potentially finetune
+        and then pick the top self.n_blocks to finetune
+        
+        weight_decay is applied to both the head and (if relevant) the encoder
+        learning rate decay is applied to the encoder only: lr x (lr_decay^block_n), ignoring the head (block 0)
+
+        What counts as a "block" is a bit fuzzy, but I generally use the self.encoder.stages from timm. I also count the stem as a block.
+
+        batch norm layers may optionally still have updated statistics using always_train_batchnorm
+        """
+
+        lr = self.learning_rate
+        params = [{"params": self.head.parameters(), "lr": lr}]
+
+        logging.info(f'Encoder architecture to finetune: {type(self.encoder)}')
+
+        if self.from_scratch:
+            logging.warning('self.from_scratch is True, training everything and ignoring all settings')
+            params += [{"params": self.encoder.parameters(), "lr": lr}]
+            return torch.optim.AdamW(params, weight_decay=self.weight_decay)
+
+        if isinstance(self.encoder, timm.models.EfficientNet): # includes v2
+            # TODO for now, these count as separate layers, not ideal
+            early_tuneable_layers = [self.encoder.conv_stem, self.encoder.bn1]
+            encoder_blocks = list(self.encoder.blocks)
+            tuneable_blocks = early_tuneable_layers + encoder_blocks
+        elif isinstance(self.encoder, timm.models.ResNet):
+            # all timm resnets seem to have this structure
+            tuneable_blocks = [
+                # similarly
+                self.encoder.conv1,
+                self.encoder.bn1,
+                self.encoder.layer1,
+                self.encoder.layer2,
+                self.encoder.layer3,
+                self.encoder.layer4
+            ]
+        elif isinstance(self.encoder, timm.models.MaxxVit):
+            tuneable_blocks = [self.encoder.stem] + [stage for stage in self.encoder.stages]
+        elif isinstance(self.encoder, timm.models.ConvNeXt):  # stem + 4 blocks, for all sizes
+            # https://github.com/huggingface/pytorch-image-models/blob/main/timm/models/convnext.py#L264
+            tuneable_blocks = [self.encoder.stem] + [stage for stage in self.encoder.stages]
+        else:
+            raise ValueError(f'Encoder architecture not automatically recognised: {type(self.encoder)}')
+        
+        # new vs Zoobot
+        # interpret -1 as all blocks
+        if self.n_blocks == -1:
+            logging.info('n_blocks is -1, finetuning all blocks')
+            self.n_blocks = len(tuneable_blocks)
+
+        assert self.n_blocks <= len(
+            tuneable_blocks
+        ), f"Network only has {len(tuneable_blocks)} tuneable blocks, {self.n_blocks} specified for finetuning"
+
+        
+        # take n blocks, ordered highest layer to lowest layer
+        tuneable_blocks.reverse()
+        logging.info('possible blocks to tune: {}'.format(len(tuneable_blocks)))
+        # will finetune all params in first N
+        logging.info('blocks that will be tuned: {}'.format(self.n_blocks))
+        blocks_to_tune = tuneable_blocks[:self.n_blocks]
+        # optionally, can finetune batchnorm params in remaining layers
+        remaining_blocks = tuneable_blocks[self.n_blocks:]
+        logging.info('Remaining blocks: {}'.format(len(remaining_blocks)))
+        assert not any([block in remaining_blocks for block in blocks_to_tune]), 'Some blocks are in both tuneable and remaining'
+
+        # Append parameters of layers for finetuning along with decayed learning rate
+        for i, block in enumerate(blocks_to_tune):  # _ is the block name e.g. '3'
+            params.append({
+                    "params": block.parameters(),
+                    "lr": lr * (self.lr_decay**i)
+                })
+
+        logging.info('param groups: {}'.format(len(params)))
+
+        # because it iterates through the generators, THIS BREAKS TRAINING so only uncomment to debug params
+        # for param_group_n, param_group in enumerate(params):
+        #     shapes_within_param_group = [p.shape for p in list(param_group['params'])]
+        #     logging.debug('param group {}: {}'.format(param_group_n, shapes_within_param_group))
+        # print('head params to optimize', [p.shape for p in params[0]['params']])  # head only
+        # print(list(param_group['params']) for param_group in params)
+        # exit()
+        # Initialize AdamW optimizer
+
+        opt = torch.optim.AdamW(params, weight_decay=self.weight_decay)  # lr included in params dict
+        logging.info('Optimizer ready')
+
+        return opt
+
 
     def training_step(self, batch, batch_idx):
         return self.make_step(batch, step_name='train')
