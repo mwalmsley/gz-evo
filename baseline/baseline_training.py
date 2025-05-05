@@ -238,6 +238,7 @@ def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_
 
         dfs = trainer.predict(model=model, dataloaders=dataloader)
         # list of dfs, each is batch like {'id_str': ..., 'answer_a_fraction': ..., ...}
+        # this works because the predict_step in ClassificationBaseline returns a dict of dataframes
         df = pd.concat(dfs, ignore_index=True)
 
         predictions_save_loc = checkpoint_dir + f'/{name}_predictions.csv'

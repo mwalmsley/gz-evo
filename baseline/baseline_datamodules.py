@@ -168,7 +168,7 @@ class GenericDataset(torch.utils.data.Dataset):
         example:dict = self.dataset[idx]
         
         if self.transform:
-             # torchvision transforms operate on PIL images
+             # torchvision transforms operate on PIL images or tensors
              example['image'] = self.transform(example['image'])  # example['image'] is already a torch.Tensor via hf.set_format('torch')
 
         if self.target_transform:

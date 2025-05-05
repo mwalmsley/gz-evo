@@ -187,5 +187,5 @@ if __name__ == "__main__":
     seed = 42
     pl.seed_everything(seed)
 
-    main()
-    # evaluate()
+    # main()
+    evaluate()
