@@ -31,7 +31,8 @@ def main():
 
     # architecture_name = 'maxvit_tiny_rw_224'
 
-    architecture_name = 'convnext_nano_finetune'
+    # architecture_name = 'convnext_nano_finetune'
+    architecture_name = 'convnext_base_finetune'
 
     # base evo now started as 7222, long filtering step, others waiting for this
     # filtering completed but epoch is pretty long, 1 hour

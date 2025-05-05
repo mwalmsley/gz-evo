@@ -79,6 +79,19 @@ CFG_CONVNEXT_BASE = dict(
     drop_path_rate=0.4
 )
 
+CFG_CONVNEXT_BASE = dict(
+    architecture_name="convnext_base",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.4,
+    n_blocks=-1, # still all blocks, but...
+    lr_decay=0.7, # meaningful (aggressive) decay
+    from_scratch=False
+)
+
 CFG_CONVNEXT_BASE_LAION = dict(
     architecture_name="convnext_base.clip_laion2b_augreg_ft_in12k",
     v100_batch_size=64,
