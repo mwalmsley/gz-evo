@@ -140,9 +140,10 @@ def evaluate():
         cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar') # save_dir is not used
 
         # overrride batch size
-        cfg.batch_size = cfg.batch_size // 2  
+        # cfg.batch_size = cfg.batch_size // 2  
         # not sure why but predictions don't fit with full batch size,
         # even though neither training nor predictions are distributed
+        # it seems to be that the model doesn't fit in memory when second gpu is in use, even though it is not used
         try:
             baseline_training.evaluate_single_model(
                 checkpoint_dir, cfg, model_lightning_class=baseline_models.ClassificationBaseline, task_data_func=set_up_task_data

@@ -6,6 +6,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
+#SBATCH --exclusive  
 
 pwd; hostname; date
 
