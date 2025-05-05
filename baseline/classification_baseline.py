@@ -143,8 +143,9 @@ def evaluate():
         cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar') # save_dir is not used
 
         # overrride batch size
-        cfg.batch_size = 256
-
+        cfg.batch_size = cfg.batch_size // 2  
+        # not sure why but predictions don't fit with full batch size,
+        # even though neither training nor predictions are distributed
         try:
             baseline_training.evaluate_single_model(
                 checkpoint_dir, cfg, model_lightning_class=baseline_models.ClassificationBaseline, task_data_func=set_up_task_data
@@ -157,6 +158,7 @@ def evaluate():
     
     """
     rsync -avz walml@beluga.alliancecan.ca:"/project/def-bovy/walml/repos/gz-evo/results/baselines/classification" --exclude="*.ckpt" results/baselines
+    rsync -avz -e 'ssh -A -J walml@external.jb.man.ac.uk' --exclude="*.ckpt" walml@galahad.ast.man.ac.uk:"/share/nas2/walml/repos/gz-evo/results/baselines/classification" --exclude="*.ckpt" results/baselines
     """
 
 
