@@ -172,6 +172,38 @@ CFG_MAXVIT_TINY = dict(
     drop_path_rate=0.2
 )
 
+CFG_MAXVIT_SMALL = dict(
+    architecture_name="maxvit_rmlp_small_rw_224",
+    v100_batch_size=32,
+    a100_batch_size=128,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.3
+)
+
+CFG_MAXVIT_BASE = dict(
+    architecture_name="maxvit_rmlp_base_rw_224",
+    v100_batch_size=16,
+    a100_batch_size=64,
+    dropout_rate=0.5,
+    learning_rate=5e-5,
+    weight_decay=0.05,
+    drop_path_rate=0.45  # guess
+)
+
+
+CFG_MAXVIT_LARGE = dict(
+    architecture_name="maxvit_large_tf_rw_224",
+    v100_batch_size=8,
+    a100_batch_size=32,
+    dropout_rate=0.5,
+    learning_rate=2e-5,
+    weight_decay=0.05,
+    drop_path_rate=0.6
+)
+
+
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
 # CFG_VIT_SMALL_DINO = dict(
@@ -237,7 +269,12 @@ MODEL_CONFIGS = {
 
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
     "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
-    "maxvit_tiny_rw_224": ModelConfig(**CFG_MAXVIT_TINY),
+
+    "maxvit_tiny": ModelConfig(**CFG_MAXVIT_TINY),
+    "maxvit_small": ModelConfig(**CFG_MAXVIT_SMALL),
+    "maxvit_base": ModelConfig(**CFG_MAXVIT_BASE),
+    "maxvit_large": ModelConfig(**CFG_MAXVIT_LARGE),
+
     # "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
     "vit_base_patch16_clip_224.openai": ModelConfig(**CFG_VIT_BASE_CLIP),
     "vit_medium_patch32_clip_224.tinyclip_laion400m": ModelConfig(**CFG_VIT_MEDIUM_TINYCLIP)

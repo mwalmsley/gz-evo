@@ -35,3 +35,7 @@ Download the dataset and models (useful for clusters with offline worker nodes, 
 
     python download/download_wds_from_hub.py
     python download/download_timm_model.py
+
+## Training
+
+baseline_models.py includes PyTorch Lightning models. GenericBaseline is an abstract LightningModel that sets up the general structure: we create a model with self.encoder, self.head, 

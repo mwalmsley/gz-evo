@@ -34,3 +34,6 @@ $PYTHON $REPO_DIR/baseline/classification_baseline.py
 
 # echo 'Running regression baseline'
 # $PYTHON $REPO_DIR/baseline/regression_baseline.py 
+
+# TODO consider adding imagenet normalisation, I do wonder if it might be silently hurting performance
+# https://github.com/huggingface/pytorch-image-models/blob/main/timm/data/transforms_factory.py#L12

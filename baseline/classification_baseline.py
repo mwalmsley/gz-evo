@@ -29,10 +29,13 @@ def main():
 
     # architecture_name = 'tf_efficientnetv2_s'
 
-    # architecture_name = 'maxvit_tiny_rw_224'
+    # architecture_name = 'maxvit_tiny'
+    architecture_name = 'maxvit_small'
+    # architecture_name = 'maxvit_base'
+    # architecture_name = 'maxvit_large'
 
     # architecture_name = 'convnext_nano_finetune'
-    architecture_name = 'convnext_base_finetune'
+    # architecture_name = 'convnext_base_finetune'
 
     # base evo now started as 7222, long filtering step, others waiting for this
     # filtering completed but epoch is pretty long, 1 hour
@@ -189,8 +192,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
-    # seed = 42
-    seed = 43  # for testing the new 'core finetuning' idea
+    seed = 42
+    # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
     main()

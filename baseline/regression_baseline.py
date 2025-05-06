@@ -39,7 +39,7 @@ def main():
 
     # architecture_name = 'tf_efficientnetv2_s'
     
-    # architecture_name = 'maxvit_tiny_rw_224'
+    # architecture_name = 'maxvit_tiny'
 
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
