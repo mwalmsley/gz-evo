@@ -31,8 +31,8 @@ def main():
 
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
-    architecture_name = 'maxvit_base'
-    # architecture_name = 'maxvit_large'
+    # architecture_name = 'maxvit_base'
+    architecture_name = 'maxvit_large'
 
     # architecture_name = 'convnext_nano_finetune'
     # architecture_name = 'convnext_base_finetune'
