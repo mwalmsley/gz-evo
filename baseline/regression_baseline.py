@@ -10,7 +10,7 @@ import pytorch_lightning as pl
 # import datasets
 
 from galaxy_datasets.shared import label_metadata
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config
 
 import baseline_models  # relative import
 import baseline_datamodules  # relative import
@@ -28,8 +28,8 @@ def main():
     # now adjusted loss
 
     # architecture_name = 'convnext_atto'
-    architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_pico'
+    architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
 
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
@@ -71,11 +71,11 @@ def evaluate():
     beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/'
 
     for dataset_name, architecture_name, checkpoint_dir in [
-        ('gz_evo', 'resnet50',  beluga_dir + 'resnet50_534895718')
+        # ('gz_evo', 'resnet50',  beluga_dir + 'resnet50_534895718')
         #  ('gz2', 'convnext_pico', debug_dir + 'convnext_pico_534895718')
         # ('gz_evo', 'convnext_atto', beluga_dir + 'convnext_atto_534895718'),  # old, doesn't load properly
         # ('gz_evo', 'convnext_pico',  beluga_dir + 'convnext_pico_534895718'),
-        # ('gz_evo', 'convnext_nano',  beluga_dir + 'convnext_nano_534895718'),
+        ('gz_evo', 'convnext_nano',  beluga_dir + 'convnext_nano_534895718'),
         # ('gz_evo', 'convnext_base',  beluga_dir + 'convnext_base_534895718'),
         # ('gz_evo', 'maxvit_tiny_rw_224',  beluga_dir + 'maxvit_tiny_rw_224_534895718'),
         # ('gz_evo', 'tf_efficientnetv2_s',  beluga_dir + 'tf_efficientnetv2_s_534895718'),
@@ -123,16 +123,17 @@ def set_up_task_data(cfg):
 
     dataset_dict.set_format("torch")
 
-    transform_config = default_view_config()
+    train_transform_config = default_view_config()
+    test_transform_config = minimal_view_config()
     # transform_config = fast_view_config()
-    transform_config.random_affine['scale'] = (1.25, 1.45)  # touch more zoom to compensate for loosing 24px crop
-    transform_config.erase_iterations = 0  # disable masking small patches for now
-    transform = GalaxyViewTransform(transform_config)
+    train_transform_config.random_affine['scale'] = (1.0, 1.4)
+    train_transform_config.erase_iterations = 0  # disable masking small patches for now
+
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
-        train_transform=transform,
-        test_transform=transform,
+        train_transform=GalaxyViewTransform(train_transform_config),
+        test_transform=GalaxyViewTransform(test_transform_config),
         # target_transform=target_transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
