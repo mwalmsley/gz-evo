@@ -42,8 +42,8 @@ def main():
     
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
-    architecture_name = 'maxvit_base'
-    # architecture_name = 'maxvit_large'
+    # architecture_name = 'maxvit_base'
+    architecture_name = 'maxvit_large'
 
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
