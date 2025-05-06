@@ -102,6 +102,17 @@ CFG_CONVNEXT_BASE_LAION = dict(
     drop_path_rate=0.4
 )
 
+CFG_CONVNEXT_LARGE = dict(
+    architecture_name="convnext_large",
+    v100_batch_size=32,
+    a100_batch_size=128,
+    dropout_rate=0.5,
+    learning_rate=2e-5,  # reduced
+    weight_decay=0.05,
+    drop_path_rate=0.4
+)
+
+
 CFG_CONVNEXTV2_BASE_FCMAE= dict(
     architecture_name="convnextv2_base.fcmae",
     v100_batch_size=32,
@@ -253,6 +264,7 @@ MODEL_CONFIGS = {
     "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
     "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
     "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
+    "convnext_large": ModelConfig(**CFG_CONVNEXT_LARGE),
 
     "convnext_nano_finetune": ModelConfig(**CFG_CONVNEXT_NANO_FINETUNE),
     "convnext_base_finetune": ModelConfig(**CFG_CONVNEXT_BASE_FINETUNE),
