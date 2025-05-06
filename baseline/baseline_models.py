@@ -443,51 +443,32 @@ class CustomWeightedMSELoss(torch.nn.Module):
 
 
     def forward(self, inputs, targets):
-        # inputs is B x N, where N is the number of answer keys (fractions)
-        # targets is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
+        # inputs, prediction vector, is B x N, where N is the number of answer keys (fractions). Might change to dictlike.
+        # targets, labels from datamodule, is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
 
-        # loss = torch.zeros(inputs.shape, device=inputs.device)
-        # loss = torch.zeros(
-        #     (inputs.shape[0], len(self.question_totals_keys)),
-        #     device=inputs.device
-        # )
         loss = 0
-
-        # for question_n, question in enumerate(self.question_answer_pairs.keys()):
-        
+                
         for question, answers in self.question_answer_pairs.items():
             question_total_key = question + '_total-votes'
-            question_total = targets[question_total_key]
-            # for answer in answers:
-            #     answer_key = question + answer + '_fraction'
-            #     # TODO maybe predict dict not tensor?
-            #     # index of both preds and loss
-            #     answer_index = self.answer_fraction_keys.index(answer_key)
+            question_total = targets[question_total_key]  # total votes for this question
 
-                
-            #     answer_predicted_fraction = inputs[:, answer_index]
-            #     answer_true_fraction = targets[answer_key]
-            #     answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
-
-            #     # apply weighting
-            #     # TEMP removed
-            #     # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
-                
-            #     # masked_answer_loss = torch.where(question_total > 10, answer_loss, torch.nan)  # only apply loss if labelled
-
-            #     loss[:, answer_index] = answer_loss
-            #     # loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
-
-
+            # read answer fractions from target dictlike
             fraction_keys = [question + answer + '_fraction' for answer in answers]
             target_fractions = torch.stack([targets[key] for key in fraction_keys], dim=1)
+            # calculate counts as fractions * total votes (but I could have just read these into targets in the first place)
             counts = (target_fractions * question_total.reshape(-1, 1)).int()
 
+            # again, work out the answer indices for the prediction vector
             answer_indices = [self.answer_fraction_keys.index(key) for key in fraction_keys]
             predicted_probs = inputs[:, answer_indices]
             # total counts is implicit from counts, nice one torch :)
-            # question_loss = torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
-            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # negative log likelihood
+
+            # negative log likelihood of observed counts using multinomial p predicted by model
+            # this is a simplified version of the Dirichlet-Multinomial loss from Zoobot etc, where the model predicts concentrations
+            # here, the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
+
+            # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
+            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version
             loss += question_loss
                 
         # treating all answers equally, take a nanmean of everything
@@ -502,3 +483,27 @@ def get_multinomial_log_prob(probs, counts):
         logits[(counts == 0) & (logits == -torch.inf)] = 0
         log_powers = (logits * counts).sum(-1)
         return log_factorial_n - log_factorial_xs + log_powers
+
+
+
+# old code for calculating MSE loss (weighted). Was less stable than multinomial loss above.
+
+# Zoobot style predicting a vector, we need to know which index is which answer
+# for answer in answers:
+#     answer_key = question + answer + '_fraction'
+#     # index of both preds and loss
+#     answer_index = self.answer_fraction_keys.index(answer_key)
+    
+#     answer_predicted_fraction = inputs[:, answer_index]
+#     answer_true_fraction = targets[answer_key]
+# calculate standard MSE loss (this is looping over the answers)
+#     answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
+
+# apply weighting
+#     # TEMP removed
+#     # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
+    
+#     # masked_answer_loss = torch.where(question_total > 10, answer_loss, torch.nan)  # only apply loss if labelled with a minimal number of votes
+
+#     loss[:, answer_index] = answer_loss
+#     # loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
