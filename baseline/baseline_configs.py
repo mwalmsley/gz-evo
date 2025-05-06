@@ -194,7 +194,7 @@ CFG_MAXVIT_BASE = dict(
 
 
 CFG_MAXVIT_LARGE = dict(
-    architecture_name="maxvit_large_tf_rw_224",
+    architecture_name="maxvit_large_tf_224",
     v100_batch_size=8,
     a100_batch_size=32,
     dropout_rate=0.5,
