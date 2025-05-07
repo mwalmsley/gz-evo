@@ -33,7 +33,7 @@ def main():
     # architecture_name = 'tf_efficientnetv2_l'
 
     # architecture_name = 'maxvit_tiny'
-    # architecture_name = 'maxvit_small'
+    architecture_name = 'maxvit_small'
     # architecture_name = 'maxvit_base'
     # architecture_name = 'maxvit_large'
 
@@ -201,7 +201,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
-    seed = 42
+    # seed = 42
+    seed = 41  # maxvit small has nan problem
     # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
