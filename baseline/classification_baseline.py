@@ -127,19 +127,45 @@ def evaluate():
     # beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/classification/'
     results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/classification/'
 
-    for dataset_name, architecture_name, checkpoint_dir in [
-        #  ('gz2', 'convnext_pico', debug_dir + 'convnext_pico_534895718')
-        # ('gz_evo', 'convnext_pico',  beluga_dir + 'convnext_pico_534895718'),
-        # ('gz_evo', 'convnext_base',  beluga_dir + 'convnext_base_534895718'),
-        # ('gz_evo', 'maxvit_tiny_rw_224',  beluga_dir + 'maxvit_tiny_rw_224_534895718'),
-        # ('gz_evo', 'tf_efficientnetv2_s',  beluga_dir + 'tf_efficientnetv2_s_534895718'),
-        # ('gz_evo', 'convnext_base.clip_laion2b_augreg_ft_in12k', beluga_dir + 'convnext_base.clip_laion2b_augreg_ft_in12k_534895718'),
-        # ('gz_evo', 'resnet50', beluga_dir + 'resnet50_534895718'),
-        # ('gz_evo', 'resnet50_clip.openai', beluga_dir + 'resnet50_clip.openai_534895718'),
-        # ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k', beluga_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718')
-        # ('gz_evo', 'convnext_pico', results_dir + 'convnext_pico_534895718')
-    ]:
 
+# classification/convnext_base_534895718/
+# classification/convnext_base_534895718/checkpoints/
+# classification/convnext_base_finetune_494155588/
+# classification/convnext_base_finetune_494155588/checkpoints/
+# classification/convnext_nano_534895718/
+# classification/convnext_nano_534895718/checkpoints/
+# classification/convnext_nano_finetune_494155588/
+# classification/convnext_nano_finetune_494155588/checkpoints/
+# classification/convnextv2_base.fcmae_ft_in22k_in1k_534895718/
+# classification/convnextv2_base.fcmae_ft_in22k_in1k_534895718/checkpoints/
+# classification/maxvit_base_534895718/
+# classification/maxvit_base_534895718/checkpoints/
+
+# classification/maxvit_tiny_rw_224_534895718/
+# classification/maxvit_tiny_rw_224_534895718/checkpoints/
+# classification/resnet50_534895718/
+# classification/resnet50_534895718/checkpoints/
+# classification/tf_efficientnetv2_s_534895718/
+# classification/tf_efficientnetv2_s_534895718/checkpoints/
+
+# WIP
+# classification/maxvit_large_534895718/
+# classification/maxvit_large_534895718/checkpoints/
+# TODO maxvit small
+# TODO other efficientnets
+
+
+    for dataset_name, architecture_name, checkpoint_dir in [
+        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718'),
+        ('gz_evo', 'maxvit_base',  results_dir + 'maxvit_base_534895718'),
+        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718'),
+        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_finetune_494155588'),
+        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718'),
+        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_finetune_494155588'),
+        ('gz_evo', 'maxvit_tiny_rw_224',  results_dir + 'maxvit_tiny_rw_224_534895718'),
+        ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718'),
+        ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
+    ]:
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
         cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir='foobar') # save_dir is not used
 
@@ -196,5 +222,5 @@ if __name__ == "__main__":
     # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
-    main()
-    # evaluate()
+    # main()
+    evaluate()
