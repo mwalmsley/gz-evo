@@ -2,8 +2,8 @@
 #SBATCH --time=108:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --ntasks 1
-#SBATCH --mem=100G
-#SBATCH --cpus-per-task=8
+#SBATCH --mem=60G  # no need for high mem
+#SBATCH --cpus-per-task=10
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
 #SBATCH --exclusive  
