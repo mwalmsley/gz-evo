@@ -20,14 +20,14 @@ def main():
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
+    architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
     # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
 
     # architecture_name = 'efficientnet_b0'
 
-    architecture_name = 'tf_efficientnetv2_s'
+    # architecture_name = 'tf_efficientnetv2_s'
 
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
@@ -128,26 +128,6 @@ def evaluate():
     results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/classification/'
 
 
-# classification/convnext_base_534895718/
-# classification/convnext_base_534895718/checkpoints/
-# classification/convnext_base_finetune_494155588/
-# classification/convnext_base_finetune_494155588/checkpoints/
-# classification/convnext_nano_534895718/
-# classification/convnext_nano_534895718/checkpoints/
-# classification/convnext_nano_finetune_494155588/
-# classification/convnext_nano_finetune_494155588/checkpoints/
-# classification/convnextv2_base.fcmae_ft_in22k_in1k_534895718/
-# classification/convnextv2_base.fcmae_ft_in22k_in1k_534895718/checkpoints/
-# classification/maxvit_base_534895718/
-# classification/maxvit_base_534895718/checkpoints/
-
-# classification/maxvit_tiny_rw_224_534895718/
-# classification/maxvit_tiny_rw_224_534895718/checkpoints/
-# classification/resnet50_534895718/
-# classification/resnet50_534895718/checkpoints/
-# classification/tf_efficientnetv2_s_534895718/
-# classification/tf_efficientnetv2_s_534895718/checkpoints/
-
 # WIP
 # classification/maxvit_large_534895718/
 # classification/maxvit_large_534895718/checkpoints/
@@ -160,8 +140,8 @@ def evaluate():
         # ('gz_evo', 'maxvit_base',  results_dir + 'maxvit_base_534895718'),
         # ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718'),
         # ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_finetune_494155588'),
-        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718'),
-        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_finetune_494155588'),
+        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718'),  # not great, might need redo
+        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_finetune_494155588'),  # failed
         ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_rw_224_534895718'),
         ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718'),
         ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
@@ -222,5 +202,5 @@ if __name__ == "__main__":
     # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
-    # main()
-    evaluate()
+    main()
+    # evaluate()
