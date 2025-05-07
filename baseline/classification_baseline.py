@@ -30,7 +30,7 @@ def main():
 
     # architecture_name = 'tf_efficientnetv2_s'
     # architecture_name = 'tf_efficientnetv2_m'
-    architecture_name = 'tf_efficientnetv2_l'
+    # architecture_name = 'tf_efficientnetv2_l'
 
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
