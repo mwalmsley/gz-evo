@@ -72,18 +72,15 @@ def evaluate():
     # evaluate_single_model(checkpoint_dir, architecture_name, dataset_name)
 
     # debug_dir = '/home/walml/repos/gz-evo/results/baselines/regression/'
-    beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/'
+    # beluga_dir = '/project/def-bovy/walml/repos/gz-evo/results/baselines/regression/'
+    results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/regression/'
 
     for dataset_name, architecture_name, checkpoint_dir in [
-        # ('gz_evo', 'resnet50',  beluga_dir + 'resnet50_534895718')
-        #  ('gz2', 'convnext_pico', debug_dir + 'convnext_pico_534895718')
-        # ('gz_evo', 'convnext_atto', beluga_dir + 'convnext_atto_534895718'),  # old, doesn't load properly
-        # ('gz_evo', 'convnext_pico',  beluga_dir + 'convnext_pico_534895718'),
-        ('gz_evo', 'convnext_nano',  beluga_dir + 'convnext_nano_534895718'),
-        # ('gz_evo', 'convnext_base',  beluga_dir + 'convnext_base_534895718'),
-        # ('gz_evo', 'maxvit_tiny_rw_224',  beluga_dir + 'maxvit_tiny_rw_224_534895718'),
-        # ('gz_evo', 'tf_efficientnetv2_s',  beluga_dir + 'tf_efficientnetv2_s_534895718'),
-        # ('gz_evo', 'convnext_base.clip_laion2b_augreg_ft_in12k', beluga_dir + 'convnext_base.clip_laion2b_augreg_ft_in12k_534895718')
+        ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649')
+        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
+        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
+        # ('gz_evo', 'maxvit_tiny_rw_224',  results_dir + 'maxvit_tiny_rw_224_534895718_1746547757'), WIP
+        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782'),
     ]:
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
@@ -212,5 +209,5 @@ if __name__ == "__main__":
     seed = 42
     pl.seed_everything(seed)
 
-    main()
-    # evaluate()
+    # main()
+    evaluate()
