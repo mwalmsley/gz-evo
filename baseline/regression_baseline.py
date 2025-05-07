@@ -82,7 +82,7 @@ def evaluate():
         # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
         # ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
         # ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782')
-        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_rw_224_534895718_1746547757')
+        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757')
     ]:
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
