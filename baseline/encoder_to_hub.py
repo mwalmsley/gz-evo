@@ -14,9 +14,9 @@ def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, model_lightning
     checkpoint_loc = checkpoints[-1]
     timm_encoder = model_lightning_class.load_from_checkpoint(checkpoint_loc).encoder
 
-    if isinstance(model_lightning_class, baseline_models.ClassificationBaseline):
+    if model_lightning_class == baseline_models.ClassificationBaseline:
         encoder_training = 'classification'
-    elif isinstance(model_lightning_class, baseline_models.RegressionBaseline):
+    elif model_lightning_class == baseline_models.RegressionBaseline:
         encoder_training = 'regression'
     else:
         raise ValueError(f"Unknown model_lightning_class: {model_lightning_class}")
