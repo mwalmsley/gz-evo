@@ -163,10 +163,37 @@ CFG_EFFICIENTNET_B0 = dict(
     drop_path_rate=0.2
 )
 
+
+# possibly effnet v2 needs
+# LEARNING_RATE=0.0001
+# DROP_PATH_RATE=0.0
+# WEIGHT_DECAY=0.0
+
+
 CFG_EFFICIENTNETV2_S = dict(
     architecture_name="tf_efficientnetv2_s",
     v100_batch_size=128,
     a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.2
+)
+
+CFG_EFFICIENTNETV2_M = dict(
+    architecture_name="tf_efficientnetv2_m",
+    v100_batch_size=64,
+    a100_batch_size=128,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    drop_path_rate=0.2
+)
+
+CFG_EFFICIENTNETV2_L = dict(
+    architecture_name="tf_efficientnetv2_l",
+    v100_batch_size=32,
+    a100_batch_size=64,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -280,7 +307,10 @@ MODEL_CONFIGS = {
     "resnet50_clip.openai": ModelConfig(**CFG_RESNET50_CLIP),
 
     "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
+
     "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
+    "tf_efficientnetv2_m": ModelConfig(**CFG_EFFICIENTNETV2_M),
+    "tf_efficientnetv2_l": ModelConfig(**CFG_EFFICIENTNETV2_L),
 
     "maxvit_tiny": ModelConfig(**CFG_MAXVIT_TINY),
     "maxvit_small": ModelConfig(**CFG_MAXVIT_SMALL),

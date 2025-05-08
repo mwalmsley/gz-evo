@@ -39,11 +39,13 @@ def main():
     # architecture_name = 'efficientnet_b0'
 
     # architecture_name = 'tf_efficientnetv2_s'
+    # architecture_name = 'tf_efficientnetv2_m'
+    architecture_name = 'tf_efficientnetv2_l'
     
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
     # architecture_name = 'maxvit_base'
-    architecture_name = 'maxvit_large'
+    # architecture_name = 'maxvit_large'
 
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
@@ -76,11 +78,11 @@ def evaluate():
     results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/regression/'
 
     for dataset_name, architecture_name, checkpoint_dir in [
-        ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),
-        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
-        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
-        # ('gz_evo', 'maxvit_tiny_rw_224',  results_dir + 'maxvit_tiny_rw_224_534895718_1746547757'), WIP
-        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782')
+        # ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),  # technically still training
+        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
+        # ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
+        # ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782')
+        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757')
     ]:
 
         logging.info(f"Evaluating {dataset_name} {architecture_name} {checkpoint_dir}")
@@ -209,5 +211,5 @@ if __name__ == "__main__":
     seed = 42
     pl.seed_everything(seed)
 
-    # main()
-    evaluate()
+    main()
+    # evaluate()
