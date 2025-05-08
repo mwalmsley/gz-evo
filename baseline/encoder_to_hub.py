@@ -48,11 +48,18 @@ if __name__ == '__main__':
         # ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718'),
         ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
     ]:
-        
         publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'classification')
     logging.info("Published all classification encoders to Hugging Face Hub")
 
-    # repeat for regression TODO
-
+    # repeat for regression
+    for _, architecture_name, checkpoint_dir in [
+        ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),
+        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
+        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
+        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782')
+        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757')
+    ]:
+        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'regression')
+    logging.info("Published all regression encoders to Hugging Face Hub")
 
 
