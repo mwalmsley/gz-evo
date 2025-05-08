@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 import pytorch_lightning as pl
 import datasets
@@ -45,7 +46,7 @@ def main():
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     # dataset_name='gz2'
-    save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}"  # relative
+    save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}_{int(time.time())}"  # relative
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
     datamodule = set_up_task_data(cfg)

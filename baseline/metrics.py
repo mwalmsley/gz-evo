@@ -42,10 +42,12 @@ def get_overall_metrics(df, question_answer_pairs):
             y_pred = y_pred[safe_mask]
             mse = mean_squared_error(y_true, y_pred)
             rmse = mean_squared_error(y_true, y_pred, squared=False)
+            mad = np.mean(np.abs(y_true - y_pred))
             results.append({
                 'question_answer': f'{question}_{answer}',
                 'mse': mse,
                 'rmse': rmse,
+                'mad': mad,
                 'nan_fraction': 1-safe_mask.mean()
             })
 
