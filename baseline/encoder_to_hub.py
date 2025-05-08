@@ -34,24 +34,25 @@ if __name__ == '__main__':
 
 
 
-    results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/classification/'
-    # copy-paste from classification_baseline.py
-    # optionally can change architecture name to anything else, it's just for our benefit
-    for _, architecture_name, checkpoint_dir in [
-        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718'),
-        ('gz_evo', 'maxvit_base',  results_dir + 'maxvit_base_534895718'),
-        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718'),
-        ('gz_evo', 'convnext_base_finetuned',  results_dir + 'convnext_base_finetune_494155588'),
-        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718'),  # not great, might need redo. Redone and still not great.
-        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_finetune_494155588'),  # failed
-        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_rw_224_534895718'),
-        # ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718'),
-        ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
-    ]:
-        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'classification')
-    logging.info("Published all classification encoders to Hugging Face Hub")
+    # results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/classification/'
+    # # copy-paste from classification_baseline.py
+    # # optionally can change architecture name to anything else, it's just for our benefit
+    # for _, architecture_name, checkpoint_dir in [
+    #     ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718'),
+    #     ('gz_evo', 'maxvit_base',  results_dir + 'maxvit_base_534895718'),
+    #     ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718'),
+    #     ('gz_evo', 'convnext_base_finetuned',  results_dir + 'convnext_base_finetune_494155588'),
+    #     ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718'),  # not great, might need redo. Redone and still not great.
+    #     # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_finetune_494155588'),  # failed
+    #     ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_rw_224_534895718'),
+    #     ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718'),
+    #     ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
+    # ]:
+    #     publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'classification')
+    # logging.info("Published all classification encoders to Hugging Face Hub")
 
     # repeat for regression
+    results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/regression/'
     for _, architecture_name, checkpoint_dir in [
         ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),
         ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
