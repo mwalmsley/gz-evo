@@ -6,22 +6,23 @@ import timm
 import baseline_models
 
 
-def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, model_lightning_class):
+def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, baseline_type):
     logging.info(f"Publishing {architecture_name} encoder to Hugging Face Hub")
     checkpoints = list(glob.glob(checkpoint_dir + '/checkpoints/*.ckpt'))
     checkpoints.sort()
     assert checkpoints, checkpoint_dir
     checkpoint_loc = checkpoints[-1]
+
+    if baseline_type == 'classification':
+        model_lightning_class = baseline_models.ClassificationBaseline
+    elif baseline_type == 'regression':
+        model_lightning_class = baseline_models.RegressionBaseline
+    else:
+        raise ValueError(f"Unknown baseline version: {baseline_type}")
+    
     timm_encoder = model_lightning_class.load_from_checkpoint(checkpoint_loc).encoder
 
-    if model_lightning_class == baseline_models.ClassificationBaseline:
-        encoder_training = 'classification'
-    elif model_lightning_class == baseline_models.RegressionBaseline:
-        encoder_training = 'regression'
-    else:
-        raise ValueError(f"Unknown model_lightning_class: {model_lightning_class}")
-
-    timm.models.push_to_hf_hub(timm_encoder, f'mwalmsley/baseline-encoder-{encoder_training}-{architecture_name}')
+    timm.models.push_to_hf_hub(timm_encoder, f'mwalmsley/baseline-encoder-{baseline_type}-{architecture_name}')
 
 
 if __name__ == '__main__':
@@ -48,7 +49,7 @@ if __name__ == '__main__':
         # ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
     ]:
         
-        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, baseline_models.ClassificationBaseline)
+        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'classification')
 
     # repeat for regression TODO
 
