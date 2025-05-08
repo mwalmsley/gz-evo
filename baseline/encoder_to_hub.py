@@ -3,7 +3,7 @@ import logging
 import glob
 import timm
 
-from baseline.baseline_models import ClassificationBaseline, RegressionBaseline
+from baseline_models import ClassificationBaseline, RegressionBaseline
 
 
 def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, model_lightning_class):
