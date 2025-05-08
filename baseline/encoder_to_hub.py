@@ -3,7 +3,7 @@ import logging
 import glob
 import timm
 
-from baseline_models import ClassificationBaseline, RegressionBaseline
+import baseline_models
 
 
 def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, model_lightning_class):
@@ -14,9 +14,9 @@ def publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, model_lightning
     checkpoint_loc = checkpoints[-1]
     timm_encoder = model_lightning_class.load_from_checkpoint(checkpoint_loc).encoder
 
-    if isinstance(model_lightning_class, ClassificationBaseline):
+    if isinstance(model_lightning_class, baseline_models.ClassificationBaseline):
         encoder_training = 'classification'
-    elif isinstance(model_lightning_class, RegressionBaseline):
+    elif isinstance(model_lightning_class, baseline_models.RegressionBaseline):
         encoder_training = 'regression'
     else:
         raise ValueError(f"Unknown model_lightning_class: {model_lightning_class}")
@@ -48,7 +48,7 @@ if __name__ == '__main__':
         # ('gz_evo', 'convnextv2_base.fcmae_ft_in22k_in1k',  results_dir + 'convnextv2_base.fcmae_ft_in22k_in1k_534895718'), 
     ]:
         
-        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, ClassificationBaseline)
+        publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, baseline_models.ClassificationBaseline)
 
     # repeat for regression TODO
 

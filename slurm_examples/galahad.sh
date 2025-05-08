@@ -36,6 +36,7 @@ REPO_DIR="/share/nas2/walml/repos/gz-evo"
 # $PYTHON $REPO_DIR/baseline/regression_baseline.py 
 
 # publish to hub
+echo 'Publishing encoders to hub'
 $PYTHON $REPO_DIR/baseline/encoder_to_hub.py
 
 # TODO consider adding imagenet normalisation, I do wonder if it might be silently hurting performance
