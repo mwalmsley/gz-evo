@@ -150,7 +150,6 @@ class GenericBaseline(pl.LightningModule):
         else:
             raise ValueError(f'Encoder architecture not automatically recognised: {type(self.encoder)}')
         
-        # new vs Zoobot
         # interpret -1 as all blocks
         if self.n_blocks == -1:
             logging.info('n_blocks is -1, finetuning all blocks')

@@ -271,6 +271,18 @@ CFG_VIT_MEDIUM_TINYCLIP = dict(
     weight_decay=0.05
 )
 
+CFG_VIT_SO400M_SIGLIP_FINETUNE = dict(
+    architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
+    v100_batch_size=32,
+    a100_batch_size=128,
+    dropout_rate=0.5,
+    learning_rate=1e-5,  # may be low
+    weight_decay=0.05,
+    n_blocks=-1, # still all blocks, but...
+    lr_decay=0.5,
+    from_scratch=False
+)
+
 
 @dataclass
 class ModelConfig:
@@ -319,7 +331,9 @@ MODEL_CONFIGS = {
 
     # "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
     "vit_base_patch16_clip_224.openai": ModelConfig(**CFG_VIT_BASE_CLIP),
-    "vit_medium_patch32_clip_224.tinyclip_laion400m": ModelConfig(**CFG_VIT_MEDIUM_TINYCLIP)
+    "vit_medium_patch32_clip_224.tinyclip_laion400m": ModelConfig(**CFG_VIT_MEDIUM_TINYCLIP),
+
+    "vit_so400m_siglip_finetune": ModelConfig(**CFG_VIT_SO400M_SIGLIP_FINETUNE)
 
 
 }
