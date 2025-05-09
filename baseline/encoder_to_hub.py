@@ -54,13 +54,25 @@ if __name__ == '__main__':
     # repeat for regression
     results_dir = '/share/nas2/walml/repos/gz-evo/results/baselines/regression/'
     for _, architecture_name, checkpoint_dir in [
-        ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),
-        ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
-        ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
-        ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782'),
-        ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757')
+        # ('gz_evo', 'resnet50',  results_dir + 'resnet50_534895718_1746547649'),
+        # ('gz_evo', 'convnext_nano',  results_dir + 'convnext_nano_534895718_1746542691'),
+        # ('gz_evo', 'convnext_base',  results_dir + 'convnext_base_534895718_1746547550'),
+        # ('gz_evo', 'tf_efficientnetv2_s',  results_dir + 'tf_efficientnetv2_s_534895718_1746547782'),
+        # ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757'),
+        ('gz_evo', 'convnext_large', results_dir + 'convnext_large_534895718_1746548055'),
+        ('gz_evo', 'maxvit_base', results_dir + 'maxvit_base_534895718_1746561752'),
+        ('gz_evo', 'maxvit_large', results_dir + 'maxvit_large_534895718_1746561915'),
+        ('gz_evo', 'tf_efficientnetv2_l', results_dir + 'tf_efficientnetv2_l_534895718_1746653208'),
+        ('gz_evo', 'tf_efficientnetv2_m', results_dir + 'tf_efficientnetv2_m_534895718_1746653116'),
     ]:
         publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'regression')
     logging.info("Published all regression encoders to Hugging Face Hub")
 
 
+# regression/convnext_large_534895718_1746548055/checkpoints/
+# regression/maxvit_base_534895718_1746561752/checkpoints/
+# regression/maxvit_large_534895718_1746561915/checkpoints/
+# regression/tf_efficientnetv2_l_534895718_1746653208/
+# regression/tf_efficientnetv2_l_534895718_1746653208/checkpoints/
+# regression/tf_efficientnetv2_m_534895718_1746653116/
+# regression/tf_efficientnetv2_m_534895718_1746653116/checkpoints/
