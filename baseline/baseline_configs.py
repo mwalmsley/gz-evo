@@ -273,8 +273,8 @@ CFG_VIT_MEDIUM_TINYCLIP = dict(
 
 CFG_VIT_SO400M_SIGLIP_FINETUNE = dict(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
-    v100_batch_size=32,
-    a100_batch_size=128,
+    v100_batch_size=8,  # will likely fail, need higher cuda compute capability
+    a100_batch_size=32,
     dropout_rate=0.5,
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,
