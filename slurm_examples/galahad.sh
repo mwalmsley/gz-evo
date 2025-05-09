@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=108:00:00                                # Time limit hrs:min:sec
+#SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --ntasks 1
 #SBATCH --mem=60G  # no need for high mem
