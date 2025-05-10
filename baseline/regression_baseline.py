@@ -45,13 +45,13 @@ def main():
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
     # architecture_name = 'maxvit_base'
-    # architecture_name = 'maxvit_large'
+    architecture_name = 'maxvit_large'  # TODO restart once siglip running
 
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
 
     # architecture_name = 'vit_so400m_patch14_siglip_224.v2_webli'
-    architecture_name = 'vit_so400m_siglip_finetune'  # with attention pooling
+    # architecture_name = 'vit_so400m_siglip_finetune'  # with attention pooling
 
 
 
@@ -88,7 +88,7 @@ def evaluate():
         # ('gz_evo', 'maxvit_tiny',  results_dir + 'maxvit_tiny_534895718_1746547757'),
         ('gz_evo', 'convnext_large', results_dir + 'convnext_large_534895718_1746548055'),
         ('gz_evo', 'maxvit_base', results_dir + 'maxvit_base_534895718_1746561752'),
-        ('gz_evo', 'maxvit_large', results_dir + 'maxvit_large_534895718_1746561915'),
+        # ('gz_evo', 'maxvit_large', results_dir + 'maxvit_large_534895718_1746561915'),
         ('gz_evo', 'tf_efficientnetv2_l', results_dir + 'tf_efficientnetv2_l_534895718_1746653208'),
         ('gz_evo', 'tf_efficientnetv2_m', results_dir + 'tf_efficientnetv2_m_534895718_1746653116'),
     ]:
