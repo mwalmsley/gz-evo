@@ -46,8 +46,8 @@ def main():
     # starting another with atto for quick check, 7263
     # and starting one with nano and a filter, 7278
 
-    architecture_name = 'vit_so400m_siglip'  # no lr decay, currently  (no encoder yet)
-    # architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (_ft encoder)
+    # architecture_name = 'vit_so400m_siglip'  # no lr decay, currently  (no encoder yet)
+    architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (_ft encoder)
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
