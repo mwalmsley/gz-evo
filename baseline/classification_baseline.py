@@ -34,7 +34,7 @@ def main():
     # architecture_name = 'tf_efficientnetv2_l'
 
     # architecture_name = 'maxvit_tiny'
-    architecture_name = 'maxvit_small'
+    # architecture_name = 'maxvit_small'
     # architecture_name = 'maxvit_base'
     # architecture_name = 'maxvit_large'
 
@@ -45,6 +45,9 @@ def main():
     # filtering completed but epoch is pretty long, 1 hour
     # starting another with atto for quick check, 7263
     # and starting one with nano and a filter, 7278
+
+    architecture_name = 'vit_so400m_siglip'  # no lr decay, currently  (no encoder yet)
+    # architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (_ft encoder)
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -215,5 +218,5 @@ if __name__ == "__main__":
     # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
-    # main()
-    evaluate()
+    main()
+    # evaluate()

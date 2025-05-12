@@ -50,8 +50,8 @@ def main():
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
 
-    architecture_name = 'vit_so400m_siglip'  # no lr decay
-    # architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (under another name belows)
+    architecture_name = 'vit_so400m_siglip'  # no lr decay, currently  (no encoder yet)
+    # architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (_ft encoder)
     # architecture_name = 'vit_so400m_patch14_siglip_224.v2_webli'
     # architecture_name = 'vit_so400m_siglip_finetune'  # with attention pooling
 
