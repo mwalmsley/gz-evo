@@ -30,10 +30,10 @@ PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
 echo 'Running classification baseline'
-$PYTHON $REPO_DIR/gz_evo/classification/classification_baseline.py 
+$PYTHON $REPO_DIR/gz_evo/core/classification/classification_baseline.py 
 
 # echo 'Running regression baseline'
-# $PYTHON $REPO_DIR/gz_evo/multinomial/regression_baseline.py 
+# $PYTHON $REPO_DIR/gz_evo/core/multinomial/regression_baseline.py 
 
 # publish to hub
 # echo 'Publishing encoders to hub'
