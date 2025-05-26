@@ -17,8 +17,8 @@ export HYDRA_FULL_ERROR=1
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
-
-export HF_DATASETS_IN_MEMORY_MAX_SIZE=50000000000  # 50GB ish
+# seems to make dataset.filter() very slow, perhaps it turns off the column selection
+# export HF_DATASETS_IN_MEMORY_MAX_SIZE=50000000000  # 50GB ish. Will ignore HF_DATASETS_CACHE and keep in mem if possible.
 export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # prepared parquet files, 30 mins from nas
 export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node, TBD time
