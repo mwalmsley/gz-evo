@@ -91,6 +91,20 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     return cfg
 
 
+def get_dataset_dict(cfg):
+    dataset_loc = f"mwalmsley/{cfg.dataset_name}"
+    logging.info(f"Loading dataset from {dataset_loc}")
+    print(f"Loading dataset from {dataset_loc}")
+    dataset_dict = load_dataset(
+        dataset_loc, 
+        name=cfg.subset_name, 
+        # typically stick to defaults here
+        keep_in_memory=cfg.keep_in_memory,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
+        download_mode=cfg.download_mode,  # reuse_dataset_if_exists
+        verification_mode=cfg.verification_mode,  # basic_checks
+    )
+    return dataset_dict
+
 
 def run_training(cfg, lightning_model, datamodule):
 
@@ -150,33 +164,8 @@ def run_training(cfg, lightning_model, datamodule):
         )
 
 
-# def manually_load_gz_evo():
-#     gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
-#     train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
-#     test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
-#     assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
-#     return load_dataset(
-#         path=gz_evo_manual_download_loc,
-#         # data_files must be explicit paths seemingly, not just glob strings. Weird.
-#         data_files={'train': train_locs, 'test': test_locs},
-#         # load LOCALLY to this machine
-#         cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
-#     )
 
 
-def get_dataset_dict(cfg):
-    dataset_loc = f"mwalmsley/{cfg.dataset_name}"
-    logging.info(f"Loading dataset from {dataset_loc}")
-    print(f"Loading dataset from {dataset_loc}")
-    dataset_dict = load_dataset(
-        dataset_loc, 
-        name=cfg.subset_name, 
-        # typically stick to defaults here
-        keep_in_memory=cfg.keep_in_memory,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
-        download_mode=cfg.download_mode,  # reuse_dataset_if_exists
-        verification_mode=cfg.verification_mode,  # basic_checks
-    )
-    return dataset_dict
 
 
 def log_images(wandb_logger, datamodule):

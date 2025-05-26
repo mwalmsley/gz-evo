@@ -3,7 +3,7 @@ import logging
 import pytorch_lightning as pl
 
 from gz_evo.core import baseline_training, baseline_models 
-from gz_evo.core.classification.classification_baseline import set_up_task_data
+from gz_evo.core.classification.train import set_up_task_data
 
 
 def evaluate():

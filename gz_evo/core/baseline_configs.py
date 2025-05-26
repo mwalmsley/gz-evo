@@ -2,8 +2,22 @@ from typing import Optional
 
 from dataclasses import dataclass
 
+@dataclass
+class ModelConfig:
+    architecture_name: str
+    v100_batch_size: int
+    a100_batch_size: int
+    dropout_rate: float
+    learning_rate: float
+    weight_decay: float
+    drop_path_rate: Optional[float] = 0.
+    n_blocks: Optional[int] = -1  # all blocks (no effect)
+    lr_decay: Optional[float] = 1.  # no effect
+    from_scratch: Optional[bool] = False  # no effect
+
+
 # weak baseline
-CFG_CONVNEXT_ATTO = dict(
+CFG_CONVNEXT_ATTO = ModelConfig(
     architecture_name="convnext_atto",
     v100_batch_size=512,
     a100_batch_size=2048,
@@ -11,9 +25,10 @@ CFG_CONVNEXT_ATTO = dict(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4
+    
 )
 
-CFG_CONVNEXT_PICO = dict(
+CFG_CONVNEXT_PICO = ModelConfig(
     architecture_name="convnext_pico",
     v100_batch_size=256,
     a100_batch_size=1024,
@@ -24,7 +39,7 @@ CFG_CONVNEXT_PICO = dict(
 )
 
 
-CFG_CONVNEXT_NANO = dict(
+CFG_CONVNEXT_NANO = ModelConfig(
     architecture_name="convnext_nano",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -34,7 +49,7 @@ CFG_CONVNEXT_NANO = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_NANO_FINETUNE = dict(
+CFG_CONVNEXT_NANO_FINETUNE = ModelConfig(
     architecture_name="convnext_nano",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -48,7 +63,7 @@ CFG_CONVNEXT_NANO_FINETUNE = dict(
 )
 
 
-CFG_CONVNEXTV2_NANO_FCMAE = dict(
+CFG_CONVNEXTV2_NANO_FCMAE = ModelConfig(
     architecture_name="convnextv2_nano.fcmae",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -58,7 +73,7 @@ CFG_CONVNEXTV2_NANO_FCMAE = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXTV2_NANO_FCMAE_FTIM = dict(
+CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
     architecture_name="convnextv2_nano.fcmae_ft_in22k_in1k",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -69,7 +84,7 @@ CFG_CONVNEXTV2_NANO_FCMAE_FTIM = dict(
 )
 
 
-CFG_CONVNEXT_BASE = dict(
+CFG_CONVNEXT_BASE = ModelConfig(
     architecture_name="convnext_base",
     v100_batch_size=64,
     a100_batch_size=256,
@@ -79,7 +94,7 @@ CFG_CONVNEXT_BASE = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_BASE_FINETUNE = dict(
+CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
     architecture_name="convnext_base",
     v100_batch_size=64,
     a100_batch_size=256,
@@ -92,7 +107,7 @@ CFG_CONVNEXT_BASE_FINETUNE = dict(
     from_scratch=False
 )
 
-CFG_CONVNEXT_BASE_LAION = dict(
+CFG_CONVNEXT_BASE_LAION = ModelConfig(
     architecture_name="convnext_base.clip_laion2b_augreg_ft_in12k",
     v100_batch_size=64,
     a100_batch_size=256,
@@ -102,7 +117,7 @@ CFG_CONVNEXT_BASE_LAION = dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXT_LARGE = dict(
+CFG_CONVNEXT_LARGE = ModelConfig(
     architecture_name="convnext_large",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -113,7 +128,7 @@ CFG_CONVNEXT_LARGE = dict(
 )
 
 
-CFG_CONVNEXTV2_BASE_FCMAE= dict(
+CFG_CONVNEXTV2_BASE_FCMAE= ModelConfig(
     architecture_name="convnextv2_base.fcmae",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -123,7 +138,7 @@ CFG_CONVNEXTV2_BASE_FCMAE= dict(
     drop_path_rate=0.4
 )
 
-CFG_CONVNEXTV2_BASE_FCMAE_FTIM = dict(
+CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
     architecture_name="convnextv2_base.fcmae_ft_in22k_in1k",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -134,7 +149,7 @@ CFG_CONVNEXTV2_BASE_FCMAE_FTIM = dict(
 )
 
 
-CFG_RESNET50 = dict(
+CFG_RESNET50 = ModelConfig(
     architecture_name="resnet50",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -144,7 +159,7 @@ CFG_RESNET50 = dict(
 )
 
 # https://huggingface.co/timm/resnet50_clip.openai
-CFG_RESNET50_CLIP = dict(
+CFG_RESNET50_CLIP = ModelConfig(
     architecture_name="resnet50_clip.openai",
     v100_batch_size=128,
     a100_batch_size=512,
@@ -153,7 +168,7 @@ CFG_RESNET50_CLIP = dict(
     weight_decay=0.05
 )
 
-CFG_EFFICIENTNET_B0 = dict(
+CFG_EFFICIENTNET_B0 = ModelConfig(
     architecture_name="efficientnet_b0",
     v100_batch_size=256,
     a100_batch_size=512,
@@ -170,7 +185,7 @@ CFG_EFFICIENTNET_B0 = dict(
 # WEIGHT_DECAY=0.0
 
 
-CFG_EFFICIENTNETV2_S = dict(
+CFG_EFFICIENTNETV2_S = ModelConfig(
     architecture_name="tf_efficientnetv2_s",
     v100_batch_size=128,
     a100_batch_size=256,
@@ -180,7 +195,7 @@ CFG_EFFICIENTNETV2_S = dict(
     drop_path_rate=0.2
 )
 
-CFG_EFFICIENTNETV2_M = dict(
+CFG_EFFICIENTNETV2_M = ModelConfig(
     architecture_name="tf_efficientnetv2_m",
     v100_batch_size=64,
     a100_batch_size=128,
@@ -190,7 +205,7 @@ CFG_EFFICIENTNETV2_M = dict(
     drop_path_rate=0.2
 )
 
-CFG_EFFICIENTNETV2_L = dict(
+CFG_EFFICIENTNETV2_L = ModelConfig(
     architecture_name="tf_efficientnetv2_l",
     v100_batch_size=32,
     a100_batch_size=64,
@@ -200,7 +215,7 @@ CFG_EFFICIENTNETV2_L = dict(
     drop_path_rate=0.2
 )
 
-CFG_MAXVIT_TINY = dict(
+CFG_MAXVIT_TINY = ModelConfig(
     architecture_name="maxvit_tiny_rw_224",
     v100_batch_size=64,
     a100_batch_size=256,  
@@ -210,7 +225,7 @@ CFG_MAXVIT_TINY = dict(
     drop_path_rate=0.2
 )
 
-CFG_MAXVIT_SMALL = dict(
+CFG_MAXVIT_SMALL = ModelConfig(
     architecture_name="maxvit_rmlp_small_rw_224",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -220,7 +235,7 @@ CFG_MAXVIT_SMALL = dict(
     drop_path_rate=0.3
 )
 
-CFG_MAXVIT_BASE = dict(
+CFG_MAXVIT_BASE = ModelConfig(
     architecture_name="maxvit_rmlp_base_rw_224",
     v100_batch_size=16,
     a100_batch_size=64,
@@ -231,7 +246,7 @@ CFG_MAXVIT_BASE = dict(
 )
 
 
-CFG_MAXVIT_LARGE = dict(
+CFG_MAXVIT_LARGE = ModelConfig(
     architecture_name="maxvit_large_tf_224",
     v100_batch_size=8,
     a100_batch_size=32,
@@ -244,7 +259,7 @@ CFG_MAXVIT_LARGE = dict(
 
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
-# CFG_VIT_SMALL_DINO = dict(
+# CFG_VIT_SMALL_DINO = ModelConfig(
 #     architecture_name="vit_small_patch14_reg4_dinov2.lvd142m",
 #     v100_batch_size=64,
 #     a100_batch_size=256,
@@ -253,7 +268,7 @@ CFG_MAXVIT_LARGE = dict(
 #     weight_decay=0.05
 # )
 
-CFG_VIT_BASE_CLIP = dict(
+CFG_VIT_BASE_CLIP = ModelConfig(
     architecture_name="vit_base_patch16_clip_224.openai",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -262,7 +277,7 @@ CFG_VIT_BASE_CLIP = dict(
     weight_decay=0.05
 )
 
-CFG_VIT_MEDIUM_TINYCLIP = dict(
+CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
     architecture_name="vit_medium_patch32_clip_224.tinyclip_laion400m",
     v100_batch_size=32,
     a100_batch_size=128,
@@ -271,7 +286,7 @@ CFG_VIT_MEDIUM_TINYCLIP = dict(
     weight_decay=0.05
 )
 
-CFG_VIT_SO400M_SIGLIP = dict(
+CFG_VIT_SO400M_SIGLIP = ModelConfig(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
     v100_batch_size=8,  # will likely fail, need higher cuda compute capability
     a100_batch_size=64,  # trying it
@@ -283,7 +298,7 @@ CFG_VIT_SO400M_SIGLIP = dict(
     from_scratch=False
 )
 
-CFG_VIT_SO400M_SIGLIP_FINETUNE = dict(
+CFG_VIT_SO400M_SIGLIP_FINETUNE = ModelConfig(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
     v100_batch_size=8,  # will likely fail, need higher cuda compute capability
     a100_batch_size=64,  # trying it
@@ -296,58 +311,45 @@ CFG_VIT_SO400M_SIGLIP_FINETUNE = dict(
 )
 
 
-@dataclass
-class ModelConfig:
-    architecture_name: str
-    v100_batch_size: int
-    a100_batch_size: int
-    dropout_rate: float
-    learning_rate: float
-    weight_decay: float
-    drop_path_rate: Optional[float] = 0.
-    n_blocks: Optional[int] = -1  # all blocks (no effect)
-    lr_decay: Optional[float] = 1.  # no effect
-    from_scratch: Optional[bool] = False  # no effect
 
 
 MODEL_CONFIGS = {
-    "convnext_atto": ModelConfig(**CFG_CONVNEXT_ATTO),
-    "convnext_pico": ModelConfig(**CFG_CONVNEXT_PICO),
-    "convnext_nano": ModelConfig(**CFG_CONVNEXT_NANO),
-    "convnext_base": ModelConfig(**CFG_CONVNEXT_BASE),
-    "convnext_large": ModelConfig(**CFG_CONVNEXT_LARGE),
+    "convnext_atto": CFG_CONVNEXT_ATTO,
+    "convnext_pico": CFG_CONVNEXT_PICO,
+    "convnext_nano": CFG_CONVNEXT_NANO,
+    "convnext_base": CFG_CONVNEXT_BASE,
+    "convnext_large": CFG_CONVNEXT_LARGE,
 
-    "convnext_nano_finetune": ModelConfig(**CFG_CONVNEXT_NANO_FINETUNE),
-    "convnext_base_finetune": ModelConfig(**CFG_CONVNEXT_BASE_FINETUNE),
+    "convnext_nano_finetune": CFG_CONVNEXT_NANO_FINETUNE,
+    "convnext_base_finetune": CFG_CONVNEXT_BASE_FINETUNE,
 
-    "convnext_base.clip_laion2b_augreg_ft_in12k": ModelConfig(**CFG_CONVNEXT_BASE_LAION),
+    "convnext_base.clip_laion2b_augreg_ft_in12k": CFG_CONVNEXT_BASE_LAION,
 
-    "convnextv2_nano.fcmae": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE),
-    "convnextv2_nano.fcmae_ft_in22k_in1k": ModelConfig(**CFG_CONVNEXTV2_NANO_FCMAE_FTIM),
-    "convnextv2_base.fcmae": ModelConfig(**CFG_CONVNEXTV2_BASE_FCMAE),
-    "convnextv2_base.fcmae_ft_in22k_in1k": ModelConfig(**CFG_CONVNEXTV2_BASE_FCMAE_FTIM),
+    "convnextv2_nano.fcmae": CFG_CONVNEXTV2_NANO_FCMAE,
+    "convnextv2_nano.fcmae_ft_in22k_in1k": CFG_CONVNEXTV2_NANO_FCMAE_FTIM,
+    "convnextv2_base.fcmae": CFG_CONVNEXTV2_BASE_FCMAE,
+    "convnextv2_base.fcmae_ft_in22k_in1k": CFG_CONVNEXTV2_BASE_FCMAE_FTIM,
 
-    "resnet50": ModelConfig(**CFG_RESNET50),
-    "resnet50_clip.openai": ModelConfig(**CFG_RESNET50_CLIP),
+    "resnet50": CFG_RESNET50,
+    "resnet50_clip.openai": CFG_RESNET50_CLIP,
 
-    "efficientnet_b0": ModelConfig(**CFG_EFFICIENTNET_B0),
+    "efficientnet_b0": CFG_EFFICIENTNET_B0,
 
-    "tf_efficientnetv2_s": ModelConfig(**CFG_EFFICIENTNETV2_S),
-    "tf_efficientnetv2_m": ModelConfig(**CFG_EFFICIENTNETV2_M),
-    "tf_efficientnetv2_l": ModelConfig(**CFG_EFFICIENTNETV2_L),
+    "tf_efficientnetv2_s": CFG_EFFICIENTNETV2_S,
+    "tf_efficientnetv2_m": CFG_EFFICIENTNETV2_M,
+    "tf_efficientnetv2_l": CFG_EFFICIENTNETV2_L,
 
-    "maxvit_tiny": ModelConfig(**CFG_MAXVIT_TINY),
-    "maxvit_small": ModelConfig(**CFG_MAXVIT_SMALL),
-    "maxvit_base": ModelConfig(**CFG_MAXVIT_BASE),
-    "maxvit_large": ModelConfig(**CFG_MAXVIT_LARGE),
+    "maxvit_tiny": CFG_MAXVIT_TINY,
+    "maxvit_small": CFG_MAXVIT_SMALL,
+    "maxvit_base": CFG_MAXVIT_BASE,
+    "maxvit_large": CFG_MAXVIT_LARGE,
 
-    # "vit_small_patch14_reg4_dinov2.lvd142m": ModelConfig(**CFG_VIT_SMALL_DINO)
-    "vit_base_patch16_clip_224.openai": ModelConfig(**CFG_VIT_BASE_CLIP),
-    "vit_medium_patch32_clip_224.tinyclip_laion400m": ModelConfig(**CFG_VIT_MEDIUM_TINYCLIP),
+    # "vit_small_patch14_reg4_dinov2.lvd142m": CFG_VIT_SMALL_DINO)
+    "vit_base_patch16_clip_224.openai": CFG_VIT_BASE_CLIP,
+    "vit_medium_patch32_clip_224.tinyclip_laion400m": CFG_VIT_MEDIUM_TINYCLIP,
 
-    "vit_so400m_siglip": ModelConfig(**CFG_VIT_SO400M_SIGLIP),  # same but no lr_decay
-    "vit_so400m_siglip_finetune": ModelConfig(**CFG_VIT_SO400M_SIGLIP_FINETUNE)
-
+    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,  # same but no lr_decay
+    "vit_so400m_siglip_finetune": CFG_VIT_SO400M_SIGLIP_FINETUNE
 
 }
 

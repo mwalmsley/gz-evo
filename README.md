@@ -37,7 +37,7 @@ pip install "zoobot[pytorch-cu121]" --extra-index-url https://download.pytorch.o
 and then run training on Core datasets e.g.
 
 ```bash
-python gz_evo/classification/classification_baseline.py 
+python gz_evo/classification/train.py 
 ```
 
 or finetune on Downstream datasets e.g.
@@ -45,6 +45,35 @@ or finetune on Downstream datasets e.g.
 ```bash
 python gz_evo/downstream/TODO.py 
 ```
+
+## Training on Core dataset
+
+Both classification and multinomial training follows the same pattern. For example, in `gz_evo/classification/train.py`:
+
+```python
+cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
+
+datamodule = set_up_task_data(cfg)
+
+lightning_model = get_lightning_model(cfg)
+
+baseline_training.run_training(cfg, lightning_model, datamodule)
+```
+
+We use `baseline_training.py` for shared training functions: `get_config` creates the omegaconf config used throughout, and `run_training` to execute the training given a config, a datamodule, and a model.
+
+`classification_baseline.py` includes classification-specific functions: `set_up_task_data` creates a Lightning DataModule with dataloaders yielding (image_batch, classification_label_batch), and `get_lightning_model` creates a Lightning module with a classification-specific head.
+
+The remaining code is shared across tasks:
+
+- `baseline_datamodules.py` has boilerplate code that loads a HuggingFace image dataset as a Lightning DataModule.
+- `baseline_models.py` has a generic supervised `LightningModule` (`forward`, `training_step`, `configure_optimizers`, etc) and subclasses for classification and multinomial. The optimizer can be configured with e.g. learning rate and number of blocks to optimize.
+- `baseline_configs.py` defines per-model training choices e.g. the learning rate, the weight decay, etc. Each model needs a dictlike. Add new models by making a new dictlike here. `baseline_training.py` will look here for instructions on training your chosen model.
+
+`gz_evo/classification/test.py` is a script for making test predictions, and `gz_evo/classification/metrics.ipynb` visualizes performance (similarly for multinomial).
+
+## Training on Downstream datasets
+
 
 
 ## Example Installation on Cluster
@@ -87,6 +116,3 @@ python download/download_wds_from_hub.py
 python download/download_timm_model.py
 ```
 
-<!-- ## Training
-
-baseline_models.py includes PyTorch Lightning models. GenericBaseline is an abstract LightningModel that sets up the general structure: we create a model with self.encoder, self.head,  -->

@@ -47,6 +47,7 @@ def main():
     save_dir = f"results/baselines/classification/{architecture_name}_{np.random.randint(1e9)}_{int(time.time())}" # type: ignore
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
+    
     datamodule = set_up_task_data(cfg)
 
     lightning_model = get_lightning_model(cfg)
@@ -55,6 +56,15 @@ def main():
 
 
 def set_up_task_data(cfg):
+    """
+    Create datamodule for classification task.
+
+    Args:
+        cfg (omegaconf): configuration object
+
+    Returns:
+        DataModule: with dataloaders yielding batches of images and labels
+    """
 
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
@@ -144,7 +154,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
-    seed = os.environ.get('SEED', 42)
+    seed: int = os.environ.get('SEED', 42)  # type: ignore
     logging.info(f"Using seed: {seed}")
     # seed = 41  # maxvit small has nan problem
     pl.seed_everything(seed)

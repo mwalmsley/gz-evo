@@ -22,7 +22,7 @@ class GenericDataModule(pl.LightningDataModule):
         test_transform,
         target_transform=None,
         # hardware params
-        batch_size=256,  # careful - will affect final performance
+        batch_size=256,
         num_workers=4,
         prefetch_factor=4,
         seed=42,
@@ -54,11 +54,6 @@ class GenericDataModule(pl.LightningDataModule):
         logging.info("Num workers: {}".format(self.num_workers))
         logging.info("Prefetch factor: {}".format(self.prefetch_factor))
 
-        # self.prepare_data_per_node = False  # run prepare_data below only on master node (and one process)
-
-    # only called on main process
-    # def prepare_data(self):
-        # pass  # 
 
     # called on every gpu
     def setup(self, stage: Optional[str] = None):
@@ -128,17 +123,6 @@ class GenericDataModule(pl.LightningDataModule):
             timeout=self.dataloader_timeout,
         )
 
-    def predict_dataloader(self):
-        return DataLoader(
-            self.predict_dataset,
-            batch_size=self.batch_size,
-            shuffle=False,
-            num_workers=self.num_workers,
-            pin_memory=True,
-            persistent_workers=self.num_workers > 0,
-            prefetch_factor=self.prefetch_factor,
-            timeout=self.dataloader_timeout,
-        )
 
 class GenericDataset(torch.utils.data.Dataset):
     def __init__(

@@ -5,15 +5,12 @@ import torchmetrics
 import pytorch_lightning as pl
 import timm
 import pandas as pd
-# from zoobot.shared import schemas
 
 from gz_evo.core import baseline_datamodules
 
 class GenericBaseline(pl.LightningModule):
     """
-    All Zoobot models use the lightningmodule API and so share this structure
-    super generic, just to outline the structure. nothing specific to dirichlet, gz, etc
-    only assumes an encoder and a head
+    Generic supervised model, based on Zoobot. Intended to be subclassed.
     """
 
     def __init__(
@@ -53,7 +50,6 @@ class GenericBaseline(pl.LightningModule):
         self.setup_metrics()
 
 
-
     def setup_metrics(self, nan_strategy='error'):  # may sometimes want to ignore nan even in main metrics
 
         self.loss_metrics = torch.nn.ModuleDict({
@@ -63,27 +59,6 @@ class GenericBaseline(pl.LightningModule):
         })
 
         self.setup_other_metrics()
-        
-        # TODO could add per-campaign metrics automatically?
-
-    def forward(self, x):
-        assert x.shape[1] < 4  # torchlike BCHW
-        x = self.encoder(x)
-        return self.head(x)
-    
-    def make_step(self, batch, step_name):
-        x = batch['image']
-
-        # for classification this is simply
-        # e.g. {'label': batch['label']} i.e {'label': tensor}
-        # for regression this is e.g.
-        # {'smooth-or-featured_smooth_fraction': tensor, ...}
-        labels = {key: batch[key] for key in self.label_cols}  
-        predictions = self(x)
-        loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
-        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
-        self.update_other_metrics(outputs, step_name=step_name)
-        return outputs
 
     # simple option for baselines, designed for training from scratch
     # def configure_optimizers(self):
@@ -180,20 +155,25 @@ class GenericBaseline(pl.LightningModule):
 
         logging.info('param groups: {}'.format(len(params)))
 
-        # because it iterates through the generators, THIS BREAKS TRAINING so only uncomment to debug params
-        # for param_group_n, param_group in enumerate(params):
-        #     shapes_within_param_group = [p.shape for p in list(param_group['params'])]
-        #     logging.debug('param group {}: {}'.format(param_group_n, shapes_within_param_group))
-        # print('head params to optimize', [p.shape for p in params[0]['params']])  # head only
-        # print(list(param_group['params']) for param_group in params)
-        # exit()
-        # Initialize AdamW optimizer
-
         opt = torch.optim.AdamW(params, weight_decay=self.weight_decay)  # lr included in params dict
         logging.info('Optimizer ready')
 
         return opt
+        
+    def forward(self, x):
+        assert x.shape[1] < 4  # torchlike BCHW
+        x = self.encoder(x)
+        return self.head(x)
+    
+    def make_step(self, batch, step_name):
+        x = batch['image']
 
+        labels = {key: batch[key] for key in self.label_cols}  
+        predictions = self(x)
+        loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
+        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
+        self.update_other_metrics(outputs, step_name=step_name)
+        return outputs
 
     def training_step(self, batch, batch_idx):
         return self.make_step(batch, step_name='train')
@@ -214,21 +194,9 @@ class GenericBaseline(pl.LightningModule):
         self.log_all_metrics(split='validation')
 
     def on_test_epoch_end(self) -> None:
-        # logging.info('start test epoch end')
         self.log_all_metrics(split='test')
-        # logging.info('end test epoch end')
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
-        # I can't work out how to get webdataset to return a single item im, not a tuple (im,).
-        # this is fine for training but annoying for predict
-        # help welcome. meanwhile, this works around it
-        # if isinstance(batch, list) and len(batch) == 1:
-        #     return self(batch[0])
-        # https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html#inference
-        # this calls forward, while avoiding the need for e.g. model.eval(), torch.no_grad()
-        # x, y = batch  # would be usual format, but here, batch does not include labels
-        # x = batch['image']
-        # return {'id_str': batch['id_str'], 'prediction': self(x)}
         raise NotImplementedError('predict_step must be subclassed')
     
     # subclassed below for the various tasks, or extend yourself
@@ -482,27 +450,3 @@ def get_multinomial_log_prob(probs, counts):
         logits[(counts == 0) & (logits == -torch.inf)] = 0
         log_powers = (logits * counts).sum(-1)
         return log_factorial_n - log_factorial_xs + log_powers
-
-
-
-# old code for calculating MSE loss (weighted). Was less stable than multinomial loss above.
-
-# Zoobot style predicting a vector, we need to know which index is which answer
-# for answer in answers:
-#     answer_key = question + answer + '_fraction'
-#     # index of both preds and loss
-#     answer_index = self.answer_fraction_keys.index(answer_key)
-    
-#     answer_predicted_fraction = inputs[:, answer_index]
-#     answer_true_fraction = targets[answer_key]
-# calculate standard MSE loss (this is looping over the answers)
-#     answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
-
-# apply weighting
-#     # TEMP removed
-#     # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
-    
-#     # masked_answer_loss = torch.where(question_total > 10, answer_loss, torch.nan)  # only apply loss if labelled with a minimal number of votes
-
-#     loss[:, answer_index] = answer_loss
-#     # loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
