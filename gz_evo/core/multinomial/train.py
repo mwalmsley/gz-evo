@@ -17,8 +17,8 @@ def main():
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
