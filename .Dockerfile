@@ -1,8 +1,8 @@
 
 # https://hub.docker.com/r/pytorch/pytorch/tags
-# requires PyTorch 2.2+, ideally 2.3+
+# baselines require PyTorch 2.3+
 # doesn't require a specific CUDA version so long as it runs on your system
-FROM pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime
 
 # most dependencies are via Zoobot
 # https://github.com/mwalmsley/zoobot/blob/main/setup.py#L63 pytorch-gpu adds pytorch etc (skipped here as installed already)

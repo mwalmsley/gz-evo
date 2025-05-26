@@ -14,8 +14,6 @@ from zoobot.pytorch.training import train_with_pytorch_lightning
 
 from datasets import load_dataset
 
-import baseline_models
-import baseline_datamodules
 import baseline_configs
 
 
@@ -24,32 +22,36 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
 
     # TODO may refactor as argparse or omegaconf
     if os.path.isdir('/project/def-bovy/walml'):
-        hf_cache_dir = '/project/def-bovy/walml/cache/huggingface/datasets'
-        node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
+        # hf_cache_dir = '/project/def-bovy/walml/cache/huggingface/datasets'
+        # node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
         subset_name = 'default'
-        # A100 on narval
-        # num_workers = 12
-        # batch_size_factor = 4 
-        # V100 on beluga
-        # num_workers = 6  # even with 10 cpu, throws warning if 8 workers
-        num_workers = 10  # even with 10 cpu, throws warning if 8 workers
-        batch_size_key = 'v100_batch_size'
         accelerator="gpu"
+        
+        # A100
+        # batch_size_key = 'A100_batch_size'
+        # num_workers = 12
+
+        # V100
+        num_workers = 10
+        batch_size_key = 'v100_batch_size'
+
     elif os.path.isdir('/share/nas2'):
-        hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
-        node_cache_dir = '/state/partition1/huggingface_tmp'
+        # hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
+        # node_cache_dir = '/state/partition1/huggingface_tmp'
         subset_name = 'default'
-        # node_cache_dir = hf_cache_dir
         num_workers = 8  # of 16 per node
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
+
+    # TODO add your own system here
+
     else:
-        hf_cache_dir = None
-        node_cache_dir = hf_cache_dir
-        subset_name = 'tiny'
+        # hf_cache_dir = None
+        # node_cache_dir = hf_cache_dir
+        subset_name = 'tiny'  # debugging
         # subset_name = 'default'
         num_workers = 4
-        debug = True  # always
+        debug = True
         accelerator="auto"
         batch_size_key = 'debug'
 
@@ -58,8 +60,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             architecture_name=architecture_name,
             dataset_name=dataset_name,
             subset_name=subset_name,
-            hf_cache_dir=hf_cache_dir,
-            node_cache_dir=node_cache_dir,
+            # hf_cache_dir=hf_cache_dir,
+            # node_cache_dir=node_cache_dir,
             save_dir=save_dir,
 
             # download_mode="force_redownload",
@@ -156,38 +158,36 @@ def run_training(cfg, lightning_model, datamodule):
         )
 
 
-def manually_load_gz_evo():
-    gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
-    train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
-    test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
-    assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
-    # logging.warning('HACK ENGAGED - HALF OF GZ EVO only')
-    return load_dataset(
-        path=gz_evo_manual_download_loc,
-        # data_files must be explicit paths seemingly, not just glob strings. Weird.
-        data_files={'train': train_locs, 'test': test_locs},
-        # load LOCALLY to this machine
-        cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
-    )
+# def manually_load_gz_evo():
+#     gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
+#     train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
+#     test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
+#     assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
+#     return load_dataset(
+#         path=gz_evo_manual_download_loc,
+#         # data_files must be explicit paths seemingly, not just glob strings. Weird.
+#         data_files={'train': train_locs, 'test': test_locs},
+#         # load LOCALLY to this machine
+#         cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
+#     )
 
 
 def get_dataset_dict(cfg):
-    if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
-        logging.info('Loading gz evo from manual download')
-        # will load to HF_LOCAL_DATASETS_CACHE
-        dataset_dict=manually_load_gz_evo()
-    else:
-        dataset_loc = f"mwalmsley/{cfg.dataset_name}"
-        logging.info(f"Loading dataset from {dataset_loc}")
-        print(f"Loading dataset from {dataset_loc}")
-        dataset_dict = load_dataset(
-            dataset_loc, 
-            name=cfg.subset_name, 
-            keep_in_memory=cfg.keep_in_memory, 
-            cache_dir=cfg.hf_cache_dir,
-            download_mode=cfg.download_mode,
-        )
-        
+    # if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
+    #     logging.info('Loading gz evo from manual download')
+    #     # will load to HF_LOCAL_DATASETS_CACHE
+    #     dataset_dict=manually_load_gz_evo()
+    # else:
+    dataset_loc = f"mwalmsley/{cfg.dataset_name}"
+    logging.info(f"Loading dataset from {dataset_loc}")
+    print(f"Loading dataset from {dataset_loc}")
+    dataset_dict = load_dataset(
+        dataset_loc, 
+        name=cfg.subset_name, 
+        keep_in_memory=cfg.keep_in_memory, 
+        # cache_dir=cfg.hf_cache_dir,  # no, just use env variables
+        download_mode=cfg.download_mode,
+    )
     return dataset_dict
 
 
@@ -236,7 +236,7 @@ def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_
     for name, dataloader in [('test', datamodule.test_dataloader())]:
         print(name)
 
-        dfs = trainer.predict(model=model, dataloaders=dataloader)
+        dfs: list = trainer.predict(model=model, dataloaders=dataloader)  # type: ignore
         # list of dfs, each is batch like {'id_str': ..., 'answer_a_fraction': ..., ...}
         # this works because the predict_step in ClassificationBaseline returns a dict of dataframes
         df = pd.concat(dfs, ignore_index=True)

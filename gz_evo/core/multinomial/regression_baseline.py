@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 import numpy as np
 import pytorch_lightning as pl
-# import datasets
+import datasets
 
 from galaxy_datasets.shared import label_metadata
 from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config
@@ -60,7 +60,7 @@ def main():
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
     # dataset_name='gz2'
-    save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}_{int(time.time())}"  # relative
+    save_dir = f"results/baselines/regression/{architecture_name}_{np.random.randint(1e9)}_{int(time.time())}"  # type: ignore
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
 
@@ -118,7 +118,7 @@ def evaluate():
 
 def set_up_task_data(cfg):
 
-    dataset_dict = baseline_training.get_dataset_dict(cfg)
+    dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
     # TODO for evo, filter like this but each column
     # for GZ2 filter not yet needed, masking is enough
