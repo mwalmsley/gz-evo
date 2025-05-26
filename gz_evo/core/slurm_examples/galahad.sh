@@ -21,11 +21,11 @@ export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 # seems to make dataset.filter() very slow, perhaps it turns off the column selection
 
 export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads
-export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
-# export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
+# export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
+export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
 
-export HF_LOCAL_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets' # evo manual only
-export GZ_EVO_MANUAL_DOWNLOAD_LOC='/share/nas2/walml/tmp/gz-evo'  # evo manual only
+# export HF_LOCAL_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets' # evo manual only
+# export GZ_EVO_MANUAL_DOWNLOAD_LOC='/share/nas2/walml/tmp/gz-evo'  # evo manual only
 # scripts read seed from SEED, default is 42
 # SEED=$RANDOM
 # echo Using seed $SEED
