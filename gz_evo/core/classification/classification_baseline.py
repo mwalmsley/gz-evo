@@ -13,12 +13,11 @@ from gz_evo.core import  baseline_models, baseline_datamodules, baseline_trainin
 def main():
 
     # architecture_name = 'resnet50'
-    # architecture_name = 'resnet50_clip.openai'  # timm looks for "resnet50_clip" and doesn't find it, probaly as it is designed for openclip
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_nano'
-    # architecture_name = 'convnext_base'
+    architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
     # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
@@ -34,16 +33,12 @@ def main():
     # architecture_name = 'maxvit_base'
     # architecture_name = 'maxvit_large'
 
-    # architecture_name = 'convnext_nano_finetune'
+    # architecture_name = 'vit_so400m_siglip'
+    
+    # with lr decay
+    # architecture_name = 'convnext_nano_finetune'  
     # architecture_name = 'convnext_base_finetune'
-
-    # base evo now started as 7222, long filtering step, others waiting for this
-    # filtering completed but epoch is pretty long, 1 hour
-    # starting another with atto for quick check, 7263
-    # and starting one with nano and a filter, 7278
-
-    # architecture_name = 'vit_so400m_siglip'  # no lr decay, currently  (no encoder yet)
-    architecture_name = 'vit_so400m_siglip_finetune'  # with lr decay, currently running (_ft encoder)
+    # architecture_name = 'vit_so400m_siglip_finetune'
 
     dataset_name='gz_evo'
     # dataset_name='gz_hubble'
@@ -74,8 +69,6 @@ def set_up_task_data(cfg):
     # print(dataset_dict)
     print(dataset_dict['train'][0]['summary'], 'is an example summary')
     print(dataset_dict['train'][1]['summary'], 'is another example summary')
-
-    # dataset_dict = dataset_dict.flatten_indices() #num_proc=cfg.num_workers)
 
     dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
 
@@ -121,7 +114,6 @@ def set_up_task_data(cfg):
     return datamodule
 
 
-
 def get_lightning_model(cfg):
     lightning_model = baseline_models.ClassificationBaseline(
         architecture_name=cfg.architecture_name,
@@ -140,10 +132,11 @@ def get_lightning_model(cfg):
     
     return lightning_model
 
+
 def has_labels(summary):
-    # raise ValueError(summary)
     assert isinstance(summary, str), f"summary is not a string, but a {type(summary), {summary}}"
     return summary != ''
+
 
 if __name__ == "__main__":
 
@@ -152,8 +145,6 @@ if __name__ == "__main__":
 
     seed = 42
     # seed = 41  # maxvit small has nan problem
-    # seed = 43  # for testing the new 'core finetuning' idea
     pl.seed_everything(seed)
 
     main()
-    # evaluate()

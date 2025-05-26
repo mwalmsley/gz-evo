@@ -27,12 +27,25 @@ For training on Core, we include minimal self-contained examples under `gz_evo/c
 
 For finetuning on Downstream, we use the [Zoobot](github.com/mwalmsley/zoobot) package to adapt your choice of `timm` encoder. `Zoobot` is often used by astronomers for galaxy image tasks. It is effectively a wrapper for Pytorch Lightning and (for data loading and augmentations) [galaxy-datasets](github.com/mwalmsley/galaxy-datasets).
 
-## Quick Installation
+## Quick Start
 
 ```bash
 pip install -r requirements.txt
 pip install "zoobot[pytorch-cu121]" --extra-index-url https://download.pytorch.org/whl/cu121
 ```
+
+and then run training on Core datasets e.g.
+
+```bash
+python gz_evo/classification/classification_baseline.py 
+```
+
+or finetune on Downstream datasets e.g.
+
+```bash
+python gz_evo/downstream/TODO.py 
+```
+
 
 ## Example Installation on Cluster
 
