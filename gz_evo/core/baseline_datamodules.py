@@ -35,6 +35,8 @@ class GenericDataModule(pl.LightningDataModule):
 
         self.num_workers = num_workers
         self.seed = seed
+
+        dataset_dict.set_format(None)  # clear any previous format 
         self.dataset_dict = dataset_dict
         # torchvision transforms, expect an image
         self.train_transform = train_transform
@@ -56,11 +58,13 @@ class GenericDataModule(pl.LightningDataModule):
         logging.info("Num workers: {}".format(self.num_workers))
         logging.info("Prefetch factor: {}".format(self.prefetch_factor))
 
-
+    # torchvision acts on image key but HF dataset returns dicts
     def train_transform_wrapped(self, example: dict):
-        return self.train_transform(example['image'])
+        example['image'] = self.train_transform(example['image'])
+        return example
     def test_transform_wrapped(self, example: dict):
-        return self.test_transform(example['image'])
+        example['image'] = self.test_transform(example['image'])
+        return example
 
 
     # called on every gpu
@@ -79,9 +83,13 @@ class GenericDataModule(pl.LightningDataModule):
             # train_dataset_hf = train_dataset_hf.flatten_indices()
             # val_dataset_hf = val_dataset_hf.flatten_indices()
 
+            # avoiding indexed datasets, using hf set_transform instead
+            # replaces set_format('torch')
             train_dataset_hf.set_transform(self.train_transform_wrapped)
             val_dataset_hf.set_transform(self.train_transform_wrapped)
 
+            # for distributed reading by torch workers
+            logging.info('Converting train and val datasets to iterable datasets')
             train_dataset_hf = train_dataset_hf.to_iterable_dataset(num_shards=64)
             val_dataset_hf = val_dataset_hf.to_iterable_dataset(num_shards=64)
 

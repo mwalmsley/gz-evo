@@ -60,7 +60,7 @@ def set_up_task_data(cfg):
 
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
-    dataset_dict.set_format("torch")
+    # dataset_dict.set_format("torch")  # now replaced by transforms inside datamodule
 
     # train_transform_config = default_view_config()
     # test_transform_config = minimal_view_config()
