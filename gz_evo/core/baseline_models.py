@@ -368,45 +368,39 @@ class RegressionBaseline(GenericBaseline):
         #     torch.nn.Linear(self.encoder.num_features, num_answers), 
         #     torch.nn.Sigmoid()
         # )
-        return FractionalHead(num_features, question_answer_pairs)
-    
+        return SoftmaxHeadPerAnswer(num_features, question_answer_pairs, dropout_rate=self.head_kwargs['dropout_rate'])
 
-# Q heads, each one making softmax predictions for the answers to a question
+class SoftmaxHeadPerAnswer(torch.nn.Module):
 
-
-def SoftmaxHead(num_features, num_answers):
-    return torch.nn.Sequential(
-            torch.nn.Linear(num_features, num_answers), 
-            torch.nn.Softmax(dim=1)
-        )
-
-
-#         self.dropout = torch.nn.Dropout(self.head_kwargs['dropout_rate'])
-
-class FractionalHead(torch.nn.Module):
-
-    def __init__(self, num_features: int, question_answer_pairs: dict):
+    def __init__(self, num_features: int, question_answer_pairs: dict, dropout_rate: float = 0.5):  # dropout newly added
         super().__init__()
 
         self.question_answer_pairs = question_answer_pairs
+        # Q heads, each one making softmax predictions for the answers to a question
         self.heads = torch.nn.ModuleDict({
-            question: SoftmaxHead(num_features, len(answers)) for question, answers in question_answer_pairs.items()
+            question: SoftmaxHead(num_features, len(answers), dropout_rate) for question, answers in question_answer_pairs.items()
         })
 
     def forward(self, x):
-        # x = torch.nn.Dropout(self.head_kwargs['dropout_rate'])(x)
         preds = [head(x) for head in self.heads.values()]
         return torch.cat(preds, dim=1)
-        
+    
+
+def SoftmaxHead(num_features, num_answers, dropout_rate):
+    return torch.nn.Sequential(
+            torch.nn.Dropout(dropout_rate),  # newly added
+            torch.nn.Linear(num_features, num_answers), 
+            torch.nn.Softmax(dim=1)  # this is our estimated probability for each answer (for multinomial loss)
+        )
 
 class CustomWeightedMSELoss(torch.nn.Module):
     def __init__(self, question_answer_pairs):
         super().__init__()
         self.question_answer_pairs = question_answer_pairs
         self.question_totals_keys = [question + '_total-votes' for question in self.question_answer_pairs.keys()]
-        self.answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
+        self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
         logging.info(f'question total keys: {self.question_totals_keys}')
-        logging.info(f'answer keys: {self.answer_fraction_keys}')
+        logging.info(f'answer keys: {self.answer_keys}')
 
 
     def forward(self, inputs, targets):
@@ -416,26 +410,22 @@ class CustomWeightedMSELoss(torch.nn.Module):
         loss = 0
                 
         for question, answers in self.question_answer_pairs.items():
-            question_total_key = question + '_total-votes'
-            question_total = targets[question_total_key]  # total votes for this question
 
-            # read answer fractions from target dictlike
-            fraction_keys = [question + answer + '_fraction' for answer in answers]
-            target_fractions = torch.stack([targets[key] for key in fraction_keys], dim=1)
-            # calculate counts as fractions * total votes (but I could have just read these into targets in the first place)
-            counts = (target_fractions * question_total.reshape(-1, 1)).int()
+            q_answer_keys = [question + answer for answer in answers]
 
-            # again, work out the answer indices for the prediction vector
-            answer_indices = [self.answer_fraction_keys.index(key) for key in fraction_keys]
+            counts = torch.stack([targets[key] for key in q_answer_keys], dim=1).int()
+
+            # work out the answer indices for the prediction vector
+            answer_indices = [self.answer_keys.index(key) for key in q_answer_keys]
             predicted_probs = inputs[:, answer_indices]
-            # total counts is implicit from counts, nice one torch :)
 
             # negative log likelihood of observed counts using multinomial p predicted by model
             # this is a simplified version of the Dirichlet-Multinomial loss from Zoobot etc, where the model predicts concentrations
             # here, the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
 
+            # total counts is implicit from counts, nice one torch :)
             # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
-            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version
+            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version, I forget why...
             loss += question_loss
                 
         # treating all answers equally, take a nanmean of everything
