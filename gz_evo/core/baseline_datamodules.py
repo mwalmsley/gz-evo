@@ -36,7 +36,7 @@ class GenericDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.seed = seed
 
-        dataset_dict.set_format(None)  # clear any previous format 
+        # dataset_dict.set_format(None)  # clear any previous format 
         self.dataset_dict = dataset_dict
         # torchvision transforms, expect an image
         self.train_transform = train_transform
@@ -83,15 +83,16 @@ class GenericDataModule(pl.LightningDataModule):
             # train_dataset_hf = train_dataset_hf.flatten_indices()
             # val_dataset_hf = val_dataset_hf.flatten_indices()
 
-            # avoiding indexed datasets, using hf set_transform instead
-            # replaces set_format('torch')
-            train_dataset_hf.set_transform(self.train_transform_wrapped)
-            val_dataset_hf.set_transform(self.train_transform_wrapped)
-
             # for distributed reading by torch workers
             logging.info('Converting train and val datasets to iterable datasets')
             train_dataset_hf = train_dataset_hf.to_iterable_dataset(num_shards=64)
             val_dataset_hf = val_dataset_hf.to_iterable_dataset(num_shards=64)
+
+            # avoiding indexed datasets, using hf set_transform instead
+            # replaces set_format('torch')
+            logging.info('Setting transforms for train and val datasets')
+            train_dataset_hf.set_transform(self.train_transform_wrapped)
+            val_dataset_hf.set_transform(self.train_transform_wrapped)
 
             self.train_dataset = train_dataset_hf
             self.val_dataset = val_dataset_hf
@@ -114,8 +115,9 @@ class GenericDataModule(pl.LightningDataModule):
 
             # test_dataset_hf = self.dataset_dict['test'].to_iterable_dataset(num_shards=64)
 
+            test_dataset_hf = self.dataset_dict['test'].with_format('torch')
             self.test_dataset = GenericDataset(
-                dataset=self.dataset_dict['test'],
+                dataset=test_dataset_hf,
                 transform=self.test_transform,
                 target_transform=self.target_transform,
                 **self.dataset_kwargs
