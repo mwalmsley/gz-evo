@@ -1,3 +1,4 @@
+import os
 import logging
 import time
 
@@ -143,7 +144,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
-    seed = 42
+    seed = os.environ.get('SEED', 42)
+    logging.info(f"Using seed: {seed}")
     # seed = 41  # maxvit small has nan problem
     pl.seed_everything(seed)
 
