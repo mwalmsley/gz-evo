@@ -59,10 +59,15 @@ class GenericDataModule(pl.LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:
             logging.warning('Creating validation split from 20%% of train dataset')
-            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True)
+            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, load_from_cache_file=True)
             train_dataset_hf = train_and_val_dict["train"]
             val_dataset_hf = train_and_val_dict['test']  # actually used as val
             del train_and_val_dict
+
+            # now shuffled, so flatten indices
+            # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
+            train_dataset_hf = train_dataset_hf.flatten_indices()
+            val_dataset_hf = val_dataset_hf.flatten_indices()
 
             self.train_dataset = GenericDataset(
                     dataset=train_dataset_hf,
@@ -90,7 +95,7 @@ class GenericDataModule(pl.LightningDataModule):
         return DataLoader(
             self.train_dataset,
             batch_size=self.batch_size,
-            shuffle=True,
+            shuffle=False,  # assume preshuffled
             num_workers=self.num_workers,
             pin_memory=True,
             persistent_workers=self.num_workers > 0,
