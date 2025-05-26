@@ -168,7 +168,8 @@ class GenericBaseline(pl.LightningModule):
     def make_step(self, batch, step_name):
         x = batch['image']
 
-        labels = {key: batch[key] for key in self.label_cols}  
+        labels = {key: batch[key] for key in self.label_cols}  # here is (not needed) label_col filter
+        # e.g. {'smooth_yes: 12, 'smooth_no': 8, 'smooth_fraction': 0.6, ...}
         predictions = self(x)
         loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
         outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
@@ -292,17 +293,12 @@ class RegressionBaseline(GenericBaseline):
         # use multi-class cross entropy as loss function
         self.question_answer_pairs = kwargs['head_kwargs']['question_answer_pairs']
         self.loss_fn = CustomWeightedMSELoss(self.question_answer_pairs)
+        self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
         self.answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
-        # logging.info(f'answer keys: {self.answer_fraction_keys}')
-        # dependencies = kwargs['head_kwargs']['dependencies']
-        # schema = schemas.Schema(question_answer_pairs, dependencies)
-
-
 
 
     def setup_other_metrics(self):
         # without weighting, supervised loss (above) is the sum of the mean squared errors across all answers
-
         # also have manually-calculated MSE across all answers?
 
         regression_metrics = {
@@ -310,9 +306,7 @@ class RegressionBaseline(GenericBaseline):
             'validation/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),
             'test/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore')
         }
-        question_answer_pairs = self.head_kwargs['question_answer_pairs']
-        answer_fraction_keys = [q + a + '_fraction' for q, a_list in question_answer_pairs.items() for a in a_list]
-        for answer_col in answer_fraction_keys:
+        for answer_col in self.answer_fraction_keys:
             regression_metrics[f'train/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
             regression_metrics[f'validation/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
             regression_metrics[f'test/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
@@ -353,7 +347,7 @@ class RegressionBaseline(GenericBaseline):
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
         preds =  self(batch['image'])
-        header = self.answer_fraction_keys
+        header = self.answer_keys
         df = pd.DataFrame(preds.cpu().numpy(), columns=header)
         df['id_str'] = batch['id_str']  # str, no need to cast
         return df
@@ -397,17 +391,18 @@ class CustomWeightedMSELoss(torch.nn.Module):
     def __init__(self, question_answer_pairs):
         super().__init__()
         self.question_answer_pairs = question_answer_pairs
-        self.question_totals_keys = [question + '_total-votes' for question in self.question_answer_pairs.keys()]
+        # looks similar to the RegressionBaseline init, but this is a different self
         self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
-        logging.info(f'question total keys: {self.question_totals_keys}')
         logging.info(f'answer keys: {self.answer_keys}')
 
 
     def forward(self, inputs, targets):
         # inputs, prediction vector, is B x N, where N is the number of answer keys (fractions). Might change to dictlike.
-        # targets, labels from datamodule, is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
+        # targets, labels from datamodule, is dictlike with keys of answer_keys, each with values of shape (B)
 
         loss = 0
+
+        logging.info(targets.keys())  # should be answer_keys (and answer_fraction_keys, but ignored here)
                 
         for question, answers in self.question_answer_pairs.items():
 

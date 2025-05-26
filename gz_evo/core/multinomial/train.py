@@ -84,12 +84,14 @@ def get_lightning_model(cfg):
     # specifying the questions and answers
     question_answer_pairs = label_metadata.gz_evo_v1_public_pairs  
 
-    # question_totals_keys = [question + '_total-votes' for question in question_answer_pairs.keys()]
+    # need counts for loss and fractions for MSE metrics
     answer_keys = [q + a for q, a_list in question_answer_pairs.items() for a in a_list]
-    # label_cols = question_totals_keys + answer_keys
+    answer_fraction_keys = [col + '_fraction' for col in answer_keys]
+    # no need for totals
+    label_cols = answer_keys + answer_fraction_keys
 
     lightning_model = baseline_models.RegressionBaseline(
-        label_cols=answer_keys,  # filters columns from HF within the model, not really necessary
+        label_cols=label_cols,  # filters columns from HF within the model, not really necessary
         architecture_name=cfg.architecture_name,
         channels=cfg.channels,
         timm_kwargs={
