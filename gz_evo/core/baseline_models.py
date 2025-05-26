@@ -301,12 +301,15 @@ class RegressionBaseline(GenericBaseline):
         # without weighting, supervised loss (above) is the sum of the mean squared errors across all answers
         # also have manually-calculated MSE across all answers?
 
+        # minor duplication: we run this during super().__init__, before own init, so can't use self.answer_fraction_keys yet
+        answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
+
         regression_metrics = {
             'train/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),  # ignore nans via MeanMetric
             'validation/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),
             'test/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore')
         }
-        for answer_col in self.answer_fraction_keys:
+        for answer_col in answer_fraction_keys:
             regression_metrics[f'train/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
             regression_metrics[f'validation/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
             regression_metrics[f'test/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
