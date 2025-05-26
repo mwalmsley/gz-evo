@@ -14,7 +14,7 @@ from zoobot.pytorch.training import train_with_pytorch_lightning
 
 from datasets import load_dataset
 
-import baseline_configs
+from gz_evo.core import baseline_configs
 
 
 def get_config(architecture_name, dataset_name, save_dir, debug=False):
@@ -118,6 +118,7 @@ def run_training(cfg, lightning_model, datamodule):
     # log a few images to make sure the transforms look good
     log_images(wandb_logger, datamodule)
 
+    # TODO stolen from Zoobot code, should copy over
     checkpoint_callback, callbacks = train_with_pytorch_lightning.get_default_callbacks(
         cfg.save_dir, cfg.patience
     )

@@ -7,7 +7,7 @@ import timm
 import pandas as pd
 # from zoobot.shared import schemas
 
-import baseline_datamodules
+from gz_evo.core import baseline_datamodules
 
 class GenericBaseline(pl.LightningModule):
     """
