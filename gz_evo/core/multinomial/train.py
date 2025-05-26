@@ -113,10 +113,6 @@ def get_lightning_model(cfg):
     return lightning_model
 
 
-def has_minimal_votes(gz2_votes, threshold=10):
-    return gz2_votes >= threshold
-
-
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
