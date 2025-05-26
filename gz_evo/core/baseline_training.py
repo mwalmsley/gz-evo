@@ -6,11 +6,10 @@ import pandas as pd
 
 import omegaconf
 import wandb
-import pytorch_lightning as pl
-from pytorch_lightning.loggers import WandbLogger
 import torch
-
-from zoobot.pytorch.training import train_with_pytorch_lightning
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 
 from datasets import load_dataset
 
@@ -63,25 +62,20 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             # hf_cache_dir=hf_cache_dir,
             # node_cache_dir=node_cache_dir,
             save_dir=save_dir,
-
-            # download_mode="force_redownload",
-            download_mode="reuse_dataset_if_exists",
+            download_mode="reuse_dataset_if_exists",  # or "force_redownload",
             num_workers=num_workers,  # 4 for local desktop
-            compile_encoder=False,  # beluga, ModuleNotFoundError: No module named 'triton.common'
-            pretrained=True, #imagenet 12k, for timm kwargs
+            compile_encoder=False,  # impractically slow to compile imo
+            pretrained=True, # passed to timm
             channels=3,
-
             keep_in_memory=False,
             accelerator=accelerator,
             devices=1,
             nodes=1,
             epochs=1000,
-            # strategy="auto",
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,
             grad_clip_val=0.3,
-            # sync_batchnorm=False,  # only one device
             transform_mode='default',
             debug=debug,
             batch_size_key=batch_size_key
@@ -118,10 +112,15 @@ def run_training(cfg, lightning_model, datamodule):
     # log a few images to make sure the transforms look good
     log_images(wandb_logger, datamodule)
 
-    # TODO stolen from Zoobot code, should copy over
-    checkpoint_callback, callbacks = train_with_pytorch_lightning.get_default_callbacks(
-        cfg.save_dir, cfg.patience
+    monitor_metric = 'validation/supervised_loss' 
+    checkpoint_callback = ModelCheckpoint(
+            dirpath=os.path.join(cfg.save_dir, 'checkpoints'),
+            monitor=monitor_metric,
+            save_weights_only=True,
+            mode='min',
     )
+    early_stopping_callback = EarlyStopping(monitor=monitor_metric, patience=cfg.patience, check_finite=True)
+    callbacks = [checkpoint_callback, early_stopping_callback]
 
     trainer = pl.Trainer(
         num_sanity_val_steps=0,
@@ -129,7 +128,6 @@ def run_training(cfg, lightning_model, datamodule):
         accelerator=cfg.accelerator,
         devices=cfg.devices,  # per node
         num_nodes=cfg.nodes,
-        # strategy=cfg.strategy,
         precision=cfg.precision,
         logger=wandb_logger,
         callbacks=callbacks,
@@ -138,7 +136,6 @@ def run_training(cfg, lightning_model, datamodule):
         plugins=cfg.plugins,
         gradient_clip_val=cfg.grad_clip_val,
         accumulate_grad_batches=cfg.accumulate_grad_batches,
-        # sync_batchnorm=cfg.sync_batchnorm,
     )
 
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
@@ -151,7 +148,6 @@ def run_training(cfg, lightning_model, datamodule):
             f"Testing on {checkpoint_callback.best_model_path} with single GPU. Be careful not to overfit your choices to the test data..."
         )
         datamodule.setup(stage="test")
-        # TODO with webdataset, no need for new trainer/datamodule (actually it breaks), but might still be needed with normal dataset?
         trainer.test(
             model=lightning_model,
             datamodule=datamodule,

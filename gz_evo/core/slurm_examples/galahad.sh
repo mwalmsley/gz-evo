@@ -17,6 +17,7 @@ export HYDRA_FULL_ERROR=1
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
+# HF_DATASETS_IN_MEMORY_MAX_SIZE
 export HF_HOME="/share/nas2/walml/cache/huggingface"
 export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets"
 
