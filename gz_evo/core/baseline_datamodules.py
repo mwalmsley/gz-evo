@@ -36,8 +36,10 @@ class GenericDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.seed = seed
         self.dataset_dict = dataset_dict
+        # torchvision transforms, expect an image
         self.train_transform = train_transform
         self.test_transform = test_transform
+
         self.target_transform = target_transform
         self.dataset_kwargs = dataset_kwargs
 
@@ -55,35 +57,55 @@ class GenericDataModule(pl.LightningDataModule):
         logging.info("Prefetch factor: {}".format(self.prefetch_factor))
 
 
+    def train_transform_wrapped(self, example: dict):
+        return self.train_transform(example['image'])
+    def test_transform_wrapped(self, example: dict):
+        return self.test_transform(example['image'])
+
+
     # called on every gpu
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:
             logging.warning('Creating validation split from 20%% of train dataset')
-            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, load_from_cache_file=True)
+            # TODO temp shuffle=False
+            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=False, load_from_cache_file=True)
             train_dataset_hf = train_and_val_dict["train"]
             val_dataset_hf = train_and_val_dict['test']  # actually used as val
             del train_and_val_dict
 
             # now shuffled, so flatten indices
+            # slow, sadly
             # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
-            train_dataset_hf = train_dataset_hf.flatten_indices()
-            val_dataset_hf = val_dataset_hf.flatten_indices()
+            # train_dataset_hf = train_dataset_hf.flatten_indices()
+            # val_dataset_hf = val_dataset_hf.flatten_indices()
 
-            self.train_dataset = GenericDataset(
-                    dataset=train_dataset_hf,
-                    transform=self.train_transform,
-                    target_transform=self.target_transform,
-                    **self.dataset_kwargs
-            )
-            self.val_dataset = GenericDataset(
-                dataset=val_dataset_hf,
-                transform=self.test_transform,
-                target_transform=self.target_transform,
-                **self.dataset_kwargs
-            )
+            train_dataset_hf.set_transform(self.train_transform_wrapped)
+            val_dataset_hf.set_transform(self.train_transform_wrapped)
+
+            train_dataset_hf = train_dataset_hf.to_iterable_dataset(num_shards=64)
+            val_dataset_hf = val_dataset_hf.to_iterable_dataset(num_shards=64)
+
+            self.train_dataset = train_dataset_hf
+            self.val_dataset = val_dataset_hf
+
+            # self.train_dataset = GenericDataset(
+            #         dataset=train_dataset_hf,
+            #         transform=self.train_transform,
+            #         target_transform=self.target_transform,
+            #         **self.dataset_kwargs
+            # )
+            # self.val_dataset = GenericDataset(
+            #     dataset=val_dataset_hf,
+            #     transform=self.test_transform,
+            #     target_transform=self.target_transform,
+            #     **self.dataset_kwargs
+            # )
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
+
+            # test_dataset_hf = self.dataset_dict['test'].to_iterable_dataset(num_shards=64)
+
             self.test_dataset = GenericDataset(
                 dataset=self.dataset_dict['test'],
                 transform=self.test_transform,
