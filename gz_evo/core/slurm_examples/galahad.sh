@@ -18,7 +18,7 @@ export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
 
-HF_DATASETS_IN_MEMORY_MAX_SIZE=50000000000  # 50GB ish
+export HF_DATASETS_IN_MEMORY_MAX_SIZE=50000000000  # 50GB ish
 export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # prepared parquet files, 30 mins from nas
 export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node, TBD time

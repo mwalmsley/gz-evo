@@ -21,8 +21,6 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
 
     # TODO may refactor as argparse or omegaconf
     if os.path.isdir('/project/def-bovy/walml'):
-        # hf_cache_dir = '/project/def-bovy/walml/cache/huggingface/datasets'
-        # node_cache_dir = os.environ.get('SLURM_TMPDIR', hf_cache_dir)
         subset_name = 'default'
         accelerator="gpu"
         
@@ -35,8 +33,6 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'v100_batch_size'
 
     elif os.path.isdir('/share/nas2'):
-        # hf_cache_dir = '/share/nas2/walml/cache/huggingface/datasets'
-        # node_cache_dir = '/state/partition1/huggingface_tmp'
         subset_name = 'default'
         num_workers = 8  # of 16 per node
         batch_size_key = 'a100_batch_size'
@@ -45,8 +41,6 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     # TODO add your own system here
 
     else:
-        # hf_cache_dir = None
-        # node_cache_dir = hf_cache_dir
         subset_name = 'tiny'  # debugging
         # subset_name = 'default'
         num_workers = 4
@@ -59,15 +53,14 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             architecture_name=architecture_name,
             dataset_name=dataset_name,
             subset_name=subset_name,
-            # hf_cache_dir=hf_cache_dir,
-            # node_cache_dir=node_cache_dir,
             save_dir=save_dir,
             download_mode="reuse_dataset_if_exists",  # or "force_redownload",
+            verification_mode="basic_checks",  # or "no_checks"
+            keep_in_memory=None,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
             num_workers=num_workers,  # 4 for local desktop
             compile_encoder=False,  # impractically slow to compile imo
             pretrained=True, # passed to timm
             channels=3,
-            keep_in_memory=False,
             accelerator=accelerator,
             devices=1,
             nodes=1,
@@ -88,7 +81,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         cfg.epochs = 20
     else:
         cfg.batch_size = cfg[cfg.batch_size_key]
-        cfg.accumulate_grad_batches = 2048 // cfg.batch_size
+        # always the same effective batch size, after accumulation
+        cfg.accumulate_grad_batches = 2048 // cfg.batch_size  
         cfg.debug = debug
 
     logging.info(f'using config:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
@@ -170,20 +164,16 @@ def run_training(cfg, lightning_model, datamodule):
 
 
 def get_dataset_dict(cfg):
-    # if cfg.dataset_name == 'gz_evo' and os.environ.get('GZ_EVO_MANUAL_DOWNLOAD_LOC'):
-    #     logging.info('Loading gz evo from manual download')
-    #     # will load to HF_LOCAL_DATASETS_CACHE
-    #     dataset_dict=manually_load_gz_evo()
-    # else:
     dataset_loc = f"mwalmsley/{cfg.dataset_name}"
     logging.info(f"Loading dataset from {dataset_loc}")
     print(f"Loading dataset from {dataset_loc}")
     dataset_dict = load_dataset(
         dataset_loc, 
         name=cfg.subset_name, 
-        keep_in_memory=cfg.keep_in_memory, 
-        # cache_dir=cfg.hf_cache_dir,  # no, just use env variables
-        download_mode=cfg.download_mode,
+        # typically stick to defaults here
+        keep_in_memory=cfg.keep_in_memory,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
+        download_mode=cfg.download_mode,  # reuse_dataset_if_exists
+        verification_mode=cfg.verification_mode,  # basic_checks
     )
     return dataset_dict
 
