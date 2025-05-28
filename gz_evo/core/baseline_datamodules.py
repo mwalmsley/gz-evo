@@ -6,6 +6,7 @@ import datasets as hf_datasets
 from PIL import Image
 import torch
 from torch.utils.data import DataLoader
+from torchvision.transforms import v2
 
 LABEL_ORDER = ['smooth_round', 'smooth_cigar', 'unbarred_spiral', 'edge_on_disk', 'barred_spiral', 'featured_without_bar_or_spiral']
 # convert to integers
@@ -26,6 +27,7 @@ class GenericDataModule(pl.LightningDataModule):
         num_workers=4,
         prefetch_factor=4,
         seed=42,
+        iterable=False,  # whether to use IterableDataset (faster, no indexed access)
         dataset_kwargs={}
     ):
         # super().__init__()
@@ -45,6 +47,8 @@ class GenericDataModule(pl.LightningDataModule):
         self.target_transform = target_transform
         self.dataset_kwargs = dataset_kwargs
 
+        self.iterable = iterable
+
         if self.num_workers == 0:
             logging.warning(
                 "num_workers=0, setting prefetch=None and timeout=0 as no multiprocessing"
@@ -60,7 +64,13 @@ class GenericDataModule(pl.LightningDataModule):
 
     # torchvision acts on image key but HF dataset returns dicts
     def train_transform_wrapped(self, example: dict):
+        # REPLACES set_transform('torch') so we also need to make torch tensors
+        # https://huggingface.co/docs/datasets/v3.6.0/en/package_reference/main_classes#datasets.Dataset.with_transform
+        # best with pil_to_tensor=True
+        # print(example['image'], 'before')
+        # print(example['image'].shape)
         example['image'] = self.train_transform(example['image'])
+        # print(example['image'], 'after')
         return example
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
@@ -70,58 +80,56 @@ class GenericDataModule(pl.LightningDataModule):
     # called on every gpu
     def setup(self, stage: Optional[str] = None):
         if stage == "fit" or stage is None:
+
+            # first we have to split while it's still a normal dataset
             logging.warning('Creating validation split from 20%% of train dataset')
-            # TODO temp shuffle=False
-            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=False, load_from_cache_file=True)
-            train_dataset_hf = train_and_val_dict["train"]
-            val_dataset_hf = train_and_val_dict['test']  # actually used as val
-            del train_and_val_dict
-
+            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, seed=self.seed, keep_in_memory=self.seed != 42)
             # now shuffled, so flatten indices
-            # slow, sadly
+            # very slow, sadly
             # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
-            # train_dataset_hf = train_dataset_hf.flatten_indices()
-            # val_dataset_hf = val_dataset_hf.flatten_indices()
+            train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
+            # don't cache for every random seed, or it will fill up disk space
 
-            # for distributed reading by torch workers
-            logging.info('Converting train and val datasets to iterable datasets')
-            train_dataset_hf = train_dataset_hf.to_iterable_dataset(num_shards=64)
-            val_dataset_hf = val_dataset_hf.to_iterable_dataset(num_shards=64)
+            if self.iterable:
+                # convert to iterable datasets
+                logging.info('Converting to iterable datasets')
+                # these have been split above, is really train and val
+                train_dataset_hf = train_and_val_dict["train"].to_iterable_dataset(num_shards=64)
+                val_dataset_hf = train_and_val_dict["test"].to_iterable_dataset(num_shards=64)
+                del train_and_val_dict
 
-            # avoiding indexed datasets, using hf set_transform instead
-            # replaces set_format('torch')
-            logging.info('Setting transforms for train and val datasets')
-            train_dataset_hf.set_transform(self.train_transform_wrapped)
-            val_dataset_hf.set_transform(self.train_transform_wrapped)
+                # apply transforms with map
+                train_dataset_hf = train_dataset_hf.map(self.train_transform_wrapped)
+                val_dataset_hf = val_dataset_hf.map(self.test_transform_wrapped)
+                # https://huggingface.co/docs/datasets/en/image_process
+                # for dataset, map is cached and intended for "do once" transforms
+                # with_format('torch') is (probably) a map
+                # set_transform is intended for "on-the-fly" transforms and so is not cached (less disk space, faster)
+                # for iterabledataset, map is applied on-the-fly (on every yield) and not cached
+                # so there's no need for set_transform: everything is a non-cached map
+    
+            else:  # leave as not iterable, fast reads 
+                train_dataset_hf = train_and_val_dict["train"]
+                val_dataset_hf = train_and_val_dict['test']  # actually used as val
+                del train_and_val_dict
+
+                # set transforms to use on-the-fly
+                # with transform only works with dataset, not iterabledataset
+                train_dataset_hf = train_dataset_hf.with_transform(self.train_transform_wrapped)
+                val_dataset_hf = val_dataset_hf.with_transform(self.test_transform_wrapped)
+                # these act individually, dataloader will handle batching afterwards
 
             self.train_dataset = train_dataset_hf
             self.val_dataset = val_dataset_hf
 
-            # self.train_dataset = GenericDataset(
-            #         dataset=train_dataset_hf,
-            #         transform=self.train_transform,
-            #         target_transform=self.target_transform,
-            #         **self.dataset_kwargs
-            # )
-            # self.val_dataset = GenericDataset(
-            #     dataset=val_dataset_hf,
-            #     transform=self.test_transform,
-            #     target_transform=self.target_transform,
-            #     **self.dataset_kwargs
-            # )
-
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
+            test_dataset_hf = self.dataset_dict['test']
+            # not shuffled, so no need to flatten indices
+            # never iterable, for now
+            test_dataset_hf = test_dataset_hf.with_transform(self.test_transform_wrapped)
+            self.test_dataset = test_dataset_hf
 
-            # test_dataset_hf = self.dataset_dict['test'].to_iterable_dataset(num_shards=64)
-
-            test_dataset_hf = self.dataset_dict['test'].with_format('torch')
-            self.test_dataset = GenericDataset(
-                dataset=test_dataset_hf,
-                transform=self.test_transform,
-                target_transform=self.target_transform,
-                **self.dataset_kwargs
-            )
 
     def train_dataloader(self):
         return DataLoader(
@@ -161,39 +169,63 @@ class GenericDataModule(pl.LightningDataModule):
         )
 
 
-class GenericDataset(torch.utils.data.Dataset):
-    def __init__(
-        self,
-        dataset: hf_datasets.Dataset,  # HF Dataset
-        transform=None,
-        target_transform=None,
-        **kwargs
-    ):
-        """
-        Create custom PyTorch Dataset using HuggingFace dataset
+if __name__ == "__main__":
 
 
-        Args:
-            name (str): Name of HF dataset
-            transform (callable, optional): See Pytorch Datasets. Defaults to None.
-            target_transform (callable, optional): See Pytorch Datasets. Defaults to None.
-        """
-        self.dataset = dataset
-        self.transform = transform
-        self.target_transform = target_transform
+    # for testing purposes
 
-    def __len__(self) -> int:
-        return len(self.dataset)
+    import datasets as hf_datasets
+    import time
 
-    def __getitem__(self, idx: int):
-        example:dict = self.dataset[idx]
-        
-        if self.transform:
-             # torchvision transforms operate on PIL images or tensors
-             example['image'] = self.transform(example['image'])  # example['image'] is already a torch.Tensor via hf.set_format('torch')
+    ds_dict = hf_datasets.load_dataset("mwalmsley/gz-evo", 'tiny')
+    ds_dict['train'] = ds_dict['train'].repeat(5)
+    # print(ds_dict)
 
-        if self.target_transform:
-            example = self.target_transform(example)  # slightly generalised: target_transform to expect and yield example, changing the targets (labels)
+    transform = v2.Compose([
+        v2.ToImage(),  # Convert to tensor
+        v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
+        v2.Resize((224, 224)),
+        v2.ToDtype(torch.float32, scale=True)  # float for models
+    ])
 
-        return example  # dict like {'image': image, 'foobar', ..., 'label': ...}
+    # most minimal
+    # pure dataset (no dataloader) gives examples which are simple dicts, as I guessed
 
+    # def transform_wrapped(example):
+    #     example['image'] = transform(example['image'])
+    #     return example
+
+    # ds_dict.set_transform(transform_wrapped)
+
+    # dataloader = DataLoader(
+    #     ds_dict['train'],
+    #     batch_size=2,  
+    #     num_workers=0,
+    # )
+
+    # for batch in dataloader:
+    #     print(batch['image'].shape)
+    #     print(batch['spiral-winding-ukidss_medium_fraction'])
+    #     break
+    # exit()
+
+
+    datamodule = GenericDataModule(
+        dataset_dict=ds_dict,
+        train_transform=transform,
+        test_transform=transform,
+        batch_size=256, # applies AFTER transform, transform still gets row-by-row examples
+        num_workers=4,  # for testing, no multiprocessing
+        prefetch_factor=4,
+        iterable=True
+    )
+    datamodule.setup()
+
+    dataloader = datamodule.train_dataloader()
+    start_time = time.time()
+    for batch in dataloader:
+        pass
+    end_time = time.time()
+    print(f"Time taken to iterate over train_dataloader: {end_time - start_time:.2f} seconds. Iterable: {datamodule.iterable}, num_workers: {datamodule.num_workers}, prefetch_factor: {datamodule.prefetch_factor}")
+    print('Complete')
+    exit()
