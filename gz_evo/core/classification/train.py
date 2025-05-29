@@ -81,8 +81,6 @@ def set_up_task_data(cfg):
     logging.info(f'{dataset_dict["train"][0]["summary"]} is an example summary')
     logging.info(f'{dataset_dict["train"][1]["summary"]} is another example summary')
 
-    # dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
-
     train_transform_config = default_view_config()
     test_transform_config = minimal_view_config()
     # transform_config = fast_view_config()
