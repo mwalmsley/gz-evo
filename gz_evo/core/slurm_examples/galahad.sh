@@ -1,16 +1,33 @@
 #!/bin/bash
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --ntasks 1
 #SBATCH --mem=60G  # no need for high mem
 #SBATCH --cpus-per-task=10
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
 #SBATCH --exclusive  
+#SBATCH --ntasks-per-node=2
+
+#### SBATCH --ntasks 1
 
 pwd; hostname; date
 
 nvidia-smi
+
+# NCCL socket varies by node, needs some hacking here to set correctly
+
+# Extract the number from SLURMD_NODENAME (e.g., compute-0-99 -> 99)
+node_number=$(echo $SLURMD_NODENAME | grep -o -E '[0-9]+$')
+
+# Check the range of the number and set NCCL_SOCKET_IFNAME accordingly
+if (( 0 <= $node_number && $node_number < 100 )); then
+    export NCCL_SOCKET_IFNAME='em1'
+elif (( 100 <= $node_number && $node_number < 200 )); then
+    export NCCL_SOCKET_IFNAME='eno1'
+else
+    echo "SLURMD_NODENAME is out of expected range."
+fi
+
 
 export HYDRA_FULL_ERROR=1
 

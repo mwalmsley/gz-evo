@@ -1,3 +1,4 @@
+import os
 import pytorch_lightning as pl
 from typing import Optional
 import logging
@@ -7,6 +8,7 @@ from PIL import Image
 import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms import v2
+from datasets.distributed import split_dataset_by_node
 
 LABEL_ORDER = ['smooth_round', 'smooth_cigar', 'unbarred_spiral', 'edge_on_disk', 'barred_spiral', 'featured_without_bar_or_spiral']
 # convert to integers
@@ -118,7 +120,18 @@ class GenericDataModule(pl.LightningDataModule):
             logging.info('No validation split found, adding one')
             self.dataset_dict = add_validation_split(self.dataset_dict, seed=self.seed, num_workers=self.num_workers)
 
+
         if stage == "fit" or stage is None:
+
+            # distributed training
+            rank = int(os.environ.get("LOCAL_RANK", 0))  # local rank for this process
+            world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
+            if rank > 0 or world_size > 1:
+                logging.info(f"Distributing datasets on rank {rank}, world size {world_size}")
+                self.dataset_dict  = split_dataset_by_node(self.dataset_dict, rank=rank, world_size=world_size)
+            else:
+                logging.info("Not distributing datasets, single gpu training")
+
 
             if self.iterable:
                 # convert to iterable datasets
