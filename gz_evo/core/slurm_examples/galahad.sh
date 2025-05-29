@@ -4,12 +4,14 @@
 #SBATCH --mem=60G  # no need for high mem
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
+#SBATCH --cpus-per-task=16
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=2
-#SBATCH --cpus-per-task=8
+#SBATCH --exclusive  
+#SBATCH --ntasks 1
 
-#### SBATCH --exclusive  
-#### SBATCH --ntasks 1
+
+
+### #SBATCH --ntasks-per-node=2
 
 pwd; hostname; date
 
@@ -17,21 +19,22 @@ nvidia-smi
 
 # NCCL socket varies by node, needs some hacking here to set correctly
 
-# Extract the number from SLURMD_NODENAME (e.g., compute-0-99 -> 99)
-node_number=$(echo $SLURMD_NODENAME | grep -o -E '[0-9]+$')
+# # Extract the number from SLURMD_NODENAME (e.g., compute-0-99 -> 99)
+# node_number=$(echo $SLURMD_NODENAME | grep -o -E '[0-9]+$')
 
-# Check the range of the number and set NCCL_SOCKET_IFNAME accordingly
-if (( 0 <= $node_number && $node_number < 100 )); then
-    export NCCL_SOCKET_IFNAME='em1'
-elif (( 100 <= $node_number && $node_number < 200 )); then
-    export NCCL_SOCKET_IFNAME='eno1'
-else
-    echo "SLURMD_NODENAME is out of expected range."
-fi
+# # Check the range of the number and set NCCL_SOCKET_IFNAME accordingly
+# if (( 0 <= $node_number && $node_number < 100 )); then
+#     export NCCL_SOCKET_IFNAME='em1'
+# elif (( 100 <= $node_number && $node_number < 200 )); then
+#     export NCCL_SOCKET_IFNAME='eno1'
+# else
+#     echo "SLURMD_NODENAME is out of expected range."
+# fi
 
 
 export HYDRA_FULL_ERROR=1
 export NCCL_BLOCKING_WAIT=1
+export NCCL_DEBUG=INFO
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
@@ -58,8 +61,8 @@ REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
 echo SLURM_NTASKS $SLURM_NTASKS 
 echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
-export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm
-echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
+# export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm
+# echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 
     # ntasks = int(os.environ.get("SLURM_NTASKS", "1"))
     #     if ntasks > 1 and "SLURM_NTASKS_PER_NODE" not in os.environ:
