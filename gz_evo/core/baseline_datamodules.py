@@ -138,15 +138,15 @@ class GenericDataModule(pl.LightningDataModule):
         if stage == "fit" or stage is None:
 
             # distributed training
-            # TODO may move to train script for efficiency
-            self.dataset_dict = distribute_dataset_with_lightning(self.dataset_dict)
+            # TODO moved to train script for efficiency
+            # self.dataset_dict = distribute_dataset_with_lightning(self.dataset_dict)
 
             # with lightning, these aren't set as you'd expect, remain unset
             # rank = int(os.environ.get("LOCAL_RANK", 0))  # local rank for this process
             # world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
 
             # use env variables from slurm instead
-            distribute_dataset_with_lightning()
+            # distribute_dataset_with_lightning()
 
 
             if self.iterable:

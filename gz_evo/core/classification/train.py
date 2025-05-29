@@ -92,30 +92,21 @@ def set_up_task_data(cfg):
     train_transform = GalaxyViewTransform(train_transform_config).transform
     test_transform = GalaxyViewTransform(test_transform_config).transform
 
-    # any callable that takes an HF example (row) and returns a label
-    # load the summary column as integers
-    # def target_transform(example):
-        # example['label'] = baseline_datamodules.LABEL_ORDER_DICT[example['summary']]
-        # optionally could delete the other keys besides image and id_str
-        # return example
-    # just do this first...
-    # dataset_dict = dataset_dict.map(
-    #     target_transform,
-    #     input_columns=['summary'] # new, hopefully doesn't break
-    # )
+    # before we do anything heavy, split between ranks to distribute the work
+    dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
 
-    def summary_to_label(summary):
-        return baseline_datamodules.LABEL_ORDER_DICT[summary]
-    
     # we need to flatten after the filter
     # do validation split here, which flattens anyway after shuffling
     # this avoids flattening *again* with add_column below
     dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
     # also flatten test indices post-filter, where we can control num_proc
+    logging.info('Flattening indices for test set')
     dataset_dict['test'] = dataset_dict['test'].flatten_indices(num_proc=cfg.num_workers)
 
-    # add_column includes a flatten_indices call internally:
-    # dataset = self.flatten_indices() if self._indices is not None else self
+    # map to calculate labels
+    def summary_to_label(summary):
+        return baseline_datamodules.LABEL_ORDER_DICT[summary]
+    # add_column includes a flatten_indices call internally, but no num_proc option, so flatten first
     for split in dataset_dict:
         # operating on a single column seems much quicker than mapping the whole dataset
         dataset_dict[split] = dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
