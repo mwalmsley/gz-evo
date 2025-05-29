@@ -15,7 +15,6 @@ from datasets import load_dataset
 
 from gz_evo.core import baseline_configs
 
-
 def get_config(architecture_name, dataset_name, save_dir, debug=False):
     # some path management, adjust to your system as needed 
 
@@ -39,6 +38,15 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
 
+
+    elif os.path.isdir('/Users/user'):
+        # macbook
+        subset_name = 'tiny' 
+        num_workers = 0
+        debug = True
+        accelerator="cpu"  # not auto, MPS still has issues
+        batch_size_key = 'debug'
+    
     # TODO add your own system here
 
     else:

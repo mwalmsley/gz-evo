@@ -12,7 +12,21 @@ LABEL_ORDER = ['smooth_round', 'smooth_cigar', 'unbarred_spiral', 'edge_on_disk'
 # convert to integers
 LABEL_ORDER_DICT = {label_: i for i, label_ in enumerate(LABEL_ORDER)}
 
-
+# utility for adding a validation split to a huggingface dataset dictionary
+# can be used inside GenericDataModule.setup(), but best done earlier if doing other operations that require flattening
+def add_validation_split(dataset_dict, seed=42, num_workers=4):
+    logging.warning('Creating validation split from 20%% of train dataset, seed ={}'.format(seed))
+    train_and_val_dict = dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, seed=seed, keep_in_memory=seed != 42)
+    # now shuffled, so flatten indices
+    # breaks (silently hangs) if you have already done set_format
+    # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
+    logging.info('Flattening indices for train and val datasets, may take a while...')
+    train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=num_workers, keep_in_memory=seed != 42)
+    # don't cache for every random seed, or it will fill up disk space
+    dataset_dict['train'] = train_and_val_dict["train"]
+    dataset_dict['validation'] = train_and_val_dict["test"]
+    del train_and_val_dict
+    return dataset_dict
 
 # https://pytorch-lightning.readthedocs.io/en/stable/extensions/datamodules.html
 class GenericDataModule(pl.LightningDataModule):
@@ -40,7 +54,6 @@ class GenericDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.seed = seed
 
-        # dataset_dict.set_format(None)  # clear any previous format 
         self.dataset_dict = dataset_dict
         # torchvision transforms, expect an image
         self.train_transform = train_transform
@@ -99,25 +112,20 @@ class GenericDataModule(pl.LightningDataModule):
 
     # called on every gpu
     def setup(self, stage: Optional[str] = None):
-        if stage == "fit" or stage is None:
 
-            # first we have to split while it's still a normal dataset
-            logging.warning('Creating validation split from 20%% of train dataset')
-            train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, seed=self.seed, keep_in_memory=self.seed != 42)
-            # now shuffled, so flatten indices
-            # breaks (silently hangs) if you have already done set_format
-            # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
-            logging.info('Flattening indices for train and val datasets, may take a while...')
-            train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
-            # don't cache for every random seed, or it will fill up disk space
+        if 'validation' not in self.dataset_dict.keys():
+            # if no validation split, add it
+            logging.info('No validation split found, adding one')
+            self.dataset_dict = add_validation_split(self.dataset_dict, seed=self.seed, num_workers=self.num_workers)
+
+        if stage == "fit" or stage is None:
 
             if self.iterable:
                 # convert to iterable datasets
                 logging.info('Converting to iterable datasets')
                 # these have been split above, is really train and val
-                train_dataset_hf = train_and_val_dict["train"].to_iterable_dataset(num_shards=64)
-                val_dataset_hf = train_and_val_dict["test"].to_iterable_dataset(num_shards=64)
-                del train_and_val_dict
+                train_dataset_hf = self.dataset_dict["train"].to_iterable_dataset(num_shards=64)
+                val_dataset_hf = self.dataset_dict["validation"].to_iterable_dataset(num_shards=64)
 
                 # apply transforms with map
                 # map passes each example through the transform function as a dict
@@ -132,9 +140,8 @@ class GenericDataModule(pl.LightningDataModule):
                 # so there's no need for set_transform: everything is a non-cached map
     
             else:  # leave as not iterable, fast reads 
-                train_dataset_hf = train_and_val_dict["train"]
-                val_dataset_hf = train_and_val_dict['test']  # actually used as val
-                del train_and_val_dict
+                train_dataset_hf = self.dataset_dict['train']
+                val_dataset_hf = self.dataset_dict['validation']
 
                 # set transforms to use on-the-fly
                 # with transform only works with dataset, not iterabledataset
@@ -152,6 +159,8 @@ class GenericDataModule(pl.LightningDataModule):
             # never iterable, for now
             test_dataset_hf = test_dataset_hf.with_transform(self.test_transform_wrapped)
             self.test_dataset = test_dataset_hf
+
+
 
 
     def train_dataloader(self):

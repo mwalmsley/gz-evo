@@ -17,8 +17,8 @@ def main():
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    architecture_name = 'convnext_nano'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
     # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
@@ -76,6 +76,7 @@ def set_up_task_data(cfg):
         # load_from_cache_file=False
         num_proc=cfg.num_workers
     )
+    # filter will create an index mapping and need flatten_indices later for speed
     logging.info(f'{dataset_dict["train"].num_rows} training examples after filtering')
     # logging.info(dataset_dict)
     logging.info(f'{dataset_dict["train"][0]["summary"]} is an example summary')
@@ -104,11 +105,17 @@ def set_up_task_data(cfg):
 
     def summary_to_label(summary):
         return baseline_datamodules.LABEL_ORDER_DICT[summary]
+    
+    # we need to flatten after the filter
+    # do validation split here, which flattens anyway after shuffling
+    # this avoids flattening *again* with add_column below
+    dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
 
+    # add_column includes a flatten_indices call internally:
+    # dataset = self.flatten_indices() if self._indices is not None else self
     for split in dataset_dict:
         # operating on a single column seems much quicker than mapping the whole dataset
         dataset_dict[split] = dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
-        # dataset_dict[split].set_format("torch")  # now replaced by transforms inside datamodule
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
