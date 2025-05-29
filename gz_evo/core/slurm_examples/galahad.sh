@@ -7,11 +7,10 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --nodes=1
 #SBATCH --exclusive  
-#SBATCH --ntasks 1
+#SBATCH --ntasks-per-node=2
+### #SBATCH --ntasks 1
 
 
-
-### #SBATCH --ntasks-per-node=2
 
 pwd; hostname; date
 
@@ -72,7 +71,7 @@ echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
     #         )
 
 echo 'Running classification baseline'
-$PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
+srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
 # echo 'Running multinomial baseline'
 # $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
