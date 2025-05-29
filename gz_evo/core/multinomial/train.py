@@ -57,7 +57,7 @@ def main():
     # cfg.drop_path_rate = 0.75 
 
     # larger weight decay
-    cfg.weight_decay = 0.2
+    # cfg.weight_decay = 0.2
 
     # paper: batch size 4096 - mine already is, with two devices, but can play
     # cfg.accumulate_grad_batches = 4 * 4096 / (cfg.batch_size * cfg.devices)
