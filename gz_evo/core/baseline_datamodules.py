@@ -89,8 +89,8 @@ class GenericDataModule(pl.LightningDataModule):
             # now shuffled, so flatten indices
             # very slow, sadly
             # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
-            logging.info('Flattening indices for train and val datasets, may take a while...')
-            train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
+            # logging.info('Flattening indices for train and val datasets, may take a while...')
+            # train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
             # don't cache for every random seed, or it will fill up disk space
 
             if self.iterable:
