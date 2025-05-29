@@ -2,12 +2,13 @@
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --mem=60G  # no need for high mem
-#SBATCH --cpus-per-task=10
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --exclusive  
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=2
+#SBATCH --cpus-per-task=8
 
+#### SBATCH --exclusive  
 #### SBATCH --ntasks 1
 
 pwd; hostname; date
@@ -30,6 +31,7 @@ fi
 
 
 export HYDRA_FULL_ERROR=1
+export NCCL_BLOCKING_WAIT=1
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
