@@ -111,6 +111,8 @@ def set_up_task_data(cfg):
     # do validation split here, which flattens anyway after shuffling
     # this avoids flattening *again* with add_column below
     dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
+    # also flatten test indices post-filter, where we can control num_proc
+    dataset_dict['test'] = dataset_dict['test'].flatten_indices(num_proc=cfg.num_workers)
 
     # add_column includes a flatten_indices call internally:
     # dataset = self.flatten_indices() if self._indices is not None else self
