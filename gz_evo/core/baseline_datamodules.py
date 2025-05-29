@@ -77,6 +77,20 @@ class GenericDataModule(pl.LightningDataModule):
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
         return example
+    # .map sends example as dict
+    # .set_transform sends example as dict of lists, i.e. a batched dict
+    # torch collate func will handle the final dict-of-lists-to-tensor, but image transforms only get applied to the first img
+    def train_transform_wrapped_batch(self, examples: dict):
+        # assert len(examples['image']) == 1, "Expected a batch of size 1 in train, got {}".format(len(examples['image']))
+        # return train_transform_wrapped(examples[0])
+        examples['image'] = [self.train_transform(im) for im in examples['image']]
+        return examples
+    def test_transform_wrapped_batch(self, examples: dict):
+        # assert len(examples['image']) == 1, "Expected a batch of size 1 in test, got {}".format(len(examples['image']))
+        # return test_transform_wrapped(examples[0])
+        examples['image'] = [self.test_transform(im) for im in examples['image']]
+        return examples
+
 
 
     # called on every gpu
@@ -102,6 +116,8 @@ class GenericDataModule(pl.LightningDataModule):
                 del train_and_val_dict
 
                 # apply transforms with map
+                # map passes each example through the transform function as a dict
+                # (while with_transform sends a list...)
                 train_dataset_hf = train_dataset_hf.map(self.train_transform_wrapped)
                 val_dataset_hf = val_dataset_hf.map(self.test_transform_wrapped)
                 # https://huggingface.co/docs/datasets/en/image_process
@@ -118,8 +134,8 @@ class GenericDataModule(pl.LightningDataModule):
 
                 # set transforms to use on-the-fly
                 # with transform only works with dataset, not iterabledataset
-                train_dataset_hf = train_dataset_hf.with_transform(self.train_transform_wrapped)
-                val_dataset_hf = val_dataset_hf.with_transform(self.test_transform_wrapped)
+                train_dataset_hf = train_dataset_hf.with_transform(self.train_transform_wrapped_batch)
+                val_dataset_hf = val_dataset_hf.with_transform(self.train_transform_wrapped_batch)
                 # these act individually, dataloader will handle batching afterwards
 
             self.train_dataset = train_dataset_hf
@@ -219,10 +235,10 @@ if __name__ == "__main__":
         dataset_dict=ds_dict,
         train_transform=transform,
         test_transform=transform,
-        batch_size=256, # applies AFTER transform, transform still gets row-by-row examples
-        num_workers=0,  # for testing, no multiprocessing
-        prefetch_factor=4,
-        iterable=True
+        batch_size=8, # applies AFTER transform, transform still gets row-by-row examples
+        num_workers=2,  # for testing, no multiprocessing
+        prefetch_factor=None,
+        iterable=False
     )
     datamodule.setup()
 
