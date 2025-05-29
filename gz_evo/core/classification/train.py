@@ -124,6 +124,7 @@ def set_up_task_data(cfg):
         # target_transform=target_transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
+        iterable=cfg.iterable,  # if True, will use IterableDataset, else use MapDataset
         seed=seed
     )
 

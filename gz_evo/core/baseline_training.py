@@ -42,7 +42,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     elif os.path.isdir('/Users/user'):
         # macbook
         subset_name = 'tiny' 
-        num_workers = 0
+        num_workers = 1
         debug = True
         accelerator="cpu"  # not auto, MPS still has issues
         batch_size_key = 'debug'
@@ -71,7 +71,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             verification_mode="basic_checks",  # or "no_checks"
             # keep_in_memory=None,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
             keep_in_memory=False,
-            num_workers=num_workers,  # 4 for local desktop
+            num_workers=num_workers,
+            iterable=True,
             compile_encoder=False,  # impractically slow to compile imo
             pretrained=True, # passed to timm
             channels=3,

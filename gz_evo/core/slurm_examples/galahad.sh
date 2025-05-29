@@ -17,6 +17,10 @@ export HYDRA_FULL_ERROR=1
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
+# modular cache for torch.compile
+# https://docs.pytorch.org/tutorials/recipes/torch_compile_caching_tutorial.html
+export TORCHINDUCTOR_CACHE_DIR="/share/nas2/walml/cache/torchinductor"  
+
 # export HF_DATASETS_IN_MEMORY_MAX_SIZE=50000000000  # Use to ignore HF_DATASETS_CACHE and keep in mem if possible.
 # seems to make dataset.filter() very slow, perhaps it turns off the column selection
 
