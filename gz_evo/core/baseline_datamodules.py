@@ -72,7 +72,7 @@ class GenericDataModule(pl.LightningDataModule):
         # print(example['image'], 'before')
         # print(example['image'].shape)
         example['image'] = self.train_transform(example['image'])
-        # print(example['image'], 'after')
+        print(example['image'].shape, 'after')
         return example
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
@@ -181,15 +181,17 @@ if __name__ == "__main__":
     import time
 
     ds_dict = hf_datasets.load_dataset("mwalmsley/gz-evo", 'tiny')
-    ds_dict['train'] = ds_dict['train'].repeat(5)
+    ds_dict['train'] = ds_dict['train']#.repeat(5)
     # print(ds_dict)
 
-    transform = v2.Compose([
-        v2.ToImage(),  # Convert to tensor
-        v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
-        v2.Resize((224, 224)),
-        v2.ToDtype(torch.float32, scale=True)  # float for models
-    ])
+    # transform = v2.Compose([
+    #     v2.ToImage(),  # Convert to tensor
+    #     v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
+    #     v2.Resize((224, 224), antialias=True),
+    #     v2.ToDtype(torch.float32, scale=True)  # float for models
+    # ])
+    from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
+    transform = GalaxyViewTransform(default_view_config()).transform
 
     # most minimal
     # pure dataset (no dataloader) gives examples which are simple dicts, as I guessed
@@ -218,7 +220,7 @@ if __name__ == "__main__":
         train_transform=transform,
         test_transform=transform,
         batch_size=256, # applies AFTER transform, transform still gets row-by-row examples
-        num_workers=4,  # for testing, no multiprocessing
+        num_workers=0,  # for testing, no multiprocessing
         prefetch_factor=4,
         iterable=True
     )
