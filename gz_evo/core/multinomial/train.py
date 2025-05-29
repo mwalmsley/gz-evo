@@ -50,11 +50,11 @@ def main():
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
 
     # further exploration: adjust some parameters, see what happens
-    cfg.dropout_rate = 0.0  # (already done, probably, now 0.5 is the default)
+    # cfg.dropout_rate = 0.0  # (already done, probably, now 0.5 is the default)
    
     # (was 0.4 for paper)
     # cfg.drop_path_rate = 0. 
-    # cfg.drop_path_rate = 0.75 
+    cfg.drop_path_rate = 0.75 
 
     # paper: batch size 4096 - mine already is, with two devices, but can play
     # cfg.accumulate_grad_batches = 4096 / (cfg.batch_size * cfg.devices)
