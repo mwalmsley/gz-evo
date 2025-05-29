@@ -100,7 +100,8 @@ def set_up_task_data(cfg):
         return example
     # just do this first...
     dataset_dict = dataset_dict.map(
-        target_transform
+        target_transform,
+        input_columns=['summary'] # new, hopefully doesn't break
     )
 
     datamodule = baseline_datamodules.GenericDataModule(
