@@ -49,6 +49,16 @@ def main():
 
     cfg = baseline_training.get_config(architecture_name, dataset_name, save_dir)
 
+    # further exploration: adjust some parameters, see what happens
+    # cfg.dropout_rate = 0.0  (already done, probably, now 0.5 is the default)
+    # cfg.drop_path_rate = 0.75 (was 0.4 for paper)
+    # paper: There is a 20-epoch linear warmup and a cosine decaying schedule afterward.
+    # paper: batch size 4096 - mine already is, with two devices, but can play
+    # cfg.accumulate_grad_batches = 4096 / (cfg.batch_size * cfg.devices)
+    # https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingWarmRestarts.html#torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
+    # T0 should be about 40 epochs
+    # eta_min = 5e-7 say? 2e-5 initially
+
     lightning_model = get_lightning_model(cfg)
     
     datamodule = set_up_task_data(cfg)

@@ -4,7 +4,7 @@
 #SBATCH --mem=30G  # no need for high mem
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=12
 #SBATCH --nodes=1
 
 #SBATCH --ntasks-per-node=2
@@ -56,7 +56,7 @@ echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 # srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
 echo 'Running multinomial baseline'
-$PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+srun $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
 
 # publish to hub
 # echo 'Publishing encoders to hub'

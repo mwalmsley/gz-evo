@@ -174,7 +174,7 @@ class GenericDataModule(pl.LightningDataModule):
             test_dataset_hf = self.dataset_dict['test']
             # not shuffled, so no need to flatten indices
             # never iterable, for now
-            test_dataset_hf = test_dataset_hf.with_transform(self.test_transform_wrapped)
+            test_dataset_hf = test_dataset_hf.with_transform(self.train_transform_wrapped_batch)
             self.test_dataset = test_dataset_hf
 
 
