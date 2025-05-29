@@ -89,8 +89,8 @@ def set_up_task_data(cfg):
     train_transform_config.random_affine['scale'] = (1.0, 1.4)
     train_transform_config.erase_iterations = 0  # disable masking small patches for now
 
-    train_transform = GalaxyViewTransform(train_transform_config)
-    test_transform = GalaxyViewTransform(test_transform_config)
+    train_transform = GalaxyViewTransform(train_transform_config).transform
+    test_transform = GalaxyViewTransform(test_transform_config).transform
 
     # any callable that takes an HF example (row) and returns a label
     # load the summary column as integers
