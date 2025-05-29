@@ -69,6 +69,9 @@ def set_up_task_data(cfg):
 
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
+    # before we do anything heavy, split between ranks to distribute the work
+    dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
+
     # naively, only train on examples with labels, from all telescopes
     logging.info(f'{dataset_dict["train"].num_rows} training examples before filtering')
     dataset_dict = dataset_dict.filter(
@@ -82,18 +85,6 @@ def set_up_task_data(cfg):
     # logging.info(dataset_dict)
     logging.info(f'{dataset_dict["train"][0]["summary"]} is an example summary')
     logging.info(f'{dataset_dict["train"][1]["summary"]} is another example summary')
-
-    train_transform_config = default_view_config()
-    test_transform_config = minimal_view_config()
-    # transform_config = fast_view_config()
-    train_transform_config.random_affine['scale'] = (1.0, 1.4)
-    train_transform_config.erase_iterations = 0  # disable masking small patches for now
-
-    train_transform = GalaxyViewTransform(train_transform_config).transform
-    test_transform = GalaxyViewTransform(test_transform_config).transform
-
-    # before we do anything heavy, split between ranks to distribute the work
-    dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
 
     # we need to flatten after the filter
     # do validation split here, which flattens anyway after shuffling
@@ -110,6 +101,16 @@ def set_up_task_data(cfg):
     for split in dataset_dict:
         # operating on a single column seems much quicker than mapping the whole dataset
         dataset_dict[split] = dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
+
+
+    train_transform_config = default_view_config()
+    test_transform_config = minimal_view_config()
+    # transform_config = fast_view_config()
+    train_transform_config.random_affine['scale'] = (1.0, 1.4)
+    train_transform_config.erase_iterations = 0  # disable masking small patches for now
+
+    train_transform = GalaxyViewTransform(train_transform_config).transform
+    test_transform = GalaxyViewTransform(test_transform_config).transform
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
