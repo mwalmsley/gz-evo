@@ -113,7 +113,7 @@ def get_lightning_model(cfg):
 
     if cfg.compile_encoder:
         logging.info('Compiling model')
-        lightning_model = torch.compile(lightning_model, mode="reduce-overhead")
+        lightning_model = torch.compile(lightning_model, mode="default")
 
     return lightning_model
 

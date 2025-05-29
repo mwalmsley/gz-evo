@@ -5,6 +5,7 @@ import time
 import numpy as np
 import pytorch_lightning as pl
 import datasets
+import torch
 
 from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config
 
@@ -159,6 +160,10 @@ def get_lightning_model(cfg):
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay
     )
+
+    if cfg.compile_encoder:
+        logging.info('Compiling model')
+        lightning_model = torch.compile(lightning_model, mode="default")
     
     return lightning_model
 
