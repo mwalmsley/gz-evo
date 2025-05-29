@@ -104,8 +104,7 @@ def get_dataset_dict(cfg):
     #     return manually_load_gz_evo()
     # else:
     dataset_loc = f"mwalmsley/{cfg.dataset_name}"
-    logging.info(f"Loading dataset from {dataset_loc}")
-    print(f"Loading dataset from {dataset_loc}")
+    logging.info(f"Loading dataset from {dataset_loc}, subset {cfg.subset_name}")
     dataset_dict = load_dataset(
         dataset_loc, 
         name=cfg.subset_name, 
@@ -114,6 +113,7 @@ def get_dataset_dict(cfg):
         download_mode=cfg.download_mode,  # reuse_dataset_if_exists
         verification_mode=cfg.verification_mode,  # basic_checks
     )
+    logging.info(f"Dataset loaded: {cfg.dataset_name} ({cfg.subset_name})")
     return dataset_dict
 
 

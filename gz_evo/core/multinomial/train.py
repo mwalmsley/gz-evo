@@ -68,6 +68,7 @@ def set_up_task_data(cfg):
     # train_transform_config.erase_iterations = 0  # disable masking small patches for now
 
     # TODO temp speed test
+    logging.warning("Using fast view config for training and testing transforms")
     train_transform_config = fast_view_config()
     test_transform_config = fast_view_config()
 

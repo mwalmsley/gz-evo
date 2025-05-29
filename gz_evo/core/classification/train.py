@@ -69,17 +69,17 @@ def set_up_task_data(cfg):
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
     # naively, only train on examples with labels, from all telescopes
-    print(dataset_dict['train'].num_rows)
+    logging.info(f'{dataset_dict['train'].num_rows} training examples before filtering')
     dataset_dict = dataset_dict.filter(
         has_labels,
         input_columns='summary',  # important to specify, for speed
         # load_from_cache_file=False
         num_proc=cfg.num_workers
     )
-    print(dataset_dict['train'].num_rows)
-    # print(dataset_dict)
-    print(dataset_dict['train'][0]['summary'], 'is an example summary')
-    print(dataset_dict['train'][1]['summary'], 'is another example summary')
+    logging.info(f'{dataset_dict['train'].num_rows} training examples after filtering')
+    # logging.info(dataset_dict)
+    logging.info(f'{dataset_dict['train'][0]['summary']} is an example summary')
+    logging.info(f'{dataset_dict['train'][1]['summary']} is another example summary')
 
     dataset_dict.set_format("torch")  #  breaks flatten_indices if you do it first!
 
@@ -151,7 +151,7 @@ def has_labels(summary):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     logging.info("Starting classification baseline")
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore

@@ -33,11 +33,11 @@ export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  #
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
-# echo 'Running classification baseline'
-# $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
+echo 'Running classification baseline'
+$PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
-echo 'Running multinomial baseline'
-$PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+# echo 'Running multinomial baseline'
+# $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
 
 # publish to hub
 # echo 'Publishing encoders to hub'

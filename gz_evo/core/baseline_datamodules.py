@@ -33,6 +33,8 @@ class GenericDataModule(pl.LightningDataModule):
         # super().__init__()
         pl.LightningDataModule.__init__(self)
 
+        logging.info("Initializing GenericDataModule")
+
         self.batch_size = batch_size
 
         self.num_workers = num_workers
