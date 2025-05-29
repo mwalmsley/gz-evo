@@ -54,10 +54,10 @@ def main():
    
     # (was 0.4 for paper)
     # cfg.drop_path_rate = 0. 
-    cfg.drop_path_rate = 0.75 
+    # cfg.drop_path_rate = 0.75 
 
     # paper: batch size 4096 - mine already is, with two devices, but can play
-    # cfg.accumulate_grad_batches = 4096 / (cfg.batch_size * cfg.devices)
+    cfg.accumulate_grad_batches = 4 * 4096 / (cfg.batch_size * cfg.devices)
 
     # paper: There is a 20-epoch linear warmup and a cosine decaying schedule afterward.
     # https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingWarmRestarts.html#torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
