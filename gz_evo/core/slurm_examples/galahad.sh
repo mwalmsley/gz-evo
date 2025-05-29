@@ -20,7 +20,7 @@ nvidia-smi
 
 export HYDRA_FULL_ERROR=1
 export TORCH_NCCL_BLOCKING_WAIT=1
-# export NCCL_DEBUG=INFO
+export NCCL_DEBUG=INFO
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
