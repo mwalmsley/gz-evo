@@ -105,10 +105,10 @@ class GenericDataModule(pl.LightningDataModule):
             logging.warning('Creating validation split from 20%% of train dataset')
             train_and_val_dict = self.dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, seed=self.seed, keep_in_memory=self.seed != 42)
             # now shuffled, so flatten indices
-            # very slow, sadly
+            # breaks (silently hangs) if you have already done set_format
             # https://huggingface.co/docs/datasets/en/about_mapstyle_vs_iterable#speed-differences
             # logging.info('Flattening indices for train and val datasets, may take a while...')
-            # train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
+            train_and_val_dict = train_and_val_dict.flatten_indices(num_proc=self.num_workers, keep_in_memory=self.seed != 42)
             # don't cache for every random seed, or it will fill up disk space
 
             if self.iterable:
