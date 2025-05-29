@@ -107,7 +107,7 @@ def set_up_task_data(cfg):
 
     for split in dataset_dict:
         # operating on a single column seems much quicker than mapping the whole dataset
-        dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
+        dataset_dict[split] = dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
         # dataset_dict[split].set_format("torch")  # now replaced by transforms inside datamodule
 
     datamodule = baseline_datamodules.GenericDataModule(
