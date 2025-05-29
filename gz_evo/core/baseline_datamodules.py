@@ -30,7 +30,7 @@ def add_validation_split(dataset_dict, seed=42, num_workers=4):
     del train_and_val_dict
     return dataset_dict
 
-def distribute_dataset_with_lightning(dataset_dict):
+def distribute_dataset_with_lightning(dataset_dict: hf_datasets.DatasetDict):
     rank = int(os.environ.get("SLURM_PROCID", 0))  # index of slurm task
     world_size = int(os.environ.get("NTASKS_PER_NODE", 1))  # number of slurm tasks = world size for single node
 
@@ -38,7 +38,9 @@ def distribute_dataset_with_lightning(dataset_dict):
 
     if (rank > 0) or (world_size > 1):
         logging.info(f"Distributing datasets on rank {rank}, world size {world_size}")
-        dataset_dict  = split_dataset_by_node(dataset_dict, rank=rank, world_size=world_size)
+        for split in dataset_dict.keys():
+            logging.info(f"Selecting from {split}")
+            dataset_dict[split]  = split_dataset_by_node(dataset_dict[split], rank=rank, world_size=world_size)
     else:
         logging.info(f"Not distributing datasets on rank {rank}, world {world_size}, single gpu training")
 
