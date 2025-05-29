@@ -62,7 +62,7 @@ REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
 echo SLURM_NTASKS $SLURM_NTASKS 
 echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
-export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm
+export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 
     # ntasks = int(os.environ.get("SLURM_NTASKS", "1"))
