@@ -125,12 +125,17 @@ class GenericDataModule(pl.LightningDataModule):
 
             # distributed training
             rank = int(os.environ.get("LOCAL_RANK", 0))  # local rank for this process
-            world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
-            if rank > 0 or world_size > 1:
+            # world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
+            world_size = int(os.environ.get("NTASKS_PER_NODE", 1))  # for single node, this is world size
+            slurm_procid = int(os.environ.get("SLURM_PROCID", 0))  # for slurm, this is the process id
+
+            logging.info('Beginning data loading on rank {}, slurm_procid {}, world size {}'.format(rank, slurm_procid, world_size))
+
+            if (rank > 0) or (world_size > 1):
                 logging.info(f"Distributing datasets on rank {rank}, world size {world_size}")
                 self.dataset_dict  = split_dataset_by_node(self.dataset_dict, rank=rank, world_size=world_size)
             else:
-                logging.info("Not distributing datasets, single gpu training")
+                logging.info(f"Not distributing datasets on rank {rank}, world {world_size}, single gpu training")
 
 
             if self.iterable:
