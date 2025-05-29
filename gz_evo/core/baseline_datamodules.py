@@ -72,28 +72,27 @@ class GenericDataModule(pl.LightningDataModule):
         # print(example['image'], 'before')
         # print(example['image'].shape)
         example['image'] = self.train_transform(example['image'])
-        example = self.target_transform(example) if self.target_transform is not None else example
-        print(example['image'].shape, 'after')
+        # example = self.target_transform(example) if self.target_transform is not None else example
+        # print(example['image'].shape, 'after')
         return example
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
-        example = self.target_transform(example) if self.target_transform is not None else example
+        # example = self.target_transform(example) if self.target_transform is not None else example
         return example
     # .map sends example as dict
     # .set_transform sends example as dict of lists, i.e. a batched dict
     # torch collate func will handle the final dict-of-lists-to-tensor, but image transforms only get applied to the first img
     def train_transform_wrapped_batch(self, examples: dict):
+        assert len(examples['image']) > 1
         # assert len(examples['image']) == 1, "Expected a batch of size 1 in train, got {}".format(len(examples['image']))
         # return train_transform_wrapped(examples[0])
         examples['image'] = [self.train_transform(im) for im in examples['image']]
-        examples = [self.target_transform(ex) if self.target_transform is not None else ex for ex in examples['image']]
         # print(examples)
         return examples
     def test_transform_wrapped_batch(self, examples: dict):
         # assert len(examples['image']) == 1, "Expected a batch of size 1 in test, got {}".format(len(examples['image']))
         # return test_transform_wrapped(examples[0])
         examples['image'] = [self.test_transform(im) for im in examples['image']]
-        examples = [self.target_transform(ex) if self.target_transform is not None else ex for ex in examples['image']]
         return examples
 
 
@@ -235,13 +234,31 @@ if __name__ == "__main__":
     #     break
     # exit()
 
+    def target_transform(example):
+        # print(example)
+        # exit()
+        example['label'] = LABEL_ORDER_DICT[example['summary']]
+        # optionally could delete the other keys besides image and id_str
+        return example
+    
+    ds_dict = ds_dict.filter(
+        lambda x: x != '',
+        input_columns='summary',  # important to specify, for speed
+        # load_from_cache_file=False
+        # num_proc=cfg.num_workers
+    )
+    
+    ds_dict = ds_dict.map(
+        target_transform
+    )
 
     datamodule = GenericDataModule(
         dataset_dict=ds_dict,
         train_transform=transform,
         test_transform=transform,
+        # target_transform=target_transform,
         batch_size=8, # applies AFTER transform in iter mode, transform still gets row-by-row examples
-        num_workers=2,
+        num_workers=0,
         prefetch_factor=None,
         iterable=False
     )
@@ -250,7 +267,7 @@ if __name__ == "__main__":
     dataloader = datamodule.train_dataloader()
     start_time = time.time()
     for batch in dataloader:
-        pass
+        print(batch['label'])
     end_time = time.time()
     print(f"Time taken to iterate over train_dataloader: {end_time - start_time:.2f} seconds. Iterable: {datamodule.iterable}, num_workers: {datamodule.num_workers}, prefetch_factor: {datamodule.prefetch_factor}")
     print('Complete')
