@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 import datasets
 import torch
 
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config
+from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config, fast_view_config
 
 from gz_evo.core import  baseline_models, baseline_datamodules, baseline_training
 
@@ -103,11 +103,12 @@ def set_up_task_data(cfg):
         dataset_dict[split] = dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
 
 
-    train_transform_config = default_view_config()
-    test_transform_config = minimal_view_config()
-    # transform_config = fast_view_config()
-    train_transform_config.random_affine['scale'] = (1.0, 1.4)
-    train_transform_config.erase_iterations = 0  # disable masking small patches for now
+    # train_transform_config = default_view_config()
+    # test_transform_config = minimal_view_config()
+    # train_transform_config.random_affine['scale'] = (1.0, 1.4)
+    # train_transform_config.erase_iterations = 0  # disable masking small patches for now
+    train_transform_config = fast_view_config()
+    test_transform_config = fast_view_config()
 
     train_transform = GalaxyViewTransform(train_transform_config).transform
     test_transform = GalaxyViewTransform(test_transform_config).transform

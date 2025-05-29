@@ -4,7 +4,7 @@
 #SBATCH --mem=30G  # no need for high mem
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=10
 #SBATCH --nodes=1
 
 #SBATCH --ntasks-per-node=2
@@ -34,7 +34,7 @@ nvidia-smi
 
 
 export HYDRA_FULL_ERROR=1
-export NCCL_BLOCKING_WAIT=1
+export TORCH_NCCL_BLOCKING_WAIT=1
 export NCCL_DEBUG=INFO
 
 export WANDB_DIR=/share/nas2/walml/wandb
