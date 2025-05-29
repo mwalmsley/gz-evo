@@ -72,10 +72,12 @@ class GenericDataModule(pl.LightningDataModule):
         # print(example['image'], 'before')
         # print(example['image'].shape)
         example['image'] = self.train_transform(example['image'])
+        example = self.target_transform(example) if self.target_transform is not None else example
         print(example['image'].shape, 'after')
         return example
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
+        example = self.target_transform(example) if self.target_transform is not None else example
         return example
     # .map sends example as dict
     # .set_transform sends example as dict of lists, i.e. a batched dict
@@ -84,11 +86,14 @@ class GenericDataModule(pl.LightningDataModule):
         # assert len(examples['image']) == 1, "Expected a batch of size 1 in train, got {}".format(len(examples['image']))
         # return train_transform_wrapped(examples[0])
         examples['image'] = [self.train_transform(im) for im in examples['image']]
+        examples = [self.target_transform(ex) if self.target_transform is not None else ex for ex in examples['image']]
+        # print(examples)
         return examples
     def test_transform_wrapped_batch(self, examples: dict):
         # assert len(examples['image']) == 1, "Expected a batch of size 1 in test, got {}".format(len(examples['image']))
         # return test_transform_wrapped(examples[0])
         examples['image'] = [self.test_transform(im) for im in examples['image']]
+        examples = [self.target_transform(ex) if self.target_transform is not None else ex for ex in examples['image']]
         return examples
 
 
@@ -235,8 +240,8 @@ if __name__ == "__main__":
         dataset_dict=ds_dict,
         train_transform=transform,
         test_transform=transform,
-        batch_size=8, # applies AFTER transform, transform still gets row-by-row examples
-        num_workers=2,  # for testing, no multiprocessing
+        batch_size=8, # applies AFTER transform in iter mode, transform still gets row-by-row examples
+        num_workers=2,
         prefetch_factor=None,
         iterable=False
     )
