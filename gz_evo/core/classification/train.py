@@ -164,6 +164,8 @@ def get_lightning_model(cfg):
     )
 
     if cfg.compile_encoder:
+        import torch._dynamo
+        torch._dynamo.config.suppress_errors = True  # fall back to eager mode on errors
         logging.info('Compiling model')
         lightning_model = torch.compile(lightning_model, mode="default")
     
