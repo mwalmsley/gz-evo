@@ -6,8 +6,10 @@
 #SBATCH --output=%x.%A.out
 #SBATCH --cpus-per-task=16
 #SBATCH --nodes=1
-#SBATCH --exclusive  
+
 #SBATCH --ntasks-per-node=2
+
+### SBATCH --exclusive  
 ### #SBATCH --ntasks 1
 
 
