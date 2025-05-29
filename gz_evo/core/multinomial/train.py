@@ -60,24 +60,29 @@ def set_up_task_data(cfg):
 
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
-    # dataset_dict.set_format("torch")  # now replaced by transforms inside datamodule
+    dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
+    
+    dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
+    # also flatten test indices post-filter, where we can control num_proc
+    logging.info('Flattening indices for test set')
+    dataset_dict['test'] = dataset_dict['test'].flatten_indices(num_proc=cfg.num_workers)
 
-    # train_transform_config = default_view_config()
-    # test_transform_config = minimal_view_config()
-    # train_transform_config.random_affine['scale'] = (1.0, 1.4)
-    # train_transform_config.erase_iterations = 0  # disable masking small patches for now
-
-    # TODO temp speed test
-    logging.warning("Using fast view config for training and testing transforms")
-    train_transform_config = fast_view_config()
-    test_transform_config = fast_view_config()
+    train_transform_config = default_view_config()
+    test_transform_config = minimal_view_config()
+    train_transform_config.random_affine['scale'] = (1.0, 1.4)
+    train_transform_config.erase_iterations = 0  # disable masking small patches for now
+    # # TODO temp speed test
+    # logging.warning("Using fast view config for training and testing transforms")
+    # train_transform_config = fast_view_config()
+    # test_transform_config = fast_view_config()
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
-        train_transform=GalaxyViewTransform(train_transform_config),
-        test_transform=GalaxyViewTransform(test_transform_config),
+        train_transform=GalaxyViewTransform(train_transform_config).transform,
+        test_transform=GalaxyViewTransform(test_transform_config).transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
+        iterable=cfg.iterable,
         seed=seed
     )
     return datamodule

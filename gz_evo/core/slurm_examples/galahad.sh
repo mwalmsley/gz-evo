@@ -18,24 +18,9 @@ pwd; hostname; date
 
 nvidia-smi
 
-# NCCL socket varies by node, needs some hacking here to set correctly
-
-# # Extract the number from SLURMD_NODENAME (e.g., compute-0-99 -> 99)
-# node_number=$(echo $SLURMD_NODENAME | grep -o -E '[0-9]+$')
-
-# # Check the range of the number and set NCCL_SOCKET_IFNAME accordingly
-# if (( 0 <= $node_number && $node_number < 100 )); then
-#     export NCCL_SOCKET_IFNAME='em1'
-# elif (( 100 <= $node_number && $node_number < 200 )); then
-#     export NCCL_SOCKET_IFNAME='eno1'
-# else
-#     echo "SLURMD_NODENAME is out of expected range."
-# fi
-
-
 export HYDRA_FULL_ERROR=1
 export TORCH_NCCL_BLOCKING_WAIT=1
-export NCCL_DEBUG=INFO
+# export NCCL_DEBUG=INFO
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
@@ -65,18 +50,13 @@ echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
 export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 
-    # ntasks = int(os.environ.get("SLURM_NTASKS", "1"))
-    #     if ntasks > 1 and "SLURM_NTASKS_PER_NODE" not in os.environ:
-    #         raise RuntimeError(
-    #             f"You set `--ntasks={ntasks}` in your SLURM bash script, but this variable is not supported."
-    #             f" HINT: Use `--ntasks-per-node={ntasks}` instead."
-    #         )
+# ----
 
-echo 'Running classification baseline'
-srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
+# echo 'Running classification baseline'
+# srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
-# echo 'Running multinomial baseline'
-# $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+echo 'Running multinomial baseline'
+$PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
 
 # publish to hub
 # echo 'Publishing encoders to hub'

@@ -31,6 +31,14 @@ def add_validation_split(dataset_dict, seed=42, num_workers=4):
     return dataset_dict
 
 def distribute_dataset_with_lightning(dataset_dict: hf_datasets.DatasetDict):
+    # split dataset for each rank, using slurm env variables
+
+    # with lightning, these aren't set as you'd expect, remain unset
+    # rank = int(os.environ.get("LOCAL_RANK", 0))  # local rank for this process
+    # world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
+
+    # use env variables from slurm instead
+    # distribute_dataset_with_lightning()
     rank = int(os.environ.get("SLURM_PROCID", 0))  # index of slurm task
     world_size = int(os.environ.get("SLURM_NTASKS_PER_NODE", 1))  # number of slurm tasks = world size for single node
 
@@ -100,29 +108,19 @@ class GenericDataModule(pl.LightningDataModule):
         # REPLACES set_transform('torch') so we also need to make torch tensors
         # https://huggingface.co/docs/datasets/v3.6.0/en/package_reference/main_classes#datasets.Dataset.with_transform
         # best with pil_to_tensor=True
-        # print(example['image'], 'before')
-        # print(example['image'].shape)
         example['image'] = self.train_transform(example['image'])
-        # example = self.target_transform(example) if self.target_transform is not None else example
-        # print(example['image'].shape, 'after')
         return example
     def test_transform_wrapped(self, example: dict):
         example['image'] = self.test_transform(example['image'])
-        # example = self.target_transform(example) if self.target_transform is not None else example
         return example
     # .map sends example as dict
     # .set_transform sends example as dict of lists, i.e. a batched dict
     # torch collate func will handle the final dict-of-lists-to-tensor, but image transforms only get applied to the first img
     def train_transform_wrapped_batch(self, examples: dict):
-        assert len(examples['image']) > 1
-        # assert len(examples['image']) == 1, "Expected a batch of size 1 in train, got {}".format(len(examples['image']))
-        # return train_transform_wrapped(examples[0])
+        # assert len(examples['image']) > 1
         examples['image'] = [self.train_transform(im) for im in examples['image']]
-        # print(examples)
         return examples
     def test_transform_wrapped_batch(self, examples: dict):
-        # assert len(examples['image']) == 1, "Expected a batch of size 1 in test, got {}".format(len(examples['image']))
-        # return test_transform_wrapped(examples[0])
         examples['image'] = [self.test_transform(im) for im in examples['image']]
         return examples
 
@@ -138,18 +136,6 @@ class GenericDataModule(pl.LightningDataModule):
 
 
         if stage == "fit" or stage is None:
-
-            # distributed training
-            # TODO moved to train script for efficiency
-            # self.dataset_dict = distribute_dataset_with_lightning(self.dataset_dict)
-
-            # with lightning, these aren't set as you'd expect, remain unset
-            # rank = int(os.environ.get("LOCAL_RANK", 0))  # local rank for this process
-            # world_size = int(os.environ.get("WORLD_SIZE", 1))  # total number of processes
-
-            # use env variables from slurm instead
-            # distribute_dataset_with_lightning()
-
 
             if self.iterable:
                 # convert to iterable datasets
