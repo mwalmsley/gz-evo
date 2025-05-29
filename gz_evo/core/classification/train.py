@@ -94,15 +94,23 @@ def set_up_task_data(cfg):
 
     # any callable that takes an HF example (row) and returns a label
     # load the summary column as integers
-    def target_transform(example):
-        example['label'] = baseline_datamodules.LABEL_ORDER_DICT[example['summary']]
+    # def target_transform(example):
+        # example['label'] = baseline_datamodules.LABEL_ORDER_DICT[example['summary']]
         # optionally could delete the other keys besides image and id_str
-        return example
+        # return example
     # just do this first...
-    dataset_dict = dataset_dict.map(
-        target_transform,
-        input_columns=['summary'] # new, hopefully doesn't break
-    )
+    # dataset_dict = dataset_dict.map(
+    #     target_transform,
+    #     input_columns=['summary'] # new, hopefully doesn't break
+    # )
+
+    def summary_to_label(summary):
+        return baseline_datamodules.LABEL_ORDER_DICT[summary]
+
+    for split in dataset_dict:
+        # operating on a single column seems much quicker than mapping the whole dataset
+        dataset_dict[split].add_column('label', [summary_to_label(x) for x in dataset_dict[split]['summary']])
+        # dataset_dict[split].set_format("torch")  # now replaced by transforms inside datamodule
 
     datamodule = baseline_datamodules.GenericDataModule(
         dataset_dict=dataset_dict,
@@ -156,7 +164,7 @@ def has_labels(summary):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logging.info("Starting classification baseline")
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore

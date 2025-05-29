@@ -34,7 +34,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
 
     elif os.path.isdir('/share/nas2'):
         subset_name = 'default'
-        # subset_name = 'tiny'
+        # subset_name = 'tiny' p
         num_workers = 8  # of 16 per node
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
@@ -46,8 +46,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             "No known system detected, using defaults for local debugging. See baseline_training.py to add system"
         )
         # defaults to local debugging mode
-        # subset_name = 'tiny' 
-        subset_name = 'default'  # TODO awaiting tiny version recreation 
+        subset_name = 'tiny' 
+        # subset_name = 'default'  # TODO awaiting tiny version recreation 
         num_workers = 4
         debug = True
         accelerator="auto"
