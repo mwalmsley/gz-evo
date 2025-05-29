@@ -169,6 +169,11 @@ def run_training(cfg, lightning_model, datamodule):
     early_stopping_callback = EarlyStopping(monitor=monitor_metric, patience=cfg.patience, check_finite=True)
     callbacks = [checkpoint_callback, early_stopping_callback]
 
+    # galahad cluster has old slurm and doesn't set correctly
+    os.environ['SLURM_NTASKS_PER_NODE'] = str(cfg.devices)  
+    logging.info(f"SLURM_NTASKS_PER_NODE set to {os.environ['SLURM_NTASKS_PER_NODE']}")
+    logging.info(f"SLURM_NTASKS is {os.environ['SLURM_NTASKS']}")
+
     trainer = pl.Trainer(
         num_sanity_val_steps=0,
         log_every_n_steps=150,

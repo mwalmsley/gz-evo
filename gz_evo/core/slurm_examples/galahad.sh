@@ -56,6 +56,16 @@ export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  #
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
+echo SLURM_NTASKS $SLURM_NTASKS 
+echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
+
+    # ntasks = int(os.environ.get("SLURM_NTASKS", "1"))
+    #     if ntasks > 1 and "SLURM_NTASKS_PER_NODE" not in os.environ:
+    #         raise RuntimeError(
+    #             f"You set `--ntasks={ntasks}` in your SLURM bash script, but this variable is not supported."
+    #             f" HINT: Use `--ntasks-per-node={ntasks}` instead."
+    #         )
+
 echo 'Running classification baseline'
 $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
