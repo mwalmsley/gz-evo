@@ -80,11 +80,10 @@ def set_up_task_data(cfg):
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
     dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
+    # test set not distributed
     
     dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
-    # also flatten test indices post-filter, where we can control num_proc
-    logging.info('Flattening indices for test set')
-    dataset_dict['test'] = dataset_dict['test'].flatten_indices(num_proc=cfg.num_workers)
+    # no need to flatten test set, not changed
 
     train_transform_config = default_view_config()
     test_transform_config = minimal_view_config()
@@ -144,8 +143,8 @@ def get_lightning_model(cfg):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.DEBUG)
-    logging.info("Starting regression baseline")
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting multinomial baseline")
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore
     logging.info(f"Using seed: {seed}")
