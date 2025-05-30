@@ -40,7 +40,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
-        prefetch_factor = 10
+        prefetch_factor = 30
 
     elif os.path.isdir('/Users/user'):
         # macbook
