@@ -217,7 +217,7 @@ class GenericDataModule(pl.LightningDataModule):
             persistent_workers=self.num_workers > 0,
             prefetch_factor=self.prefetch_factor,
             timeout=self.dataloader_timeout,
-            drop_last=True
+            drop_last=False
         )
 
 

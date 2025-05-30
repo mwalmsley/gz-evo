@@ -33,12 +33,12 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = 1
 
     elif os.path.isdir('/share/nas2'):
-        # subset_name = 'default'
-        subset_name = 'tiny' 
+        subset_name = 'default'
+        # subset_name = 'tiny' 
         num_workers = 8  # of 24 per node on some, or 16 on others
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
-        devices = 2
+        devices = os.environ.get('SLURM_NTASKS_PER_NODE', 1)
 
     elif os.path.isdir('/Users/user'):
         # macbook
@@ -82,7 +82,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             accelerator=accelerator,
             devices=devices,
             nodes=1,
-            epochs=2,
+            epochs=3,
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,

@@ -7,10 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-18
-#SBATCH --ntasks-per-node=2
-
-### SBATCH --exclusive  
-### #SBATCH --ntasks 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks 1
 
 
 
@@ -20,7 +18,7 @@ nvidia-smi
 
 export HYDRA_FULL_ERROR=1
 export TORCH_NCCL_BLOCKING_WAIT=1
-export NCCL_DEBUG=INFO
+# export NCCL_DEBUG=INFO
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
