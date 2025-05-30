@@ -82,7 +82,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             accelerator=accelerator,
             devices=devices,
             nodes=1,
-            epochs=1000,
+            epochs=2,
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,
@@ -100,7 +100,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     else:
         cfg.batch_size = cfg[cfg.batch_size_key]
         # always the same effective batch size, after accumulation
-        cfg.accumulate_grad_batches = 2048 // cfg.batch_size  
+        cfg.accumulate_grad_batches = 4096 // (cfg.batch_size  * cfg.devices)  # 4096 is the effective batch size, per node
         cfg.debug = debug
 
     logging.info(f'using config:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
@@ -202,12 +202,25 @@ def run_training(cfg, lightning_model, datamodule):
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
     # can test as per the below, but note that datamodule must have a test dataset attribute as per pytorch lightning docs.
     # also be careful not to test regularly, as this breaks train/val/test conceptual separation and may cause hparam overfitting
+    
+    # make new test trainer
+    test_trainer = pl.Trainer(
+        accelerator=cfg.accelerator,
+        devices=1,
+        num_nodes=1,
+        precision=cfg.precision,
+        logger=wandb_logger,
+        default_root_dir=cfg.save_dir,
+        plugins=cfg.plugins
+    )
+
+    
     if datamodule.test_dataloader is not None:
         logging.info(
             f"Testing on {checkpoint_callback.best_model_path} with single GPU. Be careful not to overfit your choices to the test data..."
         )
         datamodule.setup(stage="test")
-        trainer.test(
+        test_trainer.test(
             model=lightning_model,
             datamodule=datamodule,
             ckpt_path=checkpoint_callback.best_model_path,  # can optionally point to a specific checkpoint here e.g. "/share/nas2/walml/repos/gz-decals-classifiers/results/early_stopping_1xgpu_greyscale/checkpoints/epoch=26-step=16847.ckpt"

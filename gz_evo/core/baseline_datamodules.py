@@ -47,8 +47,9 @@ def distribute_dataset_with_lightning(dataset_dict: hf_datasets.DatasetDict):
     if world_size > 1:
         logging.info(f"Distributing datasets on rank {rank}, world size {world_size}")
         for split in dataset_dict.keys():
-            logging.info(f"Selecting from {split}")
-            dataset_dict[split]  = split_dataset_by_node(dataset_dict[split], rank=rank, world_size=world_size)
+            if split != 'test':  # never distribute test set to ensure all rows evaluated exactly once
+                logging.info(f"Selecting from {split}")
+                dataset_dict[split]  = split_dataset_by_node(dataset_dict[split], rank=rank, world_size=world_size)
     else:
         logging.info(f"Not distributing datasets on rank {rank}, world {world_size}, single gpu training")
 
