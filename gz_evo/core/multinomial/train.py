@@ -101,6 +101,7 @@ def set_up_task_data(cfg):
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
         iterable=cfg.iterable,
+        prefetch_factor=cfg.prefetch_factor,
         seed=seed
     )
     return datamodule

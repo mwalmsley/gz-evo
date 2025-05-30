@@ -31,6 +31,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         num_workers = 10
         batch_size_key = 'v100_batch_size'
         devices = 1
+        prefetch_factor = 4
 
     elif os.path.isdir('/share/nas2'):
         subset_name = 'default'
@@ -39,6 +40,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
+        prefetch_factor = 10
 
     elif os.path.isdir('/Users/user'):
         # macbook
@@ -48,6 +50,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         accelerator="cpu"  # not auto, MPS still has issues
         batch_size_key = 'debug'
         devices = 1
+        prefetch_factor = 2
     
     # TODO add your own system here
 
@@ -63,6 +66,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         accelerator="auto"
         batch_size_key = 'debug'
         devices = 1
+        prefetch_factor = 2
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
@@ -76,6 +80,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             keep_in_memory=False,
             num_workers=num_workers,
             iterable=True,  # seems to actually be slower rn
+            prefetch_factor=prefetch_factor, 
             compile_encoder=False,  # doesn't work on galahad, missing gcc headers
             pretrained=True, # passed to timm
             channels=3,

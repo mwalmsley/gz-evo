@@ -186,18 +186,18 @@ class GenericBaseline(pl.LightningModule):
         return self.make_step(batch, step_name='test')
 
     def on_train_epoch_end(self) -> None:
-        logging.info('on_train_epoch_end called')
+        # logging.info('on_train_epoch_end called')
         # called *after* on_validation_epoch_end, confusingly
         # do NOT log_all_metrics here. 
         # logging a metric resets it, and on_validation_epoch_end just logged and reset everything, so you will only log nans
         self.log_all_metrics(split='train')
 
-    def on_validation_epoch_start(self):
-        logging.info('on_validation_epoch_start called')
+    # def on_validation_epoch_start(self):
+        # logging.info('on_validation_epoch_start called')
 
 
     def on_validation_batch_start(self, batch, batch_idx, dataloader_idx = 0):
-        logging.info('on_validation_batch_start called')
+        # logging.info('on_validation_batch_start called')
         return super().on_validation_batch_start(batch, batch_idx, dataloader_idx)
 
     def on_validation_epoch_end(self) -> None:

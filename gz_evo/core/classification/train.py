@@ -117,10 +117,10 @@ def set_up_task_data(cfg):
         dataset_dict=dataset_dict,
         train_transform=train_transform,
         test_transform=test_transform,
-        # target_transform=target_transform,
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
         iterable=cfg.iterable,  # if True, will use IterableDataset, else use MapDataset
+        prefetch_factor=cfg.prefetch_factor,
         seed=seed
     )
 
