@@ -14,6 +14,15 @@ LABEL_ORDER = ['smooth_round', 'smooth_cigar', 'unbarred_spiral', 'edge_on_disk'
 # convert to integers
 LABEL_ORDER_DICT = {label_: i for i, label_ in enumerate(LABEL_ORDER)}
 
+# pre-decode from PIL to tensor to save cpu at the cost of I/O
+# TODO change default transform to use toImage for simplicity?
+def pil_to_tensors(dataset: hf_datasets.Dataset, num_workers=1):
+    transform_to_tensor = v2.PILToTensor()  # no compose needed
+    def transform_to_tensor_wrapped(example):
+        example['image'] = transform_to_tensor(example['image'])
+        return example
+    return dataset.map(transform_to_tensor_wrapped, num_proc=num_workers)
+
 # utility for adding a validation split to a huggingface dataset dictionary
 # can be used inside GenericDataModule.setup(), but best done earlier if doing other operations that require flattening
 def add_validation_split(dataset_dict, seed=42, num_workers=4):
@@ -233,6 +242,8 @@ if __name__ == "__main__":
     ds_dict['train'] = ds_dict['train']#.repeat(5)
     # print(ds_dict)
 
+    logging.info("Transforming images to tensors")
+    ds_dict = pil_to_tensors(ds_dict, num_workers=1) 
     # transform = v2.Compose([
     #     v2.ToImage(),  # Convert to tensor
     #     v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
@@ -240,7 +251,9 @@ if __name__ == "__main__":
     #     v2.ToDtype(torch.float32, scale=True)  # float for models
     # ])
     from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
-    transform = GalaxyViewTransform(default_view_config()).transform
+    cfg = default_view_config()
+    cfg.pil_to_tensor = False
+    transform = GalaxyViewTransform(cfg).transform
 
     # most minimal
     # pure dataset (no dataloader) gives examples which are simple dicts, as I guessed

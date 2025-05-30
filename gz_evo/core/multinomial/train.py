@@ -81,6 +81,8 @@ def set_up_task_data(cfg):
 
     dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
     # test set not distributed
+
+    dataset_dict = baseline_datamodules.pil_to_tensors(dataset_dict=dataset_dict, num_workers=cfg.num_workers)
     
     dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
     # no need to flatten test set, not changed
