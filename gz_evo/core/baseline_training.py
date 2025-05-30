@@ -38,7 +38,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         num_workers = 8  # of 24 per node on some, or 16 on others
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
-        devices = os.environ.get('SLURM_NTASKS_PER_NODE', 1)
+        devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
 
     elif os.path.isdir('/Users/user'):
         # macbook
