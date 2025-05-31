@@ -16,7 +16,7 @@ LABEL_ORDER_DICT = {label_: i for i, label_ in enumerate(LABEL_ORDER)}
 
 # pre-decode from PIL to tensor to save cpu at the cost of I/O
 # TODO change default transform to use toImage for simplicity?
-def pil_to_tensors(dataset: hf_datasets.Dataset, num_workers=1):
+def pil_to_tensors(dataset: hf_datasets.Dataset | hf_datasets.DatasetDict, num_workers=1):
     transform_to_tensor = v2.PILToTensor()  # no compose needed
     def transform_to_tensor_wrapped(example):
         example['image'] = transform_to_tensor(example['image'])
