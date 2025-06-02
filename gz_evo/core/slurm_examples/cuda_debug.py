@@ -70,7 +70,10 @@ if __name__ == "__main__":
     #         'cached': torch.cuda.memory_reserved(device)
     #     }
     
-    device_mem = dict(zip(range(torch.cuda.device_count(), get_memory())))
+    device_mem = dict(zip(
+        range(torch.cuda.device_count()), 
+        get_memory()
+    ))
     logging.info("Device memory info:")
 
     lowest_mem_device = min(device_mem, key=lambda k: device_mem[k])
