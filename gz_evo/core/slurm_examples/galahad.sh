@@ -8,7 +8,7 @@
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-18
 #SBATCH --ntasks-per-node=2
-#SBATCH --ntasks 1
+#SBATCH --ntasks 2
 #SBATCH --exclusive
 
 
