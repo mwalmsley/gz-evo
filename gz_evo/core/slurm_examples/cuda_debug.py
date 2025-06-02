@@ -82,10 +82,10 @@ if __name__ == "__main__":
     logging.info(f"Using devices: {devices}")
 
     x = torch.randn(100000, 10).to(f'cuda:{lowest_mem_device}')
-    logging.info("Tensor created on device:", x.device)
+    logging.info(f"Tensor created on device: {x.device}")
     logging.info(f"new memory: {torch.cuda.memory_allocated(lowest_mem_device)}")
 
-    # time.sleep(1000)
+    time.sleep(1000)
 
     logging.info('Releasing memory...')
     
