@@ -74,16 +74,16 @@ if __name__ == "__main__":
         range(torch.cuda.device_count()), 
         get_memory()
     ))
-    logging.info("Device memory info:")
+    logging.info("Device memory info: {}".format(device_mem))
 
     lowest_mem_device = min(device_mem, key=lambda k: device_mem[k])
     logging.info(f"Lowest memory device: {lowest_mem_device} with {device_mem[lowest_mem_device]} bytes allocated")
     devices = [lowest_mem_device]  # use the device with the lowest memory allocation
-    logging.info("Using devices:", devices)
+    logging.info(f"Using devices: {devices}")
 
     x = torch.randn(100000, 10).to(f'cuda:{lowest_mem_device}')
     logging.info("Tensor created on device:", x.device)
-    logging.info("new memory: ", torch.cuda.memory_allocated(lowest_mem_device))
+    logging.info(f"new memory: {torch.cuda.memory_allocated(lowest_mem_device)}")
 
     # time.sleep(1000)
 

@@ -14,6 +14,10 @@ pwd; hostname; date
 
 nvidia-smi 
 
+# torch device should have same order as nvidia-smi
+export CUDA_DEVICE_ORDER=PCI_BUS_ID
+echo "CUDA_DEVICE_ORDER set to $CUDA_DEVICE_ORDER"
+
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
