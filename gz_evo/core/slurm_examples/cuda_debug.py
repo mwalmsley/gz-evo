@@ -26,6 +26,12 @@ if __name__ == "__main__":
             time.sleep(1)
             return self.layer(x)
         
+        def training_step(self, batch, batch_idx):
+            x = batch
+            output = self.forward(x)
+            loss = torch.nn.functional.mse_loss(output, torch.zeros_like(output))
+            return loss
+        
     class DummyDataModule(pl.LightningDataModule):
         def __init__(self):
             super().__init__()
@@ -33,12 +39,14 @@ if __name__ == "__main__":
         def train_dataloader(self):
             return torch.utils.data.DataLoader(torch.randn(10000, 10), batch_size=32)
 
+    devices = find_usable_cuda_devices(1)
+    print("Usable CUDA devices:", devices)
+
     trainer = pl.Trainer(
-        devices=find_usable_cuda_devices(1),
-        accelerator='cuda',
+        devices=devices,
+        accelerator='gpu',
         max_epochs=1
     )
-    print("Trainer created with usable CUDA devices.")
 
     trainer.fit(
         model=DummyModel(),
