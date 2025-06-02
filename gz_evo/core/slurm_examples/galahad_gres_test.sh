@@ -9,7 +9,6 @@
 #SBATCH --exclude=compute-0-18
 #SBATCH --ntasks-per-node=1
 #SBATCH --ntasks 1
-#SBATCH --gres=gpu:1
 
 pwd; hostname; date
 
@@ -22,6 +21,19 @@ echo SLURM_NTASKS $SLURM_NTASKS
 echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
 export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
+
+# -w for specific node
+# -h for no header
+# -t R for running jobs only
+# -o for output format, %A for job ID
+# wc -l for line count i.e. number of jobs 
+CURRENT_NODE=$(hostname)
+echo "Current node: $CURRENT_NODE"
+NUM_CURRENT_JOBS=squeue -h -w $CURRENT_NODE -t R -o %A | wc -l
+echo "Number of running jobs on $CURRENT_NODE: $NUM_CURRENT_JOBS"
+
+export CUDA_VISIBLE_DEVICES=((NUM_CURRENT_JOBS - 1))
+echo "CUDA_VISIBLE_DEVICES set to $CUDA_VISIBLE_DEVICES"
 
 # ----
 
