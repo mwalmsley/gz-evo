@@ -20,7 +20,7 @@ if __name__ == "__main__":
         def __init__(self):
             super().__init__()
             self.layer = torch.nn.Linear(10, 1)
-            print("Dummy model initialized on device:", self.device)
+            print("Dummy model initialized on device:", self.layer.weight.device)
 
         def forward(self, x):
             time.sleep(1)
@@ -32,12 +32,17 @@ if __name__ == "__main__":
             loss = torch.nn.functional.mse_loss(output, torch.zeros_like(output))
             return loss
         
+        def configure_optimizers(self):
+            return torch.optim.Adam(self.parameters(), lr=0.001)
+        
     class DummyDataModule(pl.LightningDataModule):
         def __init__(self):
             super().__init__()
 
         def train_dataloader(self):
             return torch.utils.data.DataLoader(torch.randn(10000, 10), batch_size=32)
+
+
 
     devices = find_usable_cuda_devices(1)
     print("Usable CUDA devices:", devices)
