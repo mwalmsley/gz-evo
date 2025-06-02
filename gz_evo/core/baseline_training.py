@@ -280,7 +280,7 @@ def get_highest_free_memory_device() -> int:
     memory_by_device = get_available_memory_by_device()
     highest_free_mem_device = np.argmax(memory_by_device)
     logging.info(f"Highest free memory device: {highest_free_mem_device} with {memory_by_device[highest_free_mem_device]} bytes free")
-    return highest_free_mem_device  # type: ignore
+    return int(highest_free_mem_device)  # int64 without the cast, for some reason (who has that many gpus lol)
 
 
 def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_func):
