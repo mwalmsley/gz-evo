@@ -29,11 +29,12 @@ echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 # wc -l for line count i.e. number of jobs 
 CURRENT_NODE=$(hostname)
 echo "Current node: $CURRENT_NODE"
-NUM_CURRENT_JOBS=squeue -h -w $CURRENT_NODE -t R -o %A | wc -l
-echo "Number of running jobs on $CURRENT_NODE: $NUM_CURRENT_JOBS"
+NUM_CURRENT_JOBS=squeue -w $CURRENT_NODE -t R -o %A | wc -l
+echo "1 + Number of running jobs on $CURRENT_NODE: $NUM_CURRENT_JOBS"
 
-export CUDA_VISIBLE_DEVICES=((NUM_CURRENT_JOBS - 1))
-echo "CUDA_VISIBLE_DEVICES set to $CUDA_VISIBLE_DEVICES"
+# export CUDA_VISIBLE_DEVICES=((NUM_CURRENT_JOBS - 1))
+export CUDA_VISIBLE_DEVICES=$NUM_CURRENT_JOBS
+echo "CUDA_VISIBLE_DEVICES set to $NUM_CURRENT_JOBS"
 
 # ----
 
