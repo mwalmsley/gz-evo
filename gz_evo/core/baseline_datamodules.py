@@ -26,6 +26,7 @@ def pil_to_tensors(dataset: hf_datasets.Dataset, num_workers=1):
 # utility for adding a validation split to a huggingface dataset dictionary
 # can be used inside GenericDataModule.setup(), but best done earlier if doing other operations that require flattening
 def add_validation_split(dataset_dict, seed=42, num_workers=4):
+    num_workers = max(num_workers, 1)  # at least one worker (pytorch uses 0 to turn offf multiprocessing)
     logging.warning('Creating validation split from 20%% of train dataset, seed ={}'.format(seed))
     train_and_val_dict = dataset_dict["train"].train_test_split(test_size=0.2, shuffle=True, seed=seed, keep_in_memory=seed != 42)
     # now shuffled, so flatten indices
@@ -242,17 +243,56 @@ if __name__ == "__main__":
     ds_dict['train'] = ds_dict['train']#.repeat(5)
     # print(ds_dict)
 
-    logging.info("Transforming images to tensors")
-    ds_dict = pil_to_tensors(ds_dict, num_workers=1) 
+    # logging.info("Transforming images to tensors")
+    # ds_dict = pil_to_tensors(ds_dict, num_workers=1) 
+
+    # 10 seconds with this fairly minimal transform
     # transform = v2.Compose([
     #     v2.ToImage(),  # Convert to tensor
     #     v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
     #     v2.Resize((224, 224), antialias=True),
     #     v2.ToDtype(torch.float32, scale=True)  # float for models
     # ])
-    from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config
+
+
+    from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config, fast_view_config
     cfg = default_view_config()
-    cfg.pil_to_tensor = False
+    # cfg.pil_to_tensor = True
+    # cfg.erase_iterations = 0
+    # cfg = minimal_view_config()
+    cfg.interpolation_method='nearest'
+
+    # from torchvision.transforms import InterpolationMode
+    # interpolation_mode = InterpolationMode.NEAREST
+
+    # with image at the start...
+
+    # without dtype casts, still 19 seconds (no speedup from uint8 apparently)
+    # wit toimage at the end, 10 seconds! (9 seconds with only resize)
+    # So despite the official advice, it's 2x faster to use PIL backend for me here
+    # https://docs.pytorch.org/vision/stable/transforms.html#performance-considerations
+    # this may be because affine (like resize) is quicker with channels-last PIL format
+
+
+    # with only resize, 8 seconds with toimage first, 8 seconds with toimage at the end
+    # with affine+resize, 18/19 seconds with toimage first, 10 seconds with toimage at the end
+    # so affine is drmatically slower if toimage is first (channels-first tensor) than if it is last (channels-last PIL image)
+    # transform = v2.Compose([
+    #     # v2.ToImage(),  # Convert to tensor
+    #     # v2.ToDtype(torch.uint8, scale=True),  # probably already uint8
+    #     v2.RandomAffine(**cfg.random_affine),  # no resize, random affine
+    #     v2.Resize(cfg.output_size, antialias=True),  # resize to output size
+    #     # v2.ToDtype(torch.float32, scale=True)  # float for models
+    #     v2.ToImage(),  # Convert to tensor
+    # ])
+
+
+    # cfg = fast_view_config()
+
+    # 30 seconds with default -> 10.6 seconds with PIL backend
+    # 21 seconds with minimal, 17.6 with nearest interpolation -> 7.6 seconds with PIL backend
+    # 8 seconds with fast, mostly decoding and thread lock
+    # cfg = fast_view_config()
     transform = GalaxyViewTransform(cfg).transform
 
     # most minimal
@@ -309,7 +349,8 @@ if __name__ == "__main__":
     dataloader = datamodule.train_dataloader()
     start_time = time.time()
     for batch in dataloader:
-        print(batch['label'])
+        # print(batch['label'])
+        pass
     end_time = time.time()
     print(f"Time taken to iterate over train_dataloader: {end_time - start_time:.2f} seconds. Iterable: {datamodule.iterable}, num_workers: {datamodule.num_workers}, prefetch_factor: {datamodule.prefetch_factor}")
     print('Complete')
