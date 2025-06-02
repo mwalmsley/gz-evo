@@ -7,15 +7,18 @@
 #SBATCH --cpus-per-task=12
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-18
-#SBATCH --ntasks-per-node=2
-#SBATCH --ntasks 2
-#SBATCH --exclusive
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks 1
+#### SBATCH --exclusive
 
 
 
 pwd; hostname; date
 
 nvidia-smi
+
+export CUDA_VISIBLE_DEVICES=$SLURM_PROCID
+echo "CUDA_VISIBLE_DEVICES set to $CUDA_VISIBLE_DEVICES"
 
 export HYDRA_FULL_ERROR=1
 export TORCH_NCCL_BLOCKING_WAIT=1
