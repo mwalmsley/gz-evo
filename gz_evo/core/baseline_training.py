@@ -1,9 +1,11 @@
 import os
+import subprocess
 import logging
 from dataclasses import asdict
 import glob
-import pandas as pd
 
+import numpy as np
+import pandas as pd
 import omegaconf
 import wandb
 import torch
@@ -34,9 +36,9 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         prefetch_factor = 4
 
     elif os.path.isdir('/share/nas2'):
-        subset_name = 'default'
-        # subset_name = 'tiny' 
-        num_workers = 10  # of 24 per node on some, or 16 on others
+        # subset_name = 'default'
+        subset_name = 'tiny' 
+        num_workers = 8  # of 24 per node on some, or 16 on others
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
@@ -186,11 +188,17 @@ def run_training(cfg, lightning_model, datamodule):
     # if 'SLURM_NTASKS' in os.environ:
     #     del os.environ['SLURM_NTASKS']
 
+    if cfg.devices == 1:
+        devices = [get_highest_free_memory_device()]  # list of ints interpreted as device indices
+    else:
+        devices = cfg.devices
+    logging.info(f"Using {devices} devices for training")
+
     trainer = pl.Trainer(
         num_sanity_val_steps=0,
         log_every_n_steps=150,
         accelerator=cfg.accelerator,
-        devices=cfg.devices,  # per node
+        devices=devices,  # single node only
         num_nodes=cfg.nodes,
         precision=cfg.precision,
         logger=wandb_logger,
@@ -253,6 +261,26 @@ def log_images(wandb_logger, datamodule):
         }
     )
 
+
+def get_available_memory_by_device():
+    # uses nvidia-smi as torch.cuda.memory_allocated() seems broken, always 0
+    # requires export CUDA_DEVICE_ORDER=PCI_BUS_ID to ensure nvidia-smi order = torch.cuda device order
+    result = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,nounits,noheader'], stdout=subprocess.PIPE)
+    memory_by_device = [int(x) for x in result.stdout.decode('utf-8').strip().split('\n')]
+
+    logging.info("Available memory by device: {}".format(dict(zip(
+        range(len(memory_by_device)), 
+        memory_by_device)
+    )))  # type: ignore
+
+    return memory_by_device
+
+
+def get_highest_free_memory_device() -> int:
+    memory_by_device = get_available_memory_by_device()
+    highest_free_mem_device = np.argmax(memory_by_device)
+    logging.info(f"Highest free memory device: {highest_free_mem_device} with {memory_by_device[highest_free_mem_device]} bytes free")
+    return highest_free_mem_device  # type: ignore
 
 
 def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_func):

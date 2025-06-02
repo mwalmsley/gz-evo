@@ -1,34 +1,9 @@
 import time
 import logging
-import subprocess
 
-import numpy as np
 import torch
 
-
-def get_available_memory_by_device():
-    # uses nvidia-smi as torch.cuda.memory_allocated() seems broken, always 0
-    # requires export CUDA_DEVICE_ORDER=PCI_BUS_ID to ensure nvidia-smi order = torch.cuda device order
-    result = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,nounits,noheader'], stdout=subprocess.PIPE)
-    memory_by_device = [int(x) for x in result.stdout.decode('utf-8').strip().split('\n')]
-
-    logging.info("Available memory by device: {}".format(zip(
-        range(len(memory_by_device)), 
-        memory_by_device)
-    ))
-
-    return memory_by_device
-
-
-def get_highest_free_memory_device() -> int:
-
-    memory_by_device = get_available_memory_by_device()
-
-    highest_free_mem_device = np.argmax(memory_by_device)
-
-    logging.info(f"Lowest memory device: {highest_free_mem_device} with {memory_by_device[highest_free_mem_device]} bytes allocated")
-    return highest_free_mem_device  # type: ignore
-
+from gz_evo.core.baseline_training import get_highest_free_memory_device
 
 
 if __name__ == "__main__":

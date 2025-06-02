@@ -4,12 +4,11 @@
 #SBATCH --mem=30G  # no need for high mem
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=8
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-18
 #SBATCH --ntasks-per-node=1
 #SBATCH --ntasks 1
-#### SBATCH --exclusive
 
 
 
@@ -17,8 +16,9 @@ pwd; hostname; date
 
 nvidia-smi
 
-export CUDA_VISIBLE_DEVICES=$SLURM_PROCID
-echo "CUDA_VISIBLE_DEVICES set to $CUDA_VISIBLE_DEVICES"
+# torch device should have same order as nvidia-smi
+export CUDA_DEVICE_ORDER=PCI_BUS_ID
+echo "CUDA_DEVICE_ORDER set to $CUDA_DEVICE_ORDER"
 
 export HYDRA_FULL_ERROR=1
 export TORCH_NCCL_BLOCKING_WAIT=1
