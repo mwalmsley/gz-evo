@@ -89,7 +89,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             accelerator=accelerator,
             devices=devices,
             nodes=1,
-            epochs=3,
+            # epochs=3,
+            epochs=1000,
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,
@@ -196,7 +197,7 @@ def run_training(cfg, lightning_model, datamodule):
 
     trainer = pl.Trainer(
         num_sanity_val_steps=0,
-        log_every_n_steps=150,
+        log_every_n_steps=150 if cfg.subset_name == 'default' else 10,  # more frequent logging for tiny subset to avoid nan metrics
         accelerator=cfg.accelerator,
         devices=devices,  # single node only
         num_nodes=cfg.nodes,
