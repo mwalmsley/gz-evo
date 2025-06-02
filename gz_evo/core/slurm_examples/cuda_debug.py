@@ -15,12 +15,33 @@ if __name__ == "__main__":
 
     from lightning.pytorch.accelerators import find_usable_cuda_devices
 
+    # create dummy model and training data
+    class DummyModel(pl.LightningModule):
+        def __init__(self):
+            super().__init__()
+            self.layer = torch.nn.Linear(10, 1)
+            print("Dummy model initialized on device:", self.device)
+
+        def forward(self, x):
+            time.sleep(1)
+            return self.layer(x)
+        
+    class DummyDataModule(pl.LightningDataModule):
+        def __init__(self):
+            super().__init__()
+
+        def train_dataloader(self):
+            return torch.utils.data.DataLoader(torch.randn(10000, 10), batch_size=32)
+
     trainer = pl.Trainer(
         devices=find_usable_cuda_devices(1),
         accelerator='cuda',
         max_epochs=1
     )
     print("Trainer created with usable CUDA devices.")
-    print(trainer.devices)
 
-    time.sleep(60)  # Sleep to allow time to check the output
+    trainer.fit(
+        model=DummyModel(),
+        datamodule=DummyDataModule()
+    )
+    print("Training completed.")
