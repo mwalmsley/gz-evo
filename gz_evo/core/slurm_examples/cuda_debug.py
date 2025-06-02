@@ -1,5 +1,6 @@
 import time
 import logging
+import subprocess
 
 import torch
 import pytorch_lightning as pl
@@ -54,18 +55,26 @@ if __name__ == "__main__":
     # devices = find_usable_cuda_devices(1)
     # logging.info("Usable CUDA devices:", devices)
 
-    device_mem = {}
-    for device in range(torch.cuda.device_count()):
-        logging.info(f"Device {device}: {torch.cuda.get_device_name(device)}")
-        logging.info(f"  Memory Allocated: {torch.cuda.memory_allocated(device)} bytes")
-        logging.info(f"  Memory Cached: {torch.cuda.memory_reserved(device)} bytes")
-        device_mem[device] = {
-            'allocated': torch.cuda.memory_allocated(device),
-            'cached': torch.cuda.memory_reserved(device)
-        }
+    def get_memory():
+        result = subprocess.run(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,nounits,noheader'], stdout=subprocess.PIPE)
+        gpu_memory = [int(x) for x in result.stdout.decode('utf-8').strip().split('\n')]
+        return gpu_memory
 
-    lowest_mem_device = min(device_mem, key=lambda k: device_mem[k]['allocated'])
-    logging.info(f"Lowest memory device: {lowest_mem_device} with {device_mem[lowest_mem_device]['allocated']} bytes allocated")
+    # device_mem = {}
+    # for device in range(torch.cuda.device_count()):
+    #     logging.info(f"Device {device}: {torch.cuda.get_device_name(device)}")
+    #     logging.info(f"  Memory Allocated: {torch.cuda.memory_allocated(device)} bytes")
+    #     logging.info(f"  Memory Cached: {torch.cuda.memory_reserved(device)} bytes")
+    #     device_mem[device] = {
+    #         'allocated': torch.cuda.memory_allocated(device),
+    #         'cached': torch.cuda.memory_reserved(device)
+    #     }
+    
+    device_mem = dict(zip(range(torch.cuda.device_count(), get_memory())))
+    logging.info("Device memory info:")
+
+    lowest_mem_device = min(device_mem, key=lambda k: device_mem[k])
+    logging.info(f"Lowest memory device: {lowest_mem_device} with {device_mem[lowest_mem_device]} bytes allocated")
     devices = [lowest_mem_device]  # use the device with the lowest memory allocation
     logging.info("Using devices:", devices)
 
