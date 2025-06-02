@@ -64,14 +64,19 @@ if __name__ == "__main__":
     devices = [lowest_mem_device]  # use the device with the lowest memory allocation
     print("Using devices:", devices)
 
-    trainer = pl.Trainer(
-        devices=devices,
-        accelerator='gpu',
-        max_epochs=1
-    )
+    x = torch.randn(10000, 10).to(f'cuda:{lowest_mem_device}')
+    print("Tensor created on device:", x.device)
+    print("new memory: ", torch.cuda.memory_allocated(lowest_mem_device))
+    
 
-    trainer.fit(
-        model=DummyModel(),
-        datamodule=DummyDataModule()
-    )
-    print("Training completed.")
+    # trainer = pl.Trainer(
+    #     devices=devices,
+    #     accelerator='gpu',
+    #     max_epochs=1
+    # )
+
+    # trainer.fit(
+    #     model=DummyModel(),
+    #     datamodule=DummyDataModule()
+    # )
+    # print("Training completed.")
