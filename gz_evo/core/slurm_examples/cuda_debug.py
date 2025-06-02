@@ -67,6 +67,10 @@ if __name__ == "__main__":
     x = torch.randn(10000, 10).to(f'cuda:{lowest_mem_device}')
     print("Tensor created on device:", x.device)
     print("new memory: ", torch.cuda.memory_allocated(lowest_mem_device))
+
+    time.sleep(1000)
+
+    print('Releasing memory...')
     
 
     # trainer = pl.Trainer(
