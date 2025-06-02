@@ -4,10 +4,10 @@
 #SBATCH --mem=30G  # no need for high mem
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=12
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-18
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=2
 #SBATCH --ntasks 1
 #SBATCH --exclusive
 
