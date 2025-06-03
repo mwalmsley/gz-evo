@@ -38,7 +38,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     elif os.path.isdir('/share/nas2'):
         subset_name = 'default'
         # subset_name = 'tiny' 
-        num_workers = 24  # of 24 per node on some, or 16 on others
+        num_workers = 1  # of 24 per node on some, or 16 on others
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))

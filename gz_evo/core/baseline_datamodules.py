@@ -130,9 +130,12 @@ class GenericDataModule(pl.LightningDataModule):
     def train_transform_wrapped_batch(self, examples: dict):
         # assert len(examples['image']) > 1
         examples['image'] = [self.train_transform(im) for im in examples['image']]
+        # maybe it's batchwise compatible, but not sure?
+        # examples['image'] = self.train_transform(examples['image'])  # stack to tensor
         return examples
     def test_transform_wrapped_batch(self, examples: dict):
         examples['image'] = [self.test_transform(im) for im in examples['image']]
+        # examples['image'] = self.test_transform(examples['image'])  # stack to tensor
         return examples
 
 
@@ -167,7 +170,7 @@ class GenericDataModule(pl.LightningDataModule):
                 # for iterabledataset, map is applied on-the-fly (on every yield) and not cached
                 # so there's no need for set_transform: everything is a non-cached map
     
-            else:  # leave as not iterable, fast reads 
+            else:  # leave as not iterable, fast reads, but list comprehension for transforms
                 train_dataset_hf = self.dataset_dict['train']
                 val_dataset_hf = self.dataset_dict['validation']
 
