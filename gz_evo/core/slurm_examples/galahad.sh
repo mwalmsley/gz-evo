@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --mem=30G  # no need for high mem
+#SBATCH --mem=80G  # high mem node is more reliable
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
 #SBATCH --cpus-per-task=8
