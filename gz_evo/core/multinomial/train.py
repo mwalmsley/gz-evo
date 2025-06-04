@@ -53,8 +53,8 @@ def main():
     # cfg.dropout_rate = 0.0  # (already done, probably, now 0.5 is the default)
    
     # (was 0.4 for paper)
-    cfg.drop_path_rate = 0. 
-    # cfg.drop_path_rate = 0.75 
+    # cfg.drop_path_rate = 0. 
+    cfg.drop_path_rate = 0.75 
 
     # larger weight decay
     # cfg.weight_decay = 0.2
