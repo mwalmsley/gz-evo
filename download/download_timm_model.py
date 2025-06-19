@@ -1,6 +1,7 @@
 
 import os
 
+"""useful if your cluster is offline and you want to pre-download models"""
 
 if __name__ == '__main__':
 
@@ -59,9 +60,6 @@ if __name__ == '__main__':
         'vit_base_patch32_clip_224.openai',
         'vit_base_patch16_clip_224.laion2b_ft_in12k',
 
-        # seems to not have pretrained weights available
-        # 'vit_base_patch32_clip_224.laion2b_ft_in12k'
-
 
     ]:
         print(model)
@@ -69,4 +67,6 @@ if __name__ == '__main__':
             timm.create_model(model, pretrained=True)
         except Exception as e:
             print(e)
+
+        # can also explicitly download the model
         # huggingface_hub.snapshot_download('timm/' + model, repo_type='model', cache_dir='/project/def-bovy/walml/cache/huggingface')

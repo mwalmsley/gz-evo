@@ -5,15 +5,12 @@ import torchmetrics
 import pytorch_lightning as pl
 import timm
 import pandas as pd
-# from zoobot.shared import schemas
 
-import baseline_datamodules
+from gz_evo.core import baseline_datamodules
 
 class GenericBaseline(pl.LightningModule):
     """
-    All Zoobot models use the lightningmodule API and so share this structure
-    super generic, just to outline the structure. nothing specific to dirichlet, gz, etc
-    only assumes an encoder and a head
+    Generic supervised model, based on Zoobot. Intended to be subclassed.
     """
 
     def __init__(
@@ -53,7 +50,6 @@ class GenericBaseline(pl.LightningModule):
         self.setup_metrics()
 
 
-
     def setup_metrics(self, nan_strategy='error'):  # may sometimes want to ignore nan even in main metrics
 
         self.loss_metrics = torch.nn.ModuleDict({
@@ -63,27 +59,6 @@ class GenericBaseline(pl.LightningModule):
         })
 
         self.setup_other_metrics()
-        
-        # TODO could add per-campaign metrics automatically?
-
-    def forward(self, x):
-        assert x.shape[1] < 4  # torchlike BCHW
-        x = self.encoder(x)
-        return self.head(x)
-    
-    def make_step(self, batch, step_name):
-        x = batch['image']
-
-        # for classification this is simply
-        # e.g. {'label': batch['label']} i.e {'label': tensor}
-        # for regression this is e.g.
-        # {'smooth-or-featured_smooth_fraction': tensor, ...}
-        labels = {key: batch[key] for key in self.label_cols}  
-        predictions = self(x)
-        loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
-        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
-        self.update_other_metrics(outputs, step_name=step_name)
-        return outputs
 
     # simple option for baselines, designed for training from scratch
     # def configure_optimizers(self):
@@ -180,20 +155,26 @@ class GenericBaseline(pl.LightningModule):
 
         logging.info('param groups: {}'.format(len(params)))
 
-        # because it iterates through the generators, THIS BREAKS TRAINING so only uncomment to debug params
-        # for param_group_n, param_group in enumerate(params):
-        #     shapes_within_param_group = [p.shape for p in list(param_group['params'])]
-        #     logging.debug('param group {}: {}'.format(param_group_n, shapes_within_param_group))
-        # print('head params to optimize', [p.shape for p in params[0]['params']])  # head only
-        # print(list(param_group['params']) for param_group in params)
-        # exit()
-        # Initialize AdamW optimizer
-
         opt = torch.optim.AdamW(params, weight_decay=self.weight_decay)  # lr included in params dict
         logging.info('Optimizer ready')
 
         return opt
+        
+    def forward(self, x):
+        assert x.shape[1] < 4  # torchlike BCHW
+        x = self.encoder(x)
+        return self.head(x)
+    
+    def make_step(self, batch, step_name):
+        x = batch['image']
 
+        labels = {key: batch[key] for key in self.label_cols}  # here is (not needed) label_col filter
+        # e.g. {'smooth_yes: 12, 'smooth_no': 8, 'smooth_fraction': 0.6, ...}
+        predictions = self(x)
+        loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
+        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
+        self.update_other_metrics(outputs, step_name=step_name)
+        return outputs
 
     def training_step(self, batch, batch_idx):
         return self.make_step(batch, step_name='train')
@@ -205,30 +186,27 @@ class GenericBaseline(pl.LightningModule):
         return self.make_step(batch, step_name='test')
 
     def on_train_epoch_end(self) -> None:
+        # logging.info('on_train_epoch_end called')
         # called *after* on_validation_epoch_end, confusingly
         # do NOT log_all_metrics here. 
         # logging a metric resets it, and on_validation_epoch_end just logged and reset everything, so you will only log nans
         self.log_all_metrics(split='train')
 
+    # def on_validation_epoch_start(self):
+        # logging.info('on_validation_epoch_start called')
+
+
+    def on_validation_batch_start(self, batch, batch_idx, dataloader_idx = 0):
+        # logging.info('on_validation_batch_start called')
+        return super().on_validation_batch_start(batch, batch_idx, dataloader_idx)
+
     def on_validation_epoch_end(self) -> None:
         self.log_all_metrics(split='validation')
 
     def on_test_epoch_end(self) -> None:
-        # logging.info('start test epoch end')
         self.log_all_metrics(split='test')
-        # logging.info('end test epoch end')
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
-        # I can't work out how to get webdataset to return a single item im, not a tuple (im,).
-        # this is fine for training but annoying for predict
-        # help welcome. meanwhile, this works around it
-        # if isinstance(batch, list) and len(batch) == 1:
-        #     return self(batch[0])
-        # https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html#inference
-        # this calls forward, while avoiding the need for e.g. model.eval(), torch.no_grad()
-        # x, y = batch  # would be usual format, but here, batch does not include labels
-        # x = batch['image']
-        # return {'id_str': batch['id_str'], 'prediction': self(x)}
         raise NotImplementedError('predict_step must be subclassed')
     
     # subclassed below for the various tasks, or extend yourself
@@ -324,26 +302,25 @@ class RegressionBaseline(GenericBaseline):
         # use multi-class cross entropy as loss function
         self.question_answer_pairs = kwargs['head_kwargs']['question_answer_pairs']
         self.loss_fn = CustomWeightedMSELoss(self.question_answer_pairs)
+        self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
         self.answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
-        # logging.info(f'answer keys: {self.answer_fraction_keys}')
-        # dependencies = kwargs['head_kwargs']['dependencies']
-        # schema = schemas.Schema(question_answer_pairs, dependencies)
-
-
 
 
     def setup_other_metrics(self):
         # without weighting, supervised loss (above) is the sum of the mean squared errors across all answers
-
         # also have manually-calculated MSE across all answers?
+
+        # minor duplication: we run this during super().__init__, before own init, 
+        # so can't use self.answer_fraction_keys or even self.question_answer_pairs yet, only self.label_cols
+        answer_fraction_keys = [col for col in self.label_cols if col.endswith('_fraction')]
+        assert answer_fraction_keys, 'No answer fraction keys found in label_cols: {}'.format(self.label_cols)
+        # logging.info('metrics for answer fractions: {}'.format(answer_fraction_keys))
 
         regression_metrics = {
             'train/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),  # ignore nans via MeanMetric
             'validation/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore'),
             'test/supervised_total_unweighted_mse': torchmetrics.MeanMetric(nan_strategy='ignore')
         }
-        question_answer_pairs = self.head_kwargs['question_answer_pairs']
-        answer_fraction_keys = [q + a + '_fraction' for q, a_list in question_answer_pairs.items() for a in a_list]
         for answer_col in answer_fraction_keys:
             regression_metrics[f'train/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
             regression_metrics[f'validation/supervised_unweighted_mse_{answer_col}'] = torchmetrics.MeanMetric(nan_strategy='ignore')
@@ -385,7 +362,7 @@ class RegressionBaseline(GenericBaseline):
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
         preds =  self(batch['image'])
-        header = self.answer_fraction_keys
+        header = self.answer_keys
         df = pd.DataFrame(preds.cpu().numpy(), columns=header)
         df['id_str'] = batch['id_str']  # str, no need to cast
         return df
@@ -400,74 +377,65 @@ class RegressionBaseline(GenericBaseline):
         #     torch.nn.Linear(self.encoder.num_features, num_answers), 
         #     torch.nn.Sigmoid()
         # )
-        return FractionalHead(num_features, question_answer_pairs)
-    
+        return SoftmaxHeadPerAnswer(num_features, question_answer_pairs, dropout_rate=self.head_kwargs['dropout_rate'])
 
-# Q heads, each one making softmax predictions for the answers to a question
+class SoftmaxHeadPerAnswer(torch.nn.Module):
 
-
-def SoftmaxHead(num_features, num_answers):
-    return torch.nn.Sequential(
-            torch.nn.Linear(num_features, num_answers), 
-            torch.nn.Softmax(dim=1)
-        )
-
-
-#         self.dropout = torch.nn.Dropout(self.head_kwargs['dropout_rate'])
-
-class FractionalHead(torch.nn.Module):
-
-    def __init__(self, num_features: int, question_answer_pairs: dict):
+    def __init__(self, num_features: int, question_answer_pairs: dict, dropout_rate: float = 0.5):  # dropout newly added
         super().__init__()
 
         self.question_answer_pairs = question_answer_pairs
+        # Q heads, each one making softmax predictions for the answers to a question
         self.heads = torch.nn.ModuleDict({
-            question: SoftmaxHead(num_features, len(answers)) for question, answers in question_answer_pairs.items()
+            question: SoftmaxHead(num_features, len(answers), dropout_rate) for question, answers in question_answer_pairs.items()
         })
 
     def forward(self, x):
-        # x = torch.nn.Dropout(self.head_kwargs['dropout_rate'])(x)
         preds = [head(x) for head in self.heads.values()]
         return torch.cat(preds, dim=1)
-        
+    
+
+def SoftmaxHead(num_features, num_answers, dropout_rate):
+    return torch.nn.Sequential(
+            torch.nn.Dropout(dropout_rate),  # newly added
+            torch.nn.Linear(num_features, num_answers), 
+            torch.nn.Softmax(dim=1)  # this is our estimated probability for each answer (for multinomial loss)
+        )
 
 class CustomWeightedMSELoss(torch.nn.Module):
     def __init__(self, question_answer_pairs):
         super().__init__()
         self.question_answer_pairs = question_answer_pairs
-        self.question_totals_keys = [question + '_total-votes' for question in self.question_answer_pairs.keys()]
-        self.answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
-        logging.info(f'question total keys: {self.question_totals_keys}')
-        logging.info(f'answer keys: {self.answer_fraction_keys}')
+        # looks similar to the RegressionBaseline init, but this is a different self
+        self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
+        logging.info(f'answer keys: {self.answer_keys}')
 
 
     def forward(self, inputs, targets):
         # inputs, prediction vector, is B x N, where N is the number of answer keys (fractions). Might change to dictlike.
-        # targets, labels from datamodule, is dictlike with keys of answer_keys and question_totals_keys, each with values of shape (B)
+        # targets, labels from datamodule, is dictlike with keys of answer_keys, each with values of shape (B)
 
         loss = 0
+
+        # logging.info(targets.keys())  # should be answer_keys (and answer_fraction_keys, but ignored here)
                 
         for question, answers in self.question_answer_pairs.items():
-            question_total_key = question + '_total-votes'
-            question_total = targets[question_total_key]  # total votes for this question
 
-            # read answer fractions from target dictlike
-            fraction_keys = [question + answer + '_fraction' for answer in answers]
-            target_fractions = torch.stack([targets[key] for key in fraction_keys], dim=1)
-            # calculate counts as fractions * total votes (but I could have just read these into targets in the first place)
-            counts = (target_fractions * question_total.reshape(-1, 1)).int()
+            q_answer_keys = [question + answer for answer in answers]
 
-            # again, work out the answer indices for the prediction vector
-            answer_indices = [self.answer_fraction_keys.index(key) for key in fraction_keys]
+            counts = torch.stack([targets[key] for key in q_answer_keys], dim=1).int()
+
+            # work out the answer indices for the prediction vector
+            answer_indices = [self.answer_keys.index(key) for key in q_answer_keys]
             predicted_probs = inputs[:, answer_indices]
-            # total counts is implicit from counts, nice one torch :)
 
             # negative log likelihood of observed counts using multinomial p predicted by model
             # this is a simplified version of the Dirichlet-Multinomial loss from Zoobot etc, where the model predicts concentrations
             # here, the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
 
+            # total counts is implicit from counts, nice one torch :)
             # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
-            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version
+            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version, I forget why...
             loss += question_loss
                 
         # treating all answers equally, take a nanmean of everything
@@ -482,27 +450,3 @@ def get_multinomial_log_prob(probs, counts):
         logits[(counts == 0) & (logits == -torch.inf)] = 0
         log_powers = (logits * counts).sum(-1)
         return log_factorial_n - log_factorial_xs + log_powers
-
-
-
-# old code for calculating MSE loss (weighted). Was less stable than multinomial loss above.
-
-# Zoobot style predicting a vector, we need to know which index is which answer
-# for answer in answers:
-#     answer_key = question + answer + '_fraction'
-#     # index of both preds and loss
-#     answer_index = self.answer_fraction_keys.index(answer_key)
-    
-#     answer_predicted_fraction = inputs[:, answer_index]
-#     answer_true_fraction = targets[answer_key]
-# calculate standard MSE loss (this is looping over the answers)
-#     answer_loss = torch.nn.functional.mse_loss(answer_predicted_fraction, answer_true_fraction, reduction='none')
-
-# apply weighting
-#     # TEMP removed
-#     # answer_loss = answer_loss * torch.sqrt(question_total)  # upweight the more people answer
-    
-#     # masked_answer_loss = torch.where(question_total > 10, answer_loss, torch.nan)  # only apply loss if labelled with a minimal number of votes
-
-#     loss[:, answer_index] = answer_loss
-#     # loss[:, answer_index] = masked_answer_loss  # (B, N) shape still
