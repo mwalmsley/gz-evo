@@ -361,6 +361,8 @@ class RegressionBaseline(GenericBaseline):
 
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        # print(batch)
+        # print(batch['image'].shape)
         preds =  self(batch['image'])
         header = self.answer_keys
         df = pd.DataFrame(preds.cpu().numpy(), columns=header)
