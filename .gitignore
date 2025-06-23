@@ -170,3 +170,5 @@ to_ignore
 *.DS_Store
 *.pdf
 *.png
+
+*.vscode
