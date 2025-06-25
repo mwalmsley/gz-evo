@@ -22,7 +22,9 @@ from gz_evo.downstream import finetune_utils
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=gz_euclid ++debug=True
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=is-lsb ++debug=True
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=is-lsb ++wandb=True
+
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=euclid_strong_lens_expert_judges ++wandb=False ++debug=True
+python gz_evo/downstream/finetune.py +learner=vit_tiny +hardware=local ++dataset=euclid_strong_lens_expert_judges ++wandb=True ++debug=False
 
 python gz_evo/downstream/finetune.py +learner=convnext_nano ++learner.encoder_hub_path=hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano +hardware=local ++dataset=is-lsb ++debug=True
 
@@ -135,8 +137,8 @@ def main(cfg):
         patience=cfg.learner.patience,
         overfit_batches=1 if cfg.debug else 0,
     )
-    # trainer.fit(model, datamodule)
-    # trainer.test(datamodule=datamodule, ckpt_path="best")
+    trainer.fit(model, datamodule)
+    trainer.test(datamodule=datamodule, ckpt_path="best")
 
     # TODO add save_predictions
     save_predictions(model, datamodule, trainer, save_dir)
@@ -148,10 +150,10 @@ def main(cfg):
 def prepare_experiment(cfg, token=None):
     # typing fixes
     cfg.hardware.num_workers = int(cfg.hardware.num_workers)
-    if cfg.pretrained == "False":
-        cfg.pretrained = False
+    if cfg.learner.pretrained == "False":
+        cfg.learner.pretrained = False
 
-    encoder = get_encoder(cfg) #, timm_kwargs)
+    encoder = get_encoder(cfg)
 
     # now we need to set up the model (with that encoder) and the datamodule
 
@@ -259,18 +261,30 @@ def prepare_experiment(cfg, token=None):
 # to finetune new encoders replace this whatever you like
 def get_encoder(cfg):
 
-    # possibly only has an effect when training from scratch, otherwise is already fixed
-    timm_kwargs = {
-        "drop_path_rate": cfg.learner.stochastic_depth,
-    }
+    # WIP advanced baselines
+    # SSL or hybrid encoder
+    if cfg.learner.encoder_hub_path.startswith('hf_hub:mwalmsley/wip-hybrid-encoder'):
+        from foundation.models.base_hybrid import BaseHybridLearner
+        from huggingface_hub import hf_hub_download
+        repo_id = cfg.learner.encoder_hub_path.replace('hf_hub:', '')
+        ckpt_path = hf_hub_download(repo_id=repo_id, filename="last.ckpt", repo_type="model")
+        model = BaseHybridLearner.load_from_checkpoint(ckpt_path)
+        encoder = model.ssl.encoder  # timm.models.vision_transformer.VisionTransformer
 
-    # terrestrial means imagenet-pretrained
-    encoder = finetune_utils.get_timm_encoder(
-        name=cfg.learner.encoder_hub_path,
-        channels=cfg.learner.channels,
-        pretrained=cfg.pretrained,
-        timm_kwargs=timm_kwargs
-    )
+    # supervised encoders, trained with gz_evo.core, or timm equivalents
+    elif cfg.learner.encoder_hub_path.startswith('hf_hub:mwalmsley/baseline-encoder') or cfg.learner.encoder_hub_path.startswith('hf_hub:timm'):
+        # possibly only has an effect when training from scratch, otherwise is already fixed
+        timm_kwargs = {
+            "drop_path_rate": cfg.learner.stochastic_depth,
+        }
+
+        # terrestrial means imagenet-pretrained
+        encoder = finetune_utils.get_timm_encoder(
+            name=cfg.learner.encoder_hub_path,
+            channels=cfg.learner.channels,
+            pretrained=cfg.learner.pretrained,
+            timm_kwargs=timm_kwargs
+        )
 
     return encoder
 
