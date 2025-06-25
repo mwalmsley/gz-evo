@@ -7,7 +7,8 @@ import pytorch_lightning as pl
 import datasets
 import torch
 
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config, fast_view_config
+from galaxy_datasets.transforms import get_galaxy_transform, default_view_config, minimal_view_config
+from galaxy_datasets.pytorch import galaxy_datamodule, dataset_utils
 
 from gz_evo.core import  baseline_models, baseline_datamodules, baseline_training
 
@@ -18,9 +19,9 @@ def main():
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
+    architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
-    architecture_name = 'convnext_large'
+    # architecture_name = 'convnext_large'
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
     # architecture_name = 'convnext_base.clip_laion2b_augreg_ft_in12k'
 
@@ -70,7 +71,7 @@ def set_up_task_data(cfg):
     dataset_dict: datasets.DatasetDict = baseline_training.get_dataset_dict(cfg) # type: ignore
 
     # before we do anything heavy, split between ranks to distribute the work
-    dataset_dict = baseline_datamodules.distribute_dataset_with_lightning(dataset_dict)
+    dataset_dict = dataset_utils.distribute_dataset_with_lightning(dataset_dict)
 
     # naively, only train on examples with labels, from all telescopes
     logging.info(f'{dataset_dict["train"].num_rows} training examples before filtering')
@@ -89,7 +90,7 @@ def set_up_task_data(cfg):
     # we need to flatten after the filter
     # do validation split here, which flattens anyway after shuffling
     # this avoids flattening *again* with add_column below
-    dataset_dict = baseline_datamodules.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
+    dataset_dict = dataset_utils.add_validation_split(dataset_dict=dataset_dict, seed=seed, num_workers=cfg.num_workers)
     # also flatten test indices post-filter, where we can control num_proc
     logging.info('Flattening indices for test set')
     dataset_dict['test'] = dataset_dict['test'].flatten_indices(num_proc=cfg.num_workers)
@@ -110,10 +111,10 @@ def set_up_task_data(cfg):
     # train_transform_config = fast_view_config()
     # test_transform_config = fast_view_config()
 
-    train_transform = GalaxyViewTransform(train_transform_config).transform
-    test_transform = GalaxyViewTransform(test_transform_config).transform
+    train_transform = get_galaxy_transform(train_transform_config)
+    test_transform = get_galaxy_transform(test_transform_config)
 
-    datamodule = baseline_datamodules.GenericDataModule(
+    datamodule = galaxy_datamodule.HuggingFaceDataModule(
         dataset_dict=dataset_dict,
         train_transform=train_transform,
         test_transform=test_transform,

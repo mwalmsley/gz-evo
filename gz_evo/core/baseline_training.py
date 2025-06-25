@@ -181,8 +181,8 @@ def run_training(cfg, lightning_model, datamodule):
 
     # galahad cluster has old slurm and doesn't set correctly
     # os.environ['SLURM_NTASKS_PER_NODE'] = str(cfg.devices)  
-    logging.info(f"SLURM_NTASKS_PER_NODE is {os.environ['SLURM_NTASKS_PER_NODE']}")
-    logging.info(f"SLURM_NTASKS is {os.environ['SLURM_NTASKS']}")
+    logging.info(f"SLURM_NTASKS_PER_NODE is {os.environ.get('SLURM_NTASKS_PER_NODE', 'not set')}")
+    logging.info(f"SLURM_NTASKS is {os.environ.get('SLURM_NTASKS', 'not set')}")
 
     # delete SLURM env vars to avoid issues with pytorch lightning
     # if 'SLURM_NTASKS_PER_NODE' in os.environ:

@@ -69,7 +69,7 @@ class GenericBaseline(pl.LightningModule):
     #         weight_decay=self.weight_decay
     #     )  
 
-    # temporarily copied from Zoobot - plausible that finetuning for core datasets will be important
+    # copied from Zoobot - plausible that finetuning for core datasets will be important
     def configure_optimizers(self):  
         """
         This controls which parameters get optimized
@@ -301,7 +301,14 @@ class RegressionBaseline(GenericBaseline):
 
         # use multi-class cross entropy as loss function
         self.question_answer_pairs = kwargs['head_kwargs']['question_answer_pairs']
-        self.loss_fn = CustomWeightedMSELoss(self.question_answer_pairs)
+
+        # copied from Zoobot
+        # simple class to iterate through questions and answers and calculate a loss 
+        self.loss_fn = CustomMultiQuestionLoss(
+            question_answer_pairs=self.question_answer_pairs,  # set of questions and answers
+            question_functional_loss=get_neg_multinomial_log_prob  # apply to each question
+        )
+        
         self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
         self.answer_fraction_keys = [q + a + '_fraction' for q, a_list in self.question_answer_pairs.items() for a in a_list]
 
@@ -331,7 +338,8 @@ class RegressionBaseline(GenericBaseline):
         
     def calculate_loss_and_update_loss_metrics(self, predictions, labels, step_name):
         loss = self.loss_fn(predictions, labels)  # expects predictions and labels to be cross-entropy ready e.g. one-hot labels
-        self.loss_metrics[f'{step_name}/supervised_loss'](loss)
+        reduced_loss = torch.nanmean(torch.sum(loss, dim=1))  # sum across questions, then mean across batch
+        self.loss_metrics[f'{step_name}/supervised_loss'](reduced_loss)
         return loss
     
     def update_other_metrics(self, outputs, step_name):
@@ -404,20 +412,54 @@ def SoftmaxHead(num_features, num_answers, dropout_rate):
             torch.nn.Softmax(dim=1)  # this is our estimated probability for each answer (for multinomial loss)
         )
 
-class CustomWeightedMSELoss(torch.nn.Module):
-    def __init__(self, question_answer_pairs):
+
+# used for GZ-Evo paper
+def get_neg_multinomial_log_prob(probs, counts):
+        
+        # negative log likelihood of observed counts using multinomial p predicted by model
+        # this is a simplified version of the Dirichlet-Multinomial loss from Zoobot etc, where the model predicts concentrations
+        # here, assumes the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
+        
+        # official version is
+        # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predictions_for_answers).log_prob(counts)
+        # total counts is implicit from counts, nice one torch :)
+
+        # not sure why I have custom version here, maybe continuous vs integer
+        logits = torch.distributions.utils.probs_to_logits(probs)
+        log_factorial_n = torch.lgamma(counts.sum(-1) + 1)
+        log_factorial_xs = torch.lgamma(counts + 1).sum(-1)
+        logits[(counts == 0) & (logits == -torch.inf)] = 0
+        log_powers = (logits * counts).sum(-1)
+        return -1 * log_factorial_n - log_factorial_xs + log_powers
+
+# copied from Zoobot to ensure reproducibility
+class CustomMultiQuestionLoss(torch.nn.Module):
+    def __init__(self, question_answer_pairs, question_functional_loss, careful=False):
         super().__init__()
         self.question_answer_pairs = question_answer_pairs
+        self.question_functional_loss = question_functional_loss
         # looks similar to the RegressionBaseline init, but this is a different self
         self.answer_keys = [q + a for q, a_list in self.question_answer_pairs.items() for a in a_list]
         logging.info(f'answer keys: {self.answer_keys}')
+
+        self.careful = careful
 
 
     def forward(self, inputs, targets):
         # inputs, prediction vector, is B x N, where N is the number of answer keys (fractions). Might change to dictlike.
         # targets, labels from datamodule, is dictlike with keys of answer_keys, each with values of shape (B)
 
-        loss = 0
+        if self.careful:
+            # some models give occasional nans for all predictions on a specific galaxy/row
+            # these are inputs to the loss and only happen many epochs in so probably not a case of bad labels, but rather some instability during training
+            # handle this by setting loss=0 for those rows and throwing a warning
+            nan_prediction = torch.isnan(targets) | torch.isinf(targets)
+            if nan_prediction.any():
+                logging.warning(f'Found nan values in targets: {targets}')
+            safety_value = torch.ones(1, device=targets.device, dtype=targets.dtype)  # fill with 1 everywhere i.e. fully uncertain
+            targets = torch.where(condition=nan_prediction, input=safety_value, other=predictions)
+
+        q_losses = []
 
         # logging.info(targets.keys())  # should be answer_keys (and answer_fraction_keys, but ignored here)
                 
@@ -429,26 +471,14 @@ class CustomWeightedMSELoss(torch.nn.Module):
 
             # work out the answer indices for the prediction vector
             answer_indices = [self.answer_keys.index(key) for key in q_answer_keys]
-            predicted_probs = inputs[:, answer_indices]
+            predictions_for_answers = inputs[:, answer_indices]
+            # now these are two vectors and ready for the functional loss
+            
+            question_loss = self.question_functional_loss(predictions_for_answers, counts)
+            q_losses.append(question_loss)
 
-            # negative log likelihood of observed counts using multinomial p predicted by model
-            # this is a simplified version of the Dirichlet-Multinomial loss from Zoobot etc, where the model predicts concentrations
-            # here, the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
+        total_loss = torch.stack(q_losses, dim=1)
 
-            # total counts is implicit from counts, nice one torch :)
-            # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predicted_probs).log_prob(counts)
-            question_loss = -1 * get_multinomial_log_prob(predicted_probs, counts)  # DIY version, I forget why...
-            loss += question_loss
-                
         # treating all answers equally, take a nanmean of everything
-        return torch.nanmean(loss)  # and then with reduction, mean across batch. Never do mean across answers.
+        return torch.nanmean(total_loss, dim=0)  # and then with reduction, mean across batch. Never do mean across answers.
 
-
-
-def get_multinomial_log_prob(probs, counts):
-        logits = torch.distributions.utils.probs_to_logits(probs)
-        log_factorial_n = torch.lgamma(counts.sum(-1) + 1)
-        log_factorial_xs = torch.lgamma(counts + 1).sum(-1)
-        logits[(counts == 0) & (logits == -torch.inf)] = 0
-        log_powers = (logits * counts).sum(-1)
-        return log_factorial_n - log_factorial_xs + log_powers
