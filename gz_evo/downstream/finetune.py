@@ -24,6 +24,7 @@ python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++da
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=is-lsb ++wandb=True
 
 python gz_evo/downstream/finetune.py +learner=convnext_nano +hardware=local ++dataset=euclid_strong_lens_expert_judges ++wandb=False ++debug=True
+python gz_evo/downstream/finetune.py +learner=vit_tiny +hardware=local ++dataset=euclid_strong_lens_expert_judges ++wandb=False ++debug=True
 python gz_evo/downstream/finetune.py +learner=vit_tiny +hardware=local ++dataset=euclid_strong_lens_expert_judges ++wandb=True ++debug=False
 
 python gz_evo/downstream/finetune.py +learner=convnext_nano ++learner.encoder_hub_path=hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano +hardware=local ++dataset=is-lsb ++debug=True
@@ -269,7 +270,15 @@ def get_encoder(cfg):
         repo_id = cfg.learner.encoder_hub_path.replace('hf_hub:', '')
         ckpt_path = hf_hub_download(repo_id=repo_id, filename="last.ckpt", repo_type="model")
         model = BaseHybridLearner.load_from_checkpoint(ckpt_path)
-        encoder = model.ssl.encoder  # timm.models.vision_transformer.VisionTransformer
+        
+        encoder = model.ssl.backbone # MaskedVisionTransformerTIMM, 
+        # has forward() method that uses mask-supporting encode and then self.global_pool
+        # just make sure global_pool is 'avg' or 'map' or 'cls' for finetuning
+        assert encoder.global_pool in ['avg', 'map', 'cls'], \
+            f"Encoder global_pool must be 'avg', 'map' or 'cls', got {encoder.global_pool}"
+
+
+        # encoder = model.ssl.encoder  # timm.models.vision_transformer.VisionTransformer
 
     # supervised encoders, trained with gz_evo.core, or timm equivalents
     elif cfg.learner.encoder_hub_path.startswith('hf_hub:mwalmsley/baseline-encoder') or cfg.learner.encoder_hub_path.startswith('hf_hub:timm'):
