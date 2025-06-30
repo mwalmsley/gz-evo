@@ -1,0 +1,13 @@
+
+gpu_memory: 1  # gb
+
+prefetch_factor: 2
+num_workers: 12
+pin_memory: True
+
+devices: 1
+num_nodes: 1
+accelerator: 'gpu'
+strategy: 'auto' 
+precision: 16-mixed
+profiler: 'none'

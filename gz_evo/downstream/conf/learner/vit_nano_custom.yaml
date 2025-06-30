@@ -1,0 +1,32 @@
+
+encoder_hub_path: hf_hub:mwalmsley/wip-hybrid-encoder-l3dgtjp1  # custom mae trained vit
+architecture_name: vit_nano_custom
+from_scratch: False
+channels: 3  # used for augs
+input_size: 128  # different to other models
+normalize: False
+
+batch_size: 32
+
+learning_rate: 0.001  # 1e-3
+
+patience: 6
+stochastic_depth: 0.0
+
+# deep finetune with decay
+lr_decay: 0.5
+weight_decay: 0.1
+dropout_prob: 0.5
+n_blocks: -1
+
+
+# parameters below here don't change / do much
+
+max_epochs: 5000  # rely on early stopping. 200 epochs is plenty for n_blocks=5, but not enough for n_blocks=0 on very small datasets e.g. is-lsb with divisor>=2 
+always_train_batchnorm: False
+check_val_every_n_epoch: 1
+# only does something if cosine_schedule is True
+cosine_schedule: False
+warmup_epochs: 0
+max_cosine_epochs: 100
+max_learning_rate_reduction_factor: 0.01

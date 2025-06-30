@@ -1,0 +1,30 @@
+seed: 42
+project: gz-evo-baseline
+results_dir: !
+name: ! # will be set by the script
+run_id: !  # will be set by the script
+devices: 1
+num_nodes: 1
+precision: 16-mixed
+wandb: False
+cache: null
+version: dnb_debug
+debug: False
+
+
+# choose dataset e.g. galaxy_mnist, gz_rings, demo_rings, is-lsb, etc.
+dataset: !
+
+divisor: 1
+
+# choose pretraining style
+
+# pretrained: astro
+# pretrained: imagenet
+# pretrained: False
+
+# checkpoint_group: hub
+# checkpoint_group: v16  # evo v2
+
+
+# and then specify learner (i.e. encoder + training approach)
