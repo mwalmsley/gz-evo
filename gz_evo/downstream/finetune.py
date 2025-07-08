@@ -151,8 +151,8 @@ def main(cfg):
 def prepare_experiment(cfg, token=None):
     # typing fixes
     cfg.hardware.num_workers = int(cfg.hardware.num_workers)
-    if cfg.learner.pretrained == "False":
-        cfg.learner.pretrained = False
+    # if cfg.learner.pretrained == "False":
+    #     cfg.learner.pretrained = False
 
     encoder = get_encoder(cfg)
 
@@ -287,11 +287,10 @@ def get_encoder(cfg):
             "drop_path_rate": cfg.learner.stochastic_depth,
         }
 
-        # terrestrial means imagenet-pretrained
         encoder = finetune_utils.get_timm_encoder(
             name=cfg.learner.encoder_hub_path,
             channels=cfg.learner.channels,
-            pretrained=cfg.learner.pretrained,
+            pretrained=not cfg.learner.from_scratch,
             timm_kwargs=timm_kwargs
         )
 
