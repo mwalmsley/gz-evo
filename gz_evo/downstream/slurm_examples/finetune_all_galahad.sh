@@ -46,8 +46,8 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # echo $HF_HUB_CACHE
 # echo $HF_DATASETS_CACHE
 
-# LEARNER="convnext_nano"
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
+LEARNER="convnext_nano"
+LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
 # LEARNER_HUB_PATH="hf_hub:timm/convnext_nano.in12k"  # override for imagenet timm weights
 
 # LEARNER="convnext_base"
@@ -66,13 +66,13 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # gap = global average pooling, no gap = attention pooling
 # so400m_patch14 = shape optimized ('getting vits in shape'), 400M variant, 14x14 patches
 # vit_base_patch16 = 16x16 patches, 86M parameters (from original paper, also the smallest!)
-LEARNER="siglip"
+# LEARNER="siglip"
 # LEARNER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one
 # LEARNER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_224.v2_webli" 
 # LEARNER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_224.v2_webli" 
 # LEARNER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_gap_224.v2_webli" 
 # and my new finetuned version
-LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
+# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
 
 # LEARNER='maxvit_base'
 # LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base"
@@ -95,13 +95,14 @@ LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip
 
 # DIVISOR=1
 
+for DATASET in "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
-for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
+# for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
 
 do
 
-    for DIVISOR in 1 2 4 8 16 32 64
+    for DIVISOR in 1 #2 4 8 16 32 64
 
     do
         echo "Finetuning ${LEARNER_HUB_PATH} on ${DATASET} dataset"
