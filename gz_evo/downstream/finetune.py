@@ -143,7 +143,8 @@ def main(cfg):
         gradient_clip_val=0.1
     )
     # trainer.fit(model, datamodule)
-    trainer.test(model=model, datamodule=datamodule, ckpt_path="best")
+    # trainer.test(datamodule=datamodule, ckpt_path="best")
+    trainer.test(model=model, datamodule=datamodule)  # debugging
 
     # TODO add save_predictions
     save_predictions(model, datamodule, trainer, save_dir)
