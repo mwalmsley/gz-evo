@@ -1,6 +1,6 @@
 
 encoder_hub_path: !
-architecture_name: vit_small_custom # just for naming I think
+architecture_name: vit_small_custom # just for naming I think, code just loads checkpoint above
 from_scratch: False
 channels: 3  # used for augs
 input_size: 224
