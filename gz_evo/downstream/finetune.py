@@ -142,7 +142,7 @@ def main(cfg):
         detect_anomaly=True,
         gradient_clip_val=0.1
     )
-    trainer.fit(model, datamodule)
+    # trainer.fit(model, datamodule)
     trainer.test(datamodule=datamodule, ckpt_path="best")
 
     # TODO add save_predictions
