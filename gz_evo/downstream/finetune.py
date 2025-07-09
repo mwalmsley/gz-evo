@@ -139,8 +139,7 @@ def main(cfg):
         logger=logger,
         patience=cfg.learner.patience,
         overfit_batches=1 if cfg.debug else 0,
-        terminate_on_nan=True,
-        track_grad_norm=2,
+        detect_anomaly=True,
         gradient_clip_val=0.1
     )
     trainer.fit(model, datamodule)
