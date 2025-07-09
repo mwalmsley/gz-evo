@@ -308,7 +308,7 @@ def get_encoder(cfg):
         import timm
         blank_model = timm.create_model(
             cfg.learner.architecture_name,
-            pretrained=False,
+            pretrained=not cfg.learner.from_scratch,
             num_classes=0,  # no head
             in_chans=cfg.learner.channels,
         )

@@ -93,10 +93,10 @@ class GenericBaseline(pl.LightningModule):
 
         logging.info(f'Encoder architecture to finetune: {type(self.encoder)}')
 
-        if self.from_scratch:
-            logging.warning('self.from_scratch is True, training everything and ignoring all settings')
-            params += [{"params": self.encoder.parameters(), "lr": lr}]
-            return torch.optim.AdamW(params, weight_decay=self.weight_decay)
+        # if self.from_scratch:
+        #     logging.warning('self.from_scratch is True, training everything and ignoring all settings')
+        #     params += [{"params": self.encoder.parameters(), "lr": lr}]
+        #     return torch.optim.AdamW(params, weight_decay=self.weight_decay)
 
         if isinstance(self.encoder, timm.models.EfficientNet): # includes v2
             # TODO for now, these count as separate layers, not ideal
