@@ -277,10 +277,11 @@ def get_encoder(cfg):
         from foundation.models.base_hybrid import BaseHybridLearner
         model = BaseHybridLearner.load_from_checkpoint(local_path)
         encoder = model.ssl.backbone # MaskedVisionTransformerTIMM, 
-        # has forward() method that uses mask-supporting encode and then self.global_pool
+        # has forward() method that uses mask-supporting encode
         # just make sure global_pool is 'avg' or 'map' or 'cls' for finetuning
-        assert encoder.global_pool in ['avg', 'map', 'cls'], \
-            f"Encoder global_pool must be 'avg', 'map' or 'cls', got {encoder.global_pool}"
+        
+        assert encoder.vit.global_pool in ['avg', 'map', 'cls'], \
+            f"Encoder global_pool must be 'avg', 'map' or 'cls', got {encoder.vit.global_pool}"
 
         # encoder = model.ssl.encoder  # timm.models.vision_transformer.VisionTransformer
 
