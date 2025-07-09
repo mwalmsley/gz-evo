@@ -85,8 +85,12 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # currently, all models are trained on 224x224 images, but this is now easy to change with the new augmentation transforms
 
-LEARNER="convnext_nano_gz_euclid"
-ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
+# LEARNER="convnext_nano_gz_euclid"
+# ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
+
+# new MAE encoders
+LEARNER="vit_small_custom"
+ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/gimg2gls/checkpoints/last.ckpt"
 
 
 # LEARNER="convnext_pico" # not on HF
