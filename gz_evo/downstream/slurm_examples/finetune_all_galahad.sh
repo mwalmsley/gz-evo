@@ -67,12 +67,12 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # so400m_patch14 = shape optimized ('getting vits in shape'), 400M variant, 14x14 patches
 # vit_base_patch16 = 16x16 patches, 86M parameters (from original paper, also the smallest!)
 LEARNER="vit_so400m_siglip"
-ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one for imagenet standard
+# ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one for imagenet standard
 # ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_224.v2_webli" 
 # ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_224.v2_webli" 
 # ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_gap_224.v2_webli" 
 # and my new finetuned version
-# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
+ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
 
 # LEARNER='maxvit_base'
 # ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base"
@@ -103,8 +103,8 @@ ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- 
 
 # DIVISOR=1
 
-for DATASET in "euclid_strong_lens_expert_judges"
-# for DATASET in "gz_euclid"
+# for DATASET in "euclid_strong_lens_expert_judges"
+for DATASET in "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
@@ -124,7 +124,7 @@ do
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=True \
+        ++pretrained=False \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
