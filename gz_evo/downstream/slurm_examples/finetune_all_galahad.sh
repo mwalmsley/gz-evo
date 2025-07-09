@@ -92,6 +92,11 @@ ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip
 # LEARNER="vit_small_custom"
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/gimg2gls/checkpoints/last.ckpt"
 
+LEARNER="vit_so400m_siglip"
+# this was 22 epoch train on default gz evo images with a slightly high learning rate. Patch size 14.
+ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
+
+
 
 # LEARNER="convnext_pico" # not on HF
 # LEARNER="convnext_base"
@@ -103,8 +108,8 @@ ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip
 
 # DIVISOR=1
 
-# for DATASET in "euclid_strong_lens_expert_judges"
-for DATASET in "gz_euclid"
+for DATASET in "euclid_strong_lens_expert_judges"
+# for DATASET in "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
@@ -124,7 +129,7 @@ do
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=False \
+        ++pretrained=True \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
