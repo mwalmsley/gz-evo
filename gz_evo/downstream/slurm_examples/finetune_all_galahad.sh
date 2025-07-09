@@ -46,12 +46,12 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # echo $HF_HUB_CACHE
 # echo $HF_DATASETS_CACHE
 
-LEARNER="convnext_nano"
-LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
+# LEARNER="convnext_nano"
+# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
 # LEARNER_HUB_PATH="hf_hub:timm/convnext_nano.in12k"  # override for imagenet timm weights
 
-# LEARNER="convnext_base"
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
+LEARNER="convnext_base"
+LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
 
 # LEARNER="maxvit_tiny_rw_224"  # only regression, not evo prepared
 # LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_tiny"
