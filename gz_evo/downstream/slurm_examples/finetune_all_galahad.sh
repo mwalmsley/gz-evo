@@ -124,6 +124,7 @@ do
         $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
+        ++learner.learning_rate=0.000001 \
         ++learner.normalize=False \
         ++dataset=${DATASET} \
         +hardware=galahad \
