@@ -144,7 +144,7 @@ def main(cfg):
     )
     # trainer.fit(model, datamodule)
     # trainer.test(datamodule=datamodule, ckpt_path="best")
-    trainer.test(model=model, datamodule=datamodule)  # debugging
+    trainer.test(model=model, datamodule=datamodule)  # debugging - yes, it's already nan weirdly
 
     # TODO add save_predictions
     save_predictions(model, datamodule, trainer, save_dir)
@@ -276,6 +276,7 @@ def get_encoder(cfg):
         ckpt_path = hf_hub_download(repo_id=repo_id, filename="last.ckpt", repo_type="model")
         model = BaseHybridLearner.load_from_checkpoint(ckpt_path)
     elif cfg.learner.encoder_hub_path.startswith('local_hybrid:'):
+        logging.info("Loading local hybrid encoder from path: {}".format(cfg.learner.encoder_hub_path))
         local_path = cfg.learner.encoder_hub_path.replace('local_hybrid:', '')
         from foundation.models.base_hybrid import BaseHybridLearner
         model = BaseHybridLearner.load_from_checkpoint(local_path)
