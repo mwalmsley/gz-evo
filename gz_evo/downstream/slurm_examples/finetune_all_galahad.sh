@@ -47,43 +47,47 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # echo $HF_DATASETS_CACHE
 
 # LEARNER="convnext_nano"
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
-# LEARNER_HUB_PATH="hf_hub:timm/convnext_nano.in12k"  # override for imagenet timm weights
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
+# ENCODER_HUB_PATH="hf_hub:timm/convnext_nano.in12k"  # override for imagenet timm weights
 
-LEARNER="convnext_base"
-LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
+# LEARNER="convnext_base"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
 
 # LEARNER="maxvit_tiny_rw_224"  # only regression, not evo prepared
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_tiny"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_tiny"
 
 # LEARNER="maxvit_rmlp_small_rw_224"
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_small"  # not yet prepared
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_small"  # not yet prepared
 
 # LEARNER="resnet50"
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-resnet50"
-# LEARNER_HUB_PATH="hf_hub:timm/resnet50.a1_in1k"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-resnet50"
+# ENCODER_HUB_PATH="hf_hub:timm/resnet50.a1_in1k"
 
 # gap = global average pooling, no gap = attention pooling
 # so400m_patch14 = shape optimized ('getting vits in shape'), 400M variant, 14x14 patches
 # vit_base_patch16 = 16x16 patches, 86M parameters (from original paper, also the smallest!)
 # LEARNER="siglip"
-# LEARNER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one
-# LEARNER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_224.v2_webli" 
-# LEARNER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_224.v2_webli" 
-# LEARNER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_gap_224.v2_webli" 
+# ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one
+# ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_224.v2_webli" 
+# ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_224.v2_webli" 
+# ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_gap_224.v2_webli" 
 # and my new finetuned version
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
 
 # LEARNER='maxvit_base'
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base"
 
 # LEARNER='tf_efficientnetv2_m'
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-tf_efficientnetv2_m"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-tf_efficientnetv2_m"
 
 # LEARNER='tf_efficientnetv2_l'
-# LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-tf_efficientnetv2_l"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-tf_efficientnetv2_l"
 
 # currently, all models are trained on 224x224 images, but this is now easy to change with the new augmentation transforms
+
+LEARNER="convnext_nano_gz_euclid"
+ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
+
 
 # LEARNER="convnext_pico" # not on HF
 # LEARNER="convnext_base"
@@ -95,7 +99,7 @@ LEARNER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
 
 # DIVISOR=1
 
-for DATASET in "gz_euclid"
+for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
@@ -105,11 +109,11 @@ do
     for DIVISOR in 1 #2 4 8 16 32 64
 
     do
-        echo "Finetuning ${LEARNER_HUB_PATH} on ${DATASET} dataset"
+        echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset"
 
         $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
-        ++learner.encoder_hub_path=$LEARNER_HUB_PATH \
+        ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
         ++dataset=${DATASET} \
         +hardware=galahad \

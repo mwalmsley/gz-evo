@@ -31,6 +31,8 @@ python gz_evo/downstream/finetune.py +learner=convnext_nano ++learner.encoder_hu
 
 python gz_evo/downstream/finetune.py +learner=siglip +hardware=local ++dataset=gz_euclid ++debug=True ++learner.batch_size=2
 
+python gz_evo/downstream/finetune.py +learner=convnext_nano_gz_euclid +hardware=local ++dataset=euclid_strong_lens_expert_judges ++debug=True
+
 """
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
@@ -293,6 +295,35 @@ def get_encoder(cfg):
             pretrained=not cfg.learner.from_scratch,
             timm_kwargs=timm_kwargs
         )
+
+
+    elif cfg.learner.encoder_hub_path.startswith('local:'):
+        # local path to a checkpoint, which we assume is previously regression-finetuned on another downstream dataset
+        # this allow for chaining finetuning e.g. pretrain, finetune on A, finetune on B
+        local_path = cfg.learner.encoder_hub_path.replace('local:', '')
+
+        import timm
+        blank_model = timm.create_model(
+            cfg.learner.architecture_name,
+            pretrained=False,
+            num_classes=0,  # no head
+            in_chans=cfg.learner.channels,
+        )
+
+        # load the encoder from the checkpoint
+        ckpt = torch.load(local_path, map_location="cpu", weights_only=False)  # check if the path is valid
+        print(ckpt['state_dict'].keys())  # debug, check the keys
+
+        # copy encoder weights
+        blank_model.load_state_dict(
+            {k.replace("encoder.", ""): v for k, v in ckpt['state_dict'].items() if k.startswith("encoder.")}
+        )
+
+        encoder = blank_model
+
+
+    else:
+        raise ValueError(f"Unknown encoder hub path: {cfg.learner.encoder_hub_path}")
 
     return encoder
 
