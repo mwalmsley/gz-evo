@@ -99,8 +99,8 @@ ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip
 
 # DIVISOR=1
 
-# for DATASET in "euclid_strong_lens_expert_judges"
-for DATASET in "gz_euclid"
+for DATASET in "euclid_strong_lens_expert_judges"
+# for DATASET in "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
