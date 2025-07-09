@@ -3,7 +3,7 @@ encoder_hub_path: hf_hub:mwalmsley/wip-hybrid-encoder-l3dgtjp1  # custom mae tra
 architecture_name: vit_nano_custom
 from_scratch: False
 channels: 3  # used for augs
-input_size: 128  # different to other models
+input_size: 224
 normalize: False
 
 batch_size: 32

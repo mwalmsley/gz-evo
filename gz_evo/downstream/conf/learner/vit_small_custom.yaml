@@ -3,7 +3,7 @@ encoder_hub_path: !
 architecture_name: vit_small_custom # just for naming I think
 from_scratch: False
 channels: 3  # used for augs
-input_size: 128  # different to other models
+input_size: 224
 normalize: False
 
 batch_size: 32
