@@ -14,15 +14,15 @@ patience: 6
 stochastic_depth: 0.0
 
 # deep finetune with decay
-lr_decay: 0.25
+layer_decay: 0.25
 weight_decay: 0.1
 dropout_prob: 0.5
-n_blocks: 5  # maxvit s
+training_mode: "full" # maxvit s
 
 
 # parameters below here don't change / do much
 
-max_epochs: 5000  # rely on early stopping. 200 epochs is plenty for n_blocks=5, but not enough for n_blocks=0 on very small datasets e.g. is-lsb with divisor>=2 
+max_epochs: 5000  
 always_train_batchnorm: False
 check_val_every_n_epoch: 1
 # only does something if cosine_schedule is True

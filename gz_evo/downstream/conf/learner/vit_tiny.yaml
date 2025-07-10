@@ -5,7 +5,7 @@ encoder_hub_path: hf_hub:timm/vit_tiny_patch16_224.augreg_in21k  # smallest defa
 # pretrained: True  # only has an effect for timm models
 # from_scratch: False
 # learning_rate: 0.0001  # 1e-4
-# lr_decay: 0.5  # moderate LR decay, unlike for vitso-400m
+# layer_decay: 0.5  # moderate LR decay, unlike for vitso-400m
 # weight_decay: 0.1
 # dropout_prob: 0.5
 
@@ -14,7 +14,7 @@ encoder_hub_path: hf_hub:timm/vit_tiny_patch16_224.augreg_in21k  # smallest defa
 pretrained: True 
 from_scratch: False
 learning_rate: 0.0001  
-lr_decay: 0.8
+layer_decay: 0.8
 weight_decay: 0.0
 dropout_prob: 0.5
 
@@ -39,7 +39,7 @@ training_mode: full
 
 # parameters below here don't change / do much
 
-max_epochs: 5000  # rely on early stopping. 200 epochs is plenty for n_blocks=5, but not enough for n_blocks=0 on very small datasets e.g. is-lsb with divisor>=2 
+max_epochs: 5000  
 always_train_batchnorm: False
 check_val_every_n_epoch: 1
 # only does something if cosine_schedule is True

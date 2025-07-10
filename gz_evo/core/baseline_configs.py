@@ -11,9 +11,7 @@ class ModelConfig:
     learning_rate: float
     weight_decay: float
     drop_path_rate: Optional[float] = 0.
-    n_blocks: Optional[int] = -1  # all blocks (no effect)
-    lr_decay: Optional[float] = 1.  # no effect
-    from_scratch: Optional[bool] = False  # no effect
+    layer_decay: Optional[float] = 1.  # no effect
 
 
 # weak baseline
@@ -57,9 +55,7 @@ CFG_CONVNEXT_NANO_FINETUNE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    n_blocks=-1, # still all blocks, but...
-    lr_decay=0.7, # meaningful (aggressive) decay
-    from_scratch=False
+    layer_decay=0.7, # meaningful (aggressive) decay
 )
 
 
@@ -102,9 +98,7 @@ CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    n_blocks=-1, # still all blocks, but...
-    lr_decay=0.7, # meaningful (aggressive) decay
-    from_scratch=False
+    layer_decay=0.7 # meaningful (aggressive) decay
 )
 
 CFG_CONVNEXT_BASE_LAION = ModelConfig(
@@ -292,10 +286,7 @@ CFG_VIT_SO400M_SIGLIP = ModelConfig(
     a100_batch_size=64,  # trying it
     dropout_rate=0.5,
     learning_rate=1e-5,  # may be low
-    weight_decay=0.05,
-    # n_blocks=-1, # still all blocks, but...
-    # lr_decay=0.5,
-    from_scratch=False
+    weight_decay=0.05
 )
 
 CFG_VIT_SO400M_SIGLIP_FINETUNE = ModelConfig(
@@ -305,9 +296,7 @@ CFG_VIT_SO400M_SIGLIP_FINETUNE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,
-    n_blocks=-1, # still all blocks, but...
-    lr_decay=0.5,
-    from_scratch=False
+    layer_decay=0.5
 )
 
 
@@ -348,7 +337,7 @@ MODEL_CONFIGS = {
     "vit_base_patch16_clip_224.openai": CFG_VIT_BASE_CLIP,
     "vit_medium_patch32_clip_224.tinyclip_laion400m": CFG_VIT_MEDIUM_TINYCLIP,
 
-    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,  # same but no lr_decay
+    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,  # same but no layer_decay
     "vit_so400m_siglip_finetune": CFG_VIT_SO400M_SIGLIP_FINETUNE
 
 }

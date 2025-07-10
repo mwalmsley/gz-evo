@@ -70,7 +70,7 @@ We use `baseline_training.py` for shared training functions: `get_config` create
 
 `finetune.py` loads configuration options from `gz_evo/downstream/conf` (via hydra) and then executes the requested finetuning. 
 
-`get_encoder` is the function to adapt for your own code. By default, it will load any `timm` encoder (e.g. one trained with the Core code, above). This encoder is placed into a `LightningModule` and finetuned (according to e.g. `n_blocks`, etc, from config) using AdamW.
+`get_encoder` is the function to adapt for your own code. By default, it will load any `timm` encoder (e.g. one trained with the Core code, above). This encoder is placed into a `LightningModule` and finetuned (according to e.g. `training_mode`, etc, from config) using AdamW.
 
 ## Shared Code
 

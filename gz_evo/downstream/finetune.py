@@ -170,7 +170,7 @@ def prepare_experiment(cfg, token=None):
         # backbone_name=backbone_name,
         training_mode=cfg.learner.training_mode,
         # always_train_batchnorm=cfg.learner.always_train_batchnorm,
-        layer_decay=cfg.learner.lr_decay,
+        layer_decay=cfg.learner.layer_decay,
         weight_decay=cfg.learner.weight_decay,
         learning_rate=cfg.learner.learning_rate,
         head_dropout_prob=cfg.learner.dropout_prob,  # head dropout
@@ -337,11 +337,8 @@ def get_encoder(cfg):
 
 def apply_dataset_specific_overrides(cfg):
     # additional patience for somewhat noisy small datasets during linear finetune, to avoid accidental early stopping
-    if cfg.learner.n_blocks == 0:
-        if cfg.dataset == "jwst":
-            logging.warning("overriding patience for JWST linear finetune, setting 400")
-            cfg.learner.patience = 400
-        elif cfg.dataset == "which-lsb":
+    if cfg.learner.training_mode == "head_only":
+        if cfg.dataset == "which-lsb":
             logging.warning("overriding patience for which-lsb linear finetune, setting 50")
             cfg.learner.patience = 50
 

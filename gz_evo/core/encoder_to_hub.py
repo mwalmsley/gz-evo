@@ -64,7 +64,7 @@ if __name__ == '__main__':
         # ('gz_evo', 'maxvit_large', results_dir + 'maxvit_large_534895718_1746561915'),  # skip, not yet ready
         # ('gz_evo', 'tf_efficientnetv2_l', results_dir + 'tf_efficientnetv2_l_534895718_1746653208'),
         # ('gz_evo', 'tf_efficientnetv2_m', results_dir + 'tf_efficientnetv2_m_534895718_1746653116'),
-        ('gz_evo', 'vit_so400m_siglip_ft', results_dir + 'vit_so400m_siglip_finetune_534895718_1746914089'),  # finetuned with lr_decay=0.5
+        ('gz_evo', 'vit_so400m_siglip_ft', results_dir + 'vit_so400m_siglip_finetune_534895718_1746914089'),  # finetuned with layer_decay=0.5
         # TODO vit_so400m siglip no ft
     ]:
         publish_encoder_to_hf_hub(architecture_name, checkpoint_dir, 'regression')
