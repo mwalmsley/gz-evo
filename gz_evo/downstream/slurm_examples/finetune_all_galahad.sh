@@ -91,12 +91,12 @@ ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip
 # new MAE encoders
 # LEARNER="vit_small_custom"
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/gimg2gls/checkpoints/last.ckpt"
-# runs within nan (though not well)
+# runs without nan (though not well)
 
 LEARNER="vit_so400m_siglip"
 # this was 22 epoch train on default gz evo images with a slightly high learning rate. Patch size 14.
-#last.ckpt dies
-ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/model.ckpt"
+# dies with nan immediately, even without any training
+ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
 
 
 

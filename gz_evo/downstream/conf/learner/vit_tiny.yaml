@@ -1,5 +1,5 @@
 
-# encoder_hub_path: hf_hub:timm/vit_tiny_patch16_224.augreg_in21k  # smallest default ViT model in timm, not astro pretrained
+encoder_hub_path: hf_hub:timm/vit_tiny_patch16_224.augreg_in21k  # smallest default ViT model in timm, not astro pretrained
 # pretrained: False  # only has an effect for timm models
 # from_scratch: True
 # pretrained: True  # only has an effect for timm models
@@ -10,7 +10,7 @@
 # dropout_prob: 0.5
 
 # encoder_hub_path: hf_hub:mwalmsley/wip-hybrid-encoder-equ5ifvr  # mae pretrained version, on gz evo tiny
-encoder_hub_path: hf_hub:mwalmsley/wip-hybrid-encoder-n0jvg4dc  # mae pretrained version, on strong lensing
+# encoder_hub_path: hf_hub:mwalmsley/wip-hybrid-encoder-n0jvg4dc  # mae pretrained version, on strong lensing
 pretrained: True 
 from_scratch: False
 learning_rate: 0.0001  

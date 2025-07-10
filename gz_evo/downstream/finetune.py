@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import torch
 import lightning as L
-from pytorch_lightning import loggers
+from lightning.pytorch import loggers
 import hydra
 # from hydra.utils import instantiate
 from datasets import load_dataset, DatasetDict
@@ -118,11 +118,11 @@ def main(cfg):
         logger = loggers.CSVLogger(name=cfg.name, save_dir=save_dir)
 
 
-    datamodule.setup("fit")
-    loader = datamodule.train_dataloader()
-    batch = next(iter(loader))
-    images = batch['image']
-    logging.info((images.min(), images.max(), images.shape, images.dtype))
+    # datamodule.setup("fit")
+    # loader = datamodule.train_dataloader()
+    # batch = next(iter(loader))
+    # images = batch['image']
+    # logging.info((images.min(), images.max(), images.shape, images.dtype))
     # reset
     datamodule.setup("fit")
 
@@ -138,13 +138,13 @@ def main(cfg):
         check_val_every_n_epoch=cfg.learner.check_val_every_n_epoch,
         logger=logger,
         patience=cfg.learner.patience,
-        overfit_batches=1 if cfg.debug else 0,
-        detect_anomaly=True,
+        overfit_batches=4 if cfg.debug else 0,
+        # detect_anomaly=True,
         gradient_clip_val=0.1
     )
-    # trainer.fit(model, datamodule)
-    # trainer.test(datamodule=datamodule, ckpt_path="best")
-    trainer.test(model=model, datamodule=datamodule)  # debugging - yes, it's already nan weirdly
+    trainer.fit(model, datamodule)
+    trainer.test(datamodule=datamodule, ckpt_path="best")
+    # trainer.test(model=model, datamodule=datamodule)  # debugging - yes, it's already nan weirdly
 
     # TODO add save_predictions
     save_predictions(model, datamodule, trainer, save_dir)
@@ -168,17 +168,17 @@ def prepare_experiment(cfg, token=None):
     init_args_for_all_models = dict(
         encoder=encoder,
         # backbone_name=backbone_name,
-        n_blocks=cfg.learner.n_blocks,
-        always_train_batchnorm=cfg.learner.always_train_batchnorm,
-        lr_decay=cfg.learner.lr_decay,
+        training_mode="full" if cfg.learner.n_blocks > 0 else "head_only",
+        # always_train_batchnorm=cfg.learner.always_train_batchnorm,
+        layer_decay=cfg.learner.lr_decay,
         weight_decay=cfg.learner.weight_decay,
         learning_rate=cfg.learner.learning_rate,
-        dropout_prob=cfg.learner.dropout_prob,  # head dropout
+        head_dropout_prob=cfg.learner.dropout_prob,  # head dropout
         # optional scheduler params
-        cosine_schedule=cfg.learner.cosine_schedule,
-        warmup_epochs=cfg.learner.warmup_epochs,
-        max_cosine_epochs=cfg.learner.max_cosine_epochs,
-        max_learning_rate_reduction_factor=cfg.learner.max_learning_rate_reduction_factor,
+        # cosine_schedule=cfg.learner.cosine_schedule,
+        # warmup_epochs=cfg.learner.warmup_epochs,
+        # max_cosine_epochs=cfg.learner.max_cosine_epochs,
+        # max_learning_rate_reduction_factor=cfg.learner.max_learning_rate_reduction_factor,
         # overrides
         # from_scratch=cfg.from_scratch,
         # visualize_images=cfg.visualize_images,
