@@ -34,7 +34,7 @@ stochastic_depth: 0.0
 
 # deep finetune with decay
 
-n_blocks: -1
+training_mode: full
 
 
 # parameters below here don't change / do much

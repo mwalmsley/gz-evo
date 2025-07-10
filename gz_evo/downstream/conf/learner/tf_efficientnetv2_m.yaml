@@ -16,7 +16,7 @@ stochastic_depth: 0.2
 lr_decay: 0.25
 weight_decay: 0.1
 dropout_prob: 0.5
-n_blocks: -1 
+training_mode: full 
 
 
 # parameters below here don't change / do much
