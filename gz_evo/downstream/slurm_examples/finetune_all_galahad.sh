@@ -66,13 +66,13 @@ ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
 # gap = global average pooling, no gap = attention pooling
 # so400m_patch14 = shape optimized ('getting vits in shape'), 400M variant, 14x14 patches
 # vit_base_patch16 = 16x16 patches, 86M parameters (from original paper, also the smallest!)
-# LEARNER="vit_so400m_siglip"
+LEARNER="vit_so400m_siglip"
 # ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli"  # <- this one for imagenet standard
 # ENCODER_HUB_PATH="hf_hub:timm/vit_so400m_patch14_siglip_224.v2_webli" 
 # ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_224.v2_webli" 
 # ENCODER_HUB_PATH="hf_hub:timm/vit_base_patch16_siglip_gap_224.v2_webli" 
 # and my new finetuned version
-# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
+ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft"
 
 # LEARNER='maxvit_base'
 # ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base"
@@ -125,7 +125,6 @@ do
         $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
-        ++learner.learning_rate=0.00001 \
         ++learner.normalize=False \
         ++dataset=${DATASET} \
         +hardware=galahad \
@@ -140,6 +139,7 @@ do
 done
 
     # 
+        # ++learner.learning_rate=0.00001 \
 
     # ++learner.learning_rate=0.00001 \
 
