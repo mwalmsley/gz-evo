@@ -4,7 +4,7 @@ import os
 
 import torch
 import numpy as np
-import pytorch_lightning as pl
+import lightning as L
 import datasets
 
 from galaxy_datasets.shared import label_metadata
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore
     logging.info(f"Using seed: {seed}")
-    pl.seed_everything(seed)
+    L.seed_everything(seed)
 
 
     main()

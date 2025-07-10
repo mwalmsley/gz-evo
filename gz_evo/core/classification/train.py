@@ -3,7 +3,7 @@ import logging
 import time
 
 import numpy as np
-import pytorch_lightning as pl
+import lightning as L
 import datasets
 import torch
 
@@ -179,6 +179,6 @@ if __name__ == "__main__":
     seed: int = os.environ.get('SEED', 42)  # type: ignore
     logging.info(f"Using seed: {seed}")
     # seed = 41  # maxvit small has nan problem
-    pl.seed_everything(seed)
+    L.seed_everything(seed)
 
     main()

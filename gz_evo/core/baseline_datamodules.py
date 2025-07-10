@@ -1,5 +1,5 @@
 
-import pytorch_lightning as pl
+import lightning as L
 from typing import Optional
 import logging
 import datasets as hf_datasets

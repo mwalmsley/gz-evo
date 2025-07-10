@@ -9,9 +9,9 @@ import pandas as pd
 import omegaconf
 import wandb
 import torch
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
-from pytorch_lightning.loggers import WandbLogger
+import lightning as L
+from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping
+from lightning.pytorch.loggers import WandbLogger
 
 from datasets import load_dataset
 
@@ -196,7 +196,7 @@ def run_training(cfg, lightning_model, datamodule):
         devices = cfg.devices
     logging.info(f"Using {devices} devices for training")
 
-    trainer = pl.Trainer(
+    trainer = L.Trainer(
         num_sanity_val_steps=0,
         log_every_n_steps=150 if cfg.subset_name == 'default' else 10,  # more frequent logging for tiny subset to avoid nan metrics
         accelerator=cfg.accelerator,
@@ -222,7 +222,7 @@ def run_training(cfg, lightning_model, datamodule):
     if os.environ.get('SLURM_PROCID', '0') == '0':  # only on main process
         logging.info("Training finished, now testing the best model")
     
-        test_trainer = pl.Trainer(
+        test_trainer = L.Trainer(
             accelerator=cfg.accelerator,
             devices=1,
             num_nodes=1,
@@ -299,7 +299,7 @@ def evaluate_single_model(checkpoint_dir, cfg, model_lightning_class, task_data_
     datamodule = task_data_func(cfg)
     datamodule.setup()  # all stages
 
-    trainer = pl.Trainer(
+    trainer = L.Trainer(
         accelerator=cfg.accelerator,
         devices=cfg.devices,  # per node
         num_nodes=cfg.nodes,

@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 import torch
-import pytorch_lightning as pl
+import lightning as L
 from pytorch_lightning import loggers
 import hydra
 # from hydra.utils import instantiate
@@ -54,7 +54,7 @@ def main(cfg):
 
     # Seed for reproducibility
     logging.info(f"Setting seed to {cfg.seed}")
-    pl.seed_everything(cfg.seed)
+    L.seed_everything(cfg.seed)
 
     cfg.name = f"{cfg.learner.architecture_name}_{cfg.dataset}"
 
@@ -352,9 +352,9 @@ def apply_dataset_specific_overrides(cfg):
 
 # TODO update prediction process with HF dataset, currently only built for catalogs
 def save_predictions(
-    model: pl.LightningModule,
+    model: L.LightningModule,
     datamodule: HuggingFaceDataModule,
-    trainer: pl.Trainer,
+    trainer: L.Trainer,
     save_dir,
 ):
     for split in ["train", "validation", "test"]:
