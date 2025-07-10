@@ -1,6 +1,6 @@
 import logging
 
-import pytorch_lightning as pl
+import lightning as L
 
 from gz_evo.core import baseline_training, baseline_models 
 from gz_evo.core.classification.train import set_up_task_data
@@ -62,6 +62,6 @@ if __name__ == "__main__":
     logging.info("Starting classification baseline")
 
     seed = 42
-    pl.seed_everything(seed)
+    L.seed_everything(seed)
 
     evaluate()

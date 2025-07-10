@@ -2,13 +2,13 @@ import logging
 
 import torch
 import torchmetrics
-import pytorch_lightning as pl
+import lightning as L
 import timm
 import pandas as pd
 
 from gz_evo.core import baseline_datamodules
 
-class GenericBaseline(pl.LightningModule):
+class GenericBaseline(L.LightningModule):
     """
     Generic supervised model, based on Zoobot. Intended to be subclassed.
     """

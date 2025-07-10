@@ -3,8 +3,8 @@ import omegaconf
 import os
 
 import wandb
-import pytorch_lightning as pl
-from pytorch_lightning.loggers import WandbLogger
+import lightning as L
+from lightning.pytorch.loggers import WandbLogger
 import torch
 import datasets
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     logging.info("Starting minimal baseline")
 
     seed = 42
-    pl.seed_everything(seed)
+    L.seed_everything(seed)
 
     # some path management, adjust to your system as needed 
     # TODO may refactor as argparse or omegaconf
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         cfg.save_dir, cfg.patience
     )
 
-    trainer = pl.Trainer(
+    trainer = L.Trainer(
         num_sanity_val_steps=0,
         log_every_n_steps=150,
         accelerator=cfg.accelerator,
