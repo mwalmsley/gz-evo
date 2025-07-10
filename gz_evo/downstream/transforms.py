@@ -36,8 +36,8 @@ def get_finetuning_transforms(cfg):
     logging.info(f"Train transform: {default_transform_cfg}")
     logging.info(f"Test transform: {minimal_transform_cfg}")
 
-    train_transform = transforms.GalaxyViewTransform(default_transform_cfg)
-    test_transform = transforms.GalaxyViewTransform(default_transform_cfg)
+    train_transform = transforms.get_galaxy_transform(default_transform_cfg)
+    test_transform = transforms.get_galaxy_transform(default_transform_cfg)
 
     return train_transform, test_transform
 

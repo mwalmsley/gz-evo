@@ -8,10 +8,10 @@ import lightning as L
 import datasets
 
 from galaxy_datasets.shared import label_metadata
-from galaxy_datasets.pytorch import dataset_utils
-from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config, fast_view_config
+from galaxy_datasets.pytorch import galaxy_datamodule, dataset_utils
+from galaxy_datasets.transforms import get_galaxy_transform, default_view_config, minimal_view_config
 
-from gz_evo.core import baseline_models, baseline_datamodules, baseline_training
+from gz_evo.core import baseline_models, baseline_training
 
 
 def main():
@@ -94,15 +94,11 @@ def set_up_task_data(cfg):
     test_transform_config = minimal_view_config()
     train_transform_config.random_affine['scale'] = (1.0, 1.4)
     train_transform_config.erase_iterations = 0  # disable masking small patches for now
-    # # TODO temp speed test
-    # logging.warning("Using fast view config for training and testing transforms")
-    # train_transform_config = fast_view_config()
-    # test_transform_config = fast_view_config()
 
-    datamodule = dataset_utils.GenericDataModule(
+    datamodule = galaxy_datamodule.HuggingFaceDataModule(
         dataset_dict=dataset_dict,
-        train_transform=GalaxyViewTransform(train_transform_config).transform,
-        test_transform=GalaxyViewTransform(test_transform_config).transform,
+        train_transform=get_galaxy_transform(train_transform_config),
+        test_transform=get_galaxy_transform(test_transform_config),
         batch_size=cfg.batch_size,
         num_workers=cfg.num_workers,
         iterable=cfg.iterable,

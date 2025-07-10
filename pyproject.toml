@@ -1,0 +1,33 @@
+# pyproject.toml
+[build-system]
+requires = ["setuptools >= 64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gz_evo"
+version = "0.0.1"
+readme = {file = "README.txt", content-type = "text/markdown"}
+dependencies=[
+        "omegaconf",
+        "wandb",
+        "pytorch-lightning",
+        "torch",
+        "zoobot",
+        "datasets",
+        "pandas",
+]
+requires-python = ">= 3.9"
+authors = [
+  {name = "Mike Walmsley"}
+]
+classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+]
+[project.urls]
+Repository = "https://github.com/mwalmsley/gz-evo"
+
+# https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+[tool.setuptools]
+packages = ["gz_evo"]

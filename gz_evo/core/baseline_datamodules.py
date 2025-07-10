@@ -4,7 +4,8 @@ from typing import Optional
 import logging
 import datasets as hf_datasets
 
-from galaxy_datasets.pytorch import galaxy_datamodule
+# now all refactored into
+from galaxy_datasets.pytorch import galaxy_datamodule, dataset_utils
 
 LABEL_ORDER = ['smooth_round', 'smooth_cigar', 'unbarred_spiral', 'edge_on_disk', 'barred_spiral', 'featured_without_bar_or_spiral']
 # convert to integers
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     # ])
 
 
-    from galaxy_datasets.transforms import GalaxyViewTransform, default_view_config, minimal_view_config, fast_view_config
+    from galaxy_datasets.transforms import default_view_config, minimal_view_config, fast_view_config
     cfg = default_view_config()
     # cfg.pil_to_tensor = True
     # cfg.erase_iterations = 0

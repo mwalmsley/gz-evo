@@ -163,9 +163,10 @@ cython_debug/
 
 wandb
 to_ignore
+outputs/*
+hparams.yaml
 *.ckpt
 *.tar
-*.yaml
 *.csv
 *.DS_Store
 *.pdf

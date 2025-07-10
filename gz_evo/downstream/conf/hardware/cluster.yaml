@@ -1,0 +1,15 @@
+
+
+gpu_memory: 8  # gb, with a safety factor
+
+prefetch_factor: 4
+num_workers: 5
+pin_memory: True
+
+devices: 1
+num_nodes: 1
+accelerator: 'gpu'
+# strategy: 'ddp' 
+strategy: 'ddp_find_unused_parameters_true'
+precision: 16-mixed
+profiler: 'none'

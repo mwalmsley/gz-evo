@@ -1,0 +1,37 @@
+# import timm
+
+# requires A100 or higher (not for real reasons, just cuda enforces compute sm 8.0 or higher...$$$)
+# model = timm.create_model("hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli", pretrained=True)
+
+# encoder_hub_path: hf_hub:timm/vit_so400m_patch14_siglip_gap_224.v2_webli  # terrestrial version
+encoder_hub_path: hf_hub:mwalmsley/baseline-encoder-regression-vit_so400m_siglip_ft  # already finetuned on gz evo core
+architecture_name: vit_so400m_patch14_siglip_gap_224.v2_webli
+from_scratch: False
+channels: 3  # used for augs
+input_size: 224  # used for augs
+normalize: False
+
+batch_size: 32
+
+learning_rate: 0.00001  # 1e-5
+
+patience: 6
+stochastic_depth: 0.0
+
+# deep finetune with decay
+lr_decay: 0.9  # suuuuupppperrrr strong decay for lower layers. LR = LR * lr_decay ** i. siglip has 25 blocks so increase to 0.9
+weight_decay: 0.1
+dropout_prob: 0.5
+n_blocks: -1
+
+
+# parameters below here don't change / do much
+
+max_epochs: 5000  # rely on early stopping. 200 epochs is plenty for n_blocks=5, but not enough for n_blocks=0 on very small datasets e.g. is-lsb with divisor>=2 
+always_train_batchnorm: False
+check_val_every_n_epoch: 1
+# only does something if cosine_schedule is True
+cosine_schedule: False
+warmup_epochs: 0
+max_cosine_epochs: 100
+max_learning_rate_reduction_factor: 0.01

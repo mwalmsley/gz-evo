@@ -43,7 +43,7 @@ python gz_evo/classification/train.py
 or finetune on Downstream datasets e.g.
 
 ```bash
-python gz_evo/downstream/TODO.py 
+python gz_evo/downstream/finetune.py 
 ```
 
 ## Training on Core dataset
@@ -64,17 +64,21 @@ We use `baseline_training.py` for shared training functions: `get_config` create
 
 `classification_baseline.py` includes classification-specific functions: `set_up_task_data` creates a Lightning DataModule with dataloaders yielding (image_batch, classification_label_batch), and `get_lightning_model` creates a Lightning module with a classification-specific head.
 
-The remaining code is shared across tasks:
-
-- `baseline_datamodules.py` has boilerplate code that loads a HuggingFace image dataset as a Lightning DataModule.
-- `baseline_models.py` has a generic supervised `LightningModule` (`forward`, `training_step`, `configure_optimizers`, etc) and subclasses for classification and multinomial. The optimizer can be configured with e.g. learning rate and number of blocks to optimize.
-- `baseline_configs.py` defines per-model training choices e.g. the learning rate, the weight decay, etc. Each model needs a dictlike. Add new models by making a new dictlike here. `baseline_training.py` will look here for instructions on training your chosen model.
-
 `gz_evo/classification/test.py` is a script for making test predictions, and `gz_evo/classification/metrics.ipynb` visualizes performance (similarly for multinomial).
 
 ## Training on Downstream datasets
 
+`finetune.py` loads configuration options from `gz_evo/downstream/conf` (via hydra) and then executes the requested finetuning. 
 
+`get_encoder` is the function to adapt for your own code. By default, it will load any `timm` encoder (e.g. one trained with the Core code, above). This encoder is placed into a `LightningModule` and finetuned (according to e.g. `n_blocks`, etc, from config) using AdamW.
+
+## Shared Code
+
+The remaining code is shared across tasks:
+
+- Generic Lightning `DataModule`s (consuming HuggingFace datasets) are imported from the `galaxy-datasets` repo
+- A generic supervised `LightningModule` (`forward`, `training_step`, `configure_optimizers`, etc) is imported from the `zoobot` repo. This includes utility code for e.g. loss functions
+- `baseline_configs.py` defines per-model training choices e.g. the learning rate, the weight decay, etc. Each model needs a dictlike. Add new models by making a new dictlike here. `baseline_training.py` will look here for instructions on training your chosen model.
 
 ## Example Installation on Cluster
 
@@ -100,7 +104,7 @@ git clone -b derived-tasks git@github.com:mwalmsley/gz-evo.git
 pip install -r gz-evo/slurm_examples/requirements.txt
 ```
 
-Clone and editable-install these repos
+Clone and editable-install these repos (which we use for generic Lightning code)
 
 ```bash
 git clone -b dev git@github.com:mwalmsley/galaxy-datasets.git
@@ -108,11 +112,3 @@ git clone -b dev git@github.com:mwalmsley/zoobot.git
 pip install --no-deps -e galaxy-datasets
 pip install --no-deps -e zoobot
 ```
-
-Download the dataset and models (useful for clusters with offline worker nodes, like ours). Adjust the paths in each script as you like.
-
-```bash
-python download/download_wds_from_hub.py
-python download/download_timm_model.py
-```
-
