@@ -10,7 +10,7 @@ import omegaconf
 import wandb
 import torch
 import lightning as L
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 
 from datasets import load_dataset
