@@ -139,14 +139,11 @@ def main(cfg):
         logger=logger,
         patience=cfg.learner.patience,
         overfit_batches=4 if cfg.debug else 0
-        # detect_anomaly=True,
-        # gradient_clip_val=0.1
     )
     trainer.fit(model, datamodule)
     trainer.test(datamodule=datamodule, ckpt_path="best")
     # trainer.test(model=model, datamodule=datamodule)  # debugging - yes, it's already nan weirdly
 
-    # TODO add save_predictions
     save_predictions(model, datamodule, trainer, save_dir)
 
     logging.info("Finetuning complete")
@@ -171,17 +168,16 @@ def prepare_experiment(cfg, token=None):
         learning_rate=cfg.learner.learning_rate, 
 
         # old API
-        n_blocks=-1,
-        weight_decay=cfg.learner.weight_decay,
-        lr_decay=cfg.learner.layer_decay,
-        dropout_prob=cfg.learner.dropout_prob
+        # n_blocks=-1,
+        # weight_decay=cfg.learner.weight_decay,
+        # lr_decay=cfg.learner.layer_decay,
+        # dropout_prob=cfg.learner.dropout_prob
 
         # new API
-        # training_mode=cfg.learner.training_mode,
-
-        # layer_decay=cfg.learner.layer_decay,
-        # weight_decay=cfg.learner.weight_decay,
-        # head_dropout_prob=cfg.learner.dropout_prob,  # head dropout
+        training_mode=cfg.learner.training_mode,
+        layer_decay=cfg.learner.layer_decay,
+        weight_decay=cfg.learner.weight_decay,
+        head_dropout_prob=cfg.learner.dropout_prob,
 
         # always_train_batchnorm=cfg.learner.always_train_batchnorm,
         
