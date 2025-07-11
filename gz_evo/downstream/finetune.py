@@ -168,12 +168,23 @@ def prepare_experiment(cfg, token=None):
     init_args_for_all_models = dict(
         encoder=encoder,
         # backbone_name=backbone_name,
-        training_mode=cfg.learner.training_mode,
-        # always_train_batchnorm=cfg.learner.always_train_batchnorm,
-        layer_decay=cfg.learner.layer_decay,
+        learning_rate=cfg.learner.learning_rate, 
+
+        # old API
+        n_blocks=-1,
         weight_decay=cfg.learner.weight_decay,
-        learning_rate=cfg.learner.learning_rate,
-        head_dropout_prob=cfg.learner.dropout_prob,  # head dropout
+        lr_decay=cfg.learner.layer_decay,
+        dropout_prob=cfg.learner.dropout_prob
+
+        # new API
+        # training_mode=cfg.learner.training_mode,
+
+        # layer_decay=cfg.learner.layer_decay,
+        # weight_decay=cfg.learner.weight_decay,
+        # head_dropout_prob=cfg.learner.dropout_prob,  # head dropout
+
+        # always_train_batchnorm=cfg.learner.always_train_batchnorm,
+        
         # optional scheduler params
         # cosine_schedule=cfg.learner.cosine_schedule,
         # warmup_epochs=cfg.learner.warmup_epochs,
