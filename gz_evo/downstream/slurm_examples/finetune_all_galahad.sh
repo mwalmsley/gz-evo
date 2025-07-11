@@ -130,7 +130,7 @@ do
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=True \
+        ++pretrained=False \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
