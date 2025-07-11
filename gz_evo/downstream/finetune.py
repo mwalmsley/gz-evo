@@ -140,7 +140,7 @@ def main(cfg):
         patience=cfg.learner.patience,
         overfit_batches=4 if cfg.debug else 0,
         # detect_anomaly=True,
-        # gradient_clip_val=0.1
+        gradient_clip_val=0.1
     )
     trainer.fit(model, datamodule)
     trainer.test(datamodule=datamodule, ckpt_path="best")
