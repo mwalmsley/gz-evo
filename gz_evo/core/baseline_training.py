@@ -103,14 +103,16 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     )
     cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, etc.
     if debug:
-        cfg.batch_size = 32
+        cfg.batch_size = 8
         cfg.accumulate_grad_batches = 2
         cfg.epochs = 20
+        cfg.overfit_batches = 2
     else:
         cfg.batch_size = cfg[cfg.batch_size_key]
         # always the same effective batch size, after accumulation
         cfg.accumulate_grad_batches = 4096 // (cfg.batch_size  * cfg.devices)  # 4096 is the effective batch size, per node
         cfg.debug = debug
+        cfg.overfit_batches = None
 
     logging.info(f'using config before updates:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
@@ -210,6 +212,7 @@ def run_training(cfg, lightning_model, datamodule):
         plugins=cfg.plugins,
         gradient_clip_val=cfg.grad_clip_val,
         accumulate_grad_batches=cfg.accumulate_grad_batches,
+        overfit_batches=cfg.overfit_batches
     )
 
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')

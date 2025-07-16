@@ -359,16 +359,18 @@ def get_neg_multinomial_log_prob(probs, counts):
         # here, assumes the model predicts the probabilities of each answer without a dirichlet distribution, like W+2022
         
         # official version is
-        # question_loss = -1 * torch.distributions.multinomial.Multinomial(probs=predictions_for_answers).log_prob(counts)
-        # total counts is implicit from counts, nice one torch :)
+        # return -1 * torch.distributions.multinomial.Multinomial(probs=probs).log_prob(counts)
+        # but imhomogenous total counts and typing both cause me more hassle than just copy/pasting the guts below
 
-        # not sure why I have custom version here, maybe continuous vs integer
         logits = torch.distributions.utils.probs_to_logits(probs)
         log_factorial_n = torch.lgamma(counts.sum(-1) + 1)
         log_factorial_xs = torch.lgamma(counts + 1).sum(-1)
         logits[(counts == 0) & (logits == -torch.inf)] = 0
         log_powers = (logits * counts).sum(-1)
-        return -1 * log_factorial_n - log_factorial_xs + log_powers
+        log_prob = log_factorial_n - log_factorial_xs + log_powers  # previously missing an important set of brackets
+        return -1 * log_prob
+
+
 
 # copied from Zoobot to ensure reproducibility
 class CustomMultiQuestionLoss(torch.nn.Module):
@@ -395,7 +397,7 @@ class CustomMultiQuestionLoss(torch.nn.Module):
             if nan_prediction.any():
                 logging.warning(f'Found nan values in targets: {targets}')
             safety_value = torch.ones(1, device=targets.device, dtype=targets.dtype)  # fill with 1 everywhere i.e. fully uncertain
-            targets = torch.where(condition=nan_prediction, input=safety_value, other=predictions)
+            targets = torch.where(condition=nan_prediction, input=safety_value, other=inputs)
 
         q_losses = []
 
@@ -424,3 +426,16 @@ class CustomMultiQuestionLoss(torch.nn.Module):
         # return torch.nanmean(total_loss_sum_by_q, dim=0)  # scalar
 
 
+if __name__ == "__main__":
+
+    # probs = torch.tensor([[0.1, 0.2, 0.7], [0.3, 0.4, 0.3]], dtype=torch.float32)
+    # counts = torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.int32)
+
+    probs = torch.tensor([0.1, 0.2, 0.7], dtype=torch.float32)
+    counts = torch.tensor([1, 2, 3], dtype=torch.int32)
+    print(get_neg_multinomial_log_prob(probs, counts))
+
+    from zoobot.pytorch.training.losses import get_dirichlet_neg_log_prob
+    
+    concentrations = probs * 10
+    print(get_dirichlet_neg_log_prob(concentrations, counts))
