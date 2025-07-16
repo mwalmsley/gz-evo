@@ -17,8 +17,8 @@ from gz_evo.core import baseline_models, baseline_training
 def main():
 
     # architecture_name = 'convnext_atto'
-    # architecture_name = 'convnext_pico'
-    architecture_name = 'convnext_nano'
+    architecture_name = 'convnext_pico'
+    # architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
@@ -145,7 +145,7 @@ def get_lightning_model(cfg):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info("Starting multinomial baseline")
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore

@@ -20,7 +20,7 @@ class GenericBaseline(L.LightningModule):
         # encoder args
         architecture_name: str = 'convnext_nano',
         timm_kwargs = {},
-        channels: float = 3,
+        channels: int = 3,
         # training/finetuning args
         learning_rate: float = 1e-4,
         weight_decay: float = 0.05,
@@ -40,6 +40,12 @@ class GenericBaseline(L.LightningModule):
     
         self.encoder = timm.create_model(architecture_name, in_chans=channels, num_classes=0, **timm_kwargs)
         logging.debug(f'Encoder created: {self.encoder}')
+
+        # test with dummy input
+        # dummy_input = torch.randn(1, channels, 224, 224)
+        # x_sanity = self.encoder(dummy_input)
+        # assert not torch.isnan(x_sanity).any(), "Encoder output contains NaNs before training, on sanity check"
+
         self.head = self.create_head()
 
         self.learning_rate = learning_rate
@@ -71,7 +77,6 @@ class GenericBaseline(L.LightningModule):
 
     # copied from Zoobot - plausible that finetuning for core datasets will be important
     def configure_optimizers(self):  
-        
 
         logging.info(f'Encoder architecture to finetune: {type(self.encoder)}')
         if hasattr(self.encoder, 'vit'):  # e.g. mae
@@ -91,17 +96,27 @@ class GenericBaseline(L.LightningModule):
             weight_decay=self.weight_decay,
             layer_decay= self.layer_decay
         )
+
         # add head parameters to optimizer
         optimizer.add_param_group({'params': self.head.parameters(), 'lr': self.learning_rate})
+
+        # for debugging - simplified version
+        # optimizer = torch.optim.SGD(params=self.head.parameters(), lr=1e-4, weight_decay=0.)
+
 
         logging.info("Optimizer ready")
 
         return optimizer
         
     def forward(self, x):
+        #assert no nans
+        # assert not torch.isnan(x).any(), "Input tensor contains NaNs"
         assert x.shape[1] < 4  # torchlike BCHW
         x = self.encoder(x)
-        return self.head(x)
+        # assert not torch.isnan(x).any(), "Encoded tensor contains NaNs"
+        x = self.head(x)
+        # assert not torch.isnan(x).any(), "Head prediction tensor contains NaNs"
+        return x
     
     def make_step(self, batch, step_name):
         x = batch['image']

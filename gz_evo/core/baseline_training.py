@@ -92,7 +92,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             nodes=1,
             # epochs=3,
             epochs=1000,
-            precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
+            # precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
+            precision="32-true",
             plugins=None,
             patience=5,
             grad_clip_val=10.0, # much more generous
@@ -106,7 +107,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         cfg.batch_size = 8
         cfg.accumulate_grad_batches = 2
         cfg.epochs = 20
-        cfg.overfit_batches = 2
+        cfg.overfit_batches = 5
     else:
         cfg.batch_size = cfg[cfg.batch_size_key]
         # always the same effective batch size, after accumulation
@@ -168,8 +169,8 @@ def run_training(cfg, lightning_model, datamodule):
 
     # log a few images to make sure the transforms look good
     # only do on main process
-    # if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
-        # log_images(wandb_logger, datamodule)
+    if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
+        log_images(wandb_logger, datamodule)
 
     monitor_metric = 'validation/supervised_loss' 
     checkpoint_callback = ModelCheckpoint(
@@ -258,6 +259,10 @@ def log_images(wandb_logger, datamodule):
     # print([x.shape for x in np_images])
     # print([(x.min(), x.max()) for x in np_images])
     # exit()
+
+    # check no nans
+    assert not np.isnan(np_images).any(), "NaN values found in images"
+
     wandb_logger.experiment.log(
         {
             "train_examples": [

@@ -10,8 +10,9 @@ class ModelConfig:
     dropout_rate: float
     learning_rate: float
     weight_decay: float
-    drop_path_rate: Optional[float] = 0.
     layer_decay: Optional[float] = 1.  # no effect
+    drop_path_rate: Optional[float] = 0.
+
 
 
 # weak baseline
@@ -44,19 +45,20 @@ CFG_CONVNEXT_NANO = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=1. # no decay
 )
 
-CFG_CONVNEXT_NANO_FINETUNE = ModelConfig(
-    architecture_name="convnext_nano",
-    v100_batch_size=128,
-    a100_batch_size=512,
-    dropout_rate=0.5,
-    learning_rate=1e-4,
-    weight_decay=0.05,
-    drop_path_rate=0.4,
-    layer_decay=0.7, # meaningful (aggressive) decay
-)
+# CFG_CONVNEXT_NANO_FINETUNE = ModelConfig(
+#     architecture_name="convnext_nano",
+#     v100_batch_size=128,
+#     a100_batch_size=512,
+#     dropout_rate=0.5,
+#     learning_rate=1e-4,
+#     weight_decay=0.05,
+#     drop_path_rate=0.4,
+#     layer_decay=0.7, # meaningful (aggressive) decay
+# )
 
 
 CFG_CONVNEXTV2_NANO_FCMAE = ModelConfig(
@@ -66,7 +68,8 @@ CFG_CONVNEXTV2_NANO_FCMAE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=1. # no decay
 )
 
 CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
@@ -76,7 +79,8 @@ CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=1. # no decay
 )
 
 
@@ -87,7 +91,8 @@ CFG_CONVNEXT_BASE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=1. # no decay
 )
 
 CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
@@ -318,8 +323,9 @@ MODEL_CONFIGS = {
     "convnext_base": CFG_CONVNEXT_BASE,
     "convnext_large": CFG_CONVNEXT_LARGE,
 
-    "convnext_nano_finetune": CFG_CONVNEXT_NANO_FINETUNE,
-    "convnext_base_finetune": CFG_CONVNEXT_BASE_FINETUNE,
+    # deprecated now all models have layer decay
+    # "convnext_nano_finetune": CFG_CONVNEXT_NANO_FINETUNE,
+    # "convnext_base_finetune": CFG_CONVNEXT_BASE_FINETUNE,
 
     "convnext_base.clip_laion2b_augreg_ft_in12k": CFG_CONVNEXT_BASE_LAION,
 
