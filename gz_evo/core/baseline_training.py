@@ -169,8 +169,10 @@ def run_training(cfg, lightning_model, datamodule):
 
     # log a few images to make sure the transforms look good
     # only do on main process
+    # sometimes raises StopIteration
     if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
-        log_images(wandb_logger, datamodule)
+        if (cfg.batch_size * cfg.num_workers) < 5000:  # only log if dataset is large enough for all workers
+            log_images(wandb_logger, datamodule)
 
     monitor_metric = 'validation/supervised_loss' 
     checkpoint_callback = ModelCheckpoint(
@@ -252,13 +254,12 @@ def run_training(cfg, lightning_model, datamodule):
 
 def log_images(wandb_logger, datamodule):
     datamodule.setup()
-
+    logging.info("Requesting a batch of images from the dataloader for logging")
     batch = next(iter(datamodule.train_dataloader()))
+    logging.info(f"Logging {len(batch['image'])} images to wandb")
     images = batch['image']
     np_images = [image.numpy().transpose(2, 1, 0) for image in images[:5]]
-    # print([x.shape for x in np_images])
-    # print([(x.min(), x.max()) for x in np_images])
-    # exit()
+    exit()
 
     # check no nans
     assert not np.isnan(np_images).any(), "NaN values found in images"
