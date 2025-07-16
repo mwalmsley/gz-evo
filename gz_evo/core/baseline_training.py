@@ -166,8 +166,8 @@ def run_training(cfg, lightning_model, datamodule):
 
     # log a few images to make sure the transforms look good
     # only do on main process
-    if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
-        log_images(wandb_logger, datamodule)
+    # if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
+        # log_images(wandb_logger, datamodule)
 
     monitor_metric = 'validation/supervised_loss' 
     checkpoint_callback = ModelCheckpoint(
