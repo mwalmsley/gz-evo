@@ -208,8 +208,8 @@ def run_training(cfg, lightning_model, datamodule):
         plugins=cfg.plugins,
         gradient_clip_val=cfg.grad_clip_val,
         accumulate_grad_batches=cfg.accumulate_grad_batches,
-        overfit_batches=cfg.overfit_batches
-    )
+        overfit_batches=cfg.overfit_batches,
+        detect_anomaly=cfg.subset_name == 'tiny'  # only for tiny subset
 
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
