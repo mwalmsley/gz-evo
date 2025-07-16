@@ -22,9 +22,9 @@ class GenericBaseline(L.LightningModule):
         timm_kwargs = {},
         channels: float = 3,
         # training/finetuning args
-        learning_rate: float = 1e-3,
+        learning_rate: float = 1e-4,
         weight_decay: float = 0.05,
-        layer_decay: float = 0.9,
+        layer_decay: float = 0.75,  # new
         from_scratch: bool = False, # override the above
         # args for the head
         head_kwargs = {},

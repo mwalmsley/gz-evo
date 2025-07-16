@@ -108,7 +108,8 @@ CFG_CONVNEXT_BASE_LAION = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=0.7
 )
 
 CFG_CONVNEXT_LARGE = ModelConfig(
@@ -118,7 +119,8 @@ CFG_CONVNEXT_LARGE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=2e-5,  # reduced
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=0.7
 )
 
 
@@ -129,7 +131,8 @@ CFG_CONVNEXTV2_BASE_FCMAE= ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=0.7
 )
 
 CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
@@ -139,7 +142,8 @@ CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    layer_decay=0.7
 )
 
 
@@ -149,7 +153,8 @@ CFG_RESNET50 = ModelConfig(
     a100_batch_size=512,
     dropout_rate=0.5,
     learning_rate=1e-4,
-    weight_decay=0.05
+    weight_decay=0.05,
+    layer_decay=0.  # none
 )
 
 # https://huggingface.co/timm/resnet50_clip.openai
@@ -159,7 +164,8 @@ CFG_RESNET50_CLIP = ModelConfig(
     a100_batch_size=512,
     dropout_rate=0.5, 
     learning_rate=2e-5,  # reduced
-    weight_decay=0.05
+    weight_decay=0.05,
+    layer_decay=0.  # none
 )
 
 CFG_EFFICIENTNET_B0 = ModelConfig(
@@ -170,6 +176,7 @@ CFG_EFFICIENTNET_B0 = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.2
+    layer_decay=0.3  # low
 )
 
 
@@ -186,7 +193,8 @@ CFG_EFFICIENTNETV2_S = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.2
+    drop_path_rate=0.2,
+    layer_decay=0.3
 )
 
 CFG_EFFICIENTNETV2_M = ModelConfig(
@@ -196,7 +204,8 @@ CFG_EFFICIENTNETV2_M = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.2
+    drop_path_rate=0.2,
+    layer_decay=0.3
 )
 
 CFG_EFFICIENTNETV2_L = ModelConfig(
@@ -206,7 +215,8 @@ CFG_EFFICIENTNETV2_L = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.2
+    drop_path_rate=0.2,
+    layer_decay=0.3
 )
 
 CFG_MAXVIT_TINY = ModelConfig(
@@ -216,7 +226,8 @@ CFG_MAXVIT_TINY = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.2
+    drop_path_rate=0.2,
+    layer_decay=0.3
 )
 
 CFG_MAXVIT_SMALL = ModelConfig(
@@ -226,7 +237,8 @@ CFG_MAXVIT_SMALL = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.3
+    drop_path_rate=0.3,
+    layer_decay=0.3
 )
 
 CFG_MAXVIT_BASE = ModelConfig(
@@ -236,7 +248,8 @@ CFG_MAXVIT_BASE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=5e-5,
     weight_decay=0.05,
-    drop_path_rate=0.45  # guess
+    drop_path_rate=0.45,
+    layer_decay=0.3
 )
 
 
@@ -247,20 +260,24 @@ CFG_MAXVIT_LARGE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=2e-5,
     weight_decay=0.05,
-    drop_path_rate=0.6
+    drop_path_rate=0.6,
+    layer_decay=0.3
 )
 
 
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
-# CFG_VIT_SMALL_DINO = ModelConfig(
-#     architecture_name="vit_small_patch14_reg4_dinov2.lvd142m",
-#     v100_batch_size=64,
-#     a100_batch_size=256,
-#     dropout_rate=0.5,
-#     learning_rate=1e-5,  # lower
-#     weight_decay=0.05
-# )
+# https://huggingface.co/timm/vit_small_patch16_224.dino
+
+CFG_VIT_SMALL_DINO = ModelConfig(
+    architecture_name="vit_small_patch16_224.dino",
+    v100_batch_size=64,
+    a100_batch_size=256,
+    dropout_rate=0.5,
+    learning_rate=1e-5,  # lower
+    weight_decay=0.05,
+    layer_decay=0.5
+)
 
 CFG_VIT_BASE_CLIP = ModelConfig(
     architecture_name="vit_base_patch16_clip_224.openai",
@@ -268,7 +285,8 @@ CFG_VIT_BASE_CLIP = ModelConfig(
     a100_batch_size=128,
     dropout_rate=0.5,
     learning_rate=1e-4,
-    weight_decay=0.05
+    weight_decay=0.05,
+    layer_decay=0.5
 )
 
 CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
@@ -277,19 +295,11 @@ CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
     a100_batch_size=128,
     dropout_rate=0.5,
     learning_rate=1e-4,
-    weight_decay=0.05
+    weight_decay=0.05,
+    layer_decay=0.5
 )
 
 CFG_VIT_SO400M_SIGLIP = ModelConfig(
-    architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
-    v100_batch_size=8,  # will likely fail, need higher cuda compute capability
-    a100_batch_size=64,  # trying it
-    dropout_rate=0.5,
-    learning_rate=1e-5,  # may be low
-    weight_decay=0.05
-)
-
-CFG_VIT_SO400M_SIGLIP_FINETUNE = ModelConfig(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
     v100_batch_size=8,  # will likely fail, need higher cuda compute capability
     a100_batch_size=64,  # trying it
@@ -299,8 +309,7 @@ CFG_VIT_SO400M_SIGLIP_FINETUNE = ModelConfig(
     layer_decay=0.5
 )
 
-
-
+# https://huggingface.co/collections/timm/timm-backbones-6568c5b32f335c33707407f8
 
 MODEL_CONFIGS = {
     "convnext_atto": CFG_CONVNEXT_ATTO,
@@ -333,12 +342,12 @@ MODEL_CONFIGS = {
     "maxvit_base": CFG_MAXVIT_BASE,
     "maxvit_large": CFG_MAXVIT_LARGE,
 
+    'vit_small_patch16_224.dino': CFG_VIT_SMALL_DINO,
     # "vit_small_patch14_reg4_dinov2.lvd142m": CFG_VIT_SMALL_DINO)
     "vit_base_patch16_clip_224.openai": CFG_VIT_BASE_CLIP,
     "vit_medium_patch32_clip_224.tinyclip_laion400m": CFG_VIT_MEDIUM_TINYCLIP,
 
-    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,  # same but no layer_decay
-    "vit_so400m_siglip_finetune": CFG_VIT_SO400M_SIGLIP_FINETUNE
+    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP
 
 }
 

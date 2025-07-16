@@ -36,8 +36,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         prefetch_factor = 4
 
     elif os.path.isdir('/share/nas2'):
-        subset_name = 'default'
-        # subset_name = 'tiny' 
+        # subset_name = 'default'
+        subset_name = 'tiny' 
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
@@ -95,7 +95,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
             plugins=None,
             patience=5,
-            grad_clip_val=0.3,
+            grad_clip_val=10.0, # much more generous
             transform_mode='default',
             debug=debug,
             batch_size_key=batch_size_key
