@@ -39,6 +39,7 @@ class GenericBaseline(L.LightningModule):
         self.save_hyperparameters()  # saves all args by default
     
         self.encoder = timm.create_model(architecture_name, in_chans=channels, num_classes=0, **timm_kwargs)
+        logging.debug(f'Encoder created: {self.encoder}')
         self.head = self.create_head()
 
         self.learning_rate = learning_rate
