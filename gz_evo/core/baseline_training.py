@@ -180,17 +180,13 @@ def run_training(cfg, lightning_model, datamodule):
     )
     early_stopping_callback = EarlyStopping(monitor=monitor_metric, patience=cfg.patience, check_finite=True)
     callbacks = [checkpoint_callback, early_stopping_callback]
+    # TEMP
+    callbacks = []
 
     # galahad cluster has old slurm and doesn't set correctly
     # os.environ['SLURM_NTASKS_PER_NODE'] = str(cfg.devices)  
     logging.info(f"SLURM_NTASKS_PER_NODE is {os.environ.get('SLURM_NTASKS_PER_NODE', 'not set')}")
     logging.info(f"SLURM_NTASKS is {os.environ.get('SLURM_NTASKS', 'not set')}")
-
-    # delete SLURM env vars to avoid issues with pytorch lightning
-    # if 'SLURM_NTASKS_PER_NODE' in os.environ:
-    #     del os.environ['SLURM_NTASKS_PER_NODE']
-    # if 'SLURM_NTASKS' in os.environ:
-    #     del os.environ['SLURM_NTASKS']
 
     if cfg.devices == 1:
         devices = [get_highest_free_memory_device()]  # list of ints interpreted as device indices
