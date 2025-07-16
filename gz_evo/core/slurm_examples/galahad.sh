@@ -4,11 +4,11 @@
 #SBATCH --mem=80G  # high mem node is more reliable
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=16
 #SBATCH --nodes=1
 #SBATCH --exclude=compute-0-103
-#SBATCH --ntasks-per-node=2
-#SBATCH --ntasks 2
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks 1
 
 
 
