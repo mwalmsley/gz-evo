@@ -112,7 +112,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         # always the same effective batch size, after accumulation
         cfg.accumulate_grad_batches = 4096 // (cfg.batch_size  * cfg.devices)  # 4096 is the effective batch size, per node
         cfg.debug = debug
-        cfg.overfit_batches = None
+        cfg.overfit_batches = 0
 
     logging.info(f'using config before updates:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
