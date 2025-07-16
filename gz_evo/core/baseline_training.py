@@ -195,8 +195,8 @@ def run_training(cfg, lightning_model, datamodule):
     logging.info(f"Using {devices} devices for training")
 
     trainer = L.Trainer(
-        num_sanity_val_steps=0,
-        log_every_n_steps=150 if cfg.subset_name == 'default' else 10,  # more frequent logging for tiny subset to avoid nan metrics
+        # num_sanity_val_steps=0,
+        log_every_n_steps=150 if cfg.subset_name == 'default' else int(5000/cfg.batch_size),  # more frequent logging for tiny subset to avoid nan metrics
         accelerator=cfg.accelerator,
         devices=devices,  # single node only
         num_nodes=cfg.nodes,

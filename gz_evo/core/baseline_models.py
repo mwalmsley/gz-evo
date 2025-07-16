@@ -304,7 +304,7 @@ class RegressionBaseline(GenericBaseline):
             prog_bar = metric_collection == self.loss_metrics  # prog bar should only show losses
             for name, metric in metric_collection.items():
                 if split in name:
-                    logging.debug(f'logging {name}')
+                    # logging.debug(f'logging {name}')
                     self.log(name, metric, on_epoch=True, on_step=False, prog_bar=prog_bar, logger=True)
 
 
