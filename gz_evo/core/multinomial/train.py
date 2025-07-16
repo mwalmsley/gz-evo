@@ -144,7 +144,7 @@ def get_lightning_model(cfg):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info("Starting multinomial baseline")
 
     seed: int = os.environ.get('SEED', 42)  # type: ignore
