@@ -124,7 +124,7 @@ class GenericBaseline(L.LightningModule):
         return self.make_step(batch, step_name='test')
 
     def on_train_epoch_end(self) -> None:
-        # logging.info('on_train_epoch_end called')
+        logging.debug('on_train_epoch_end called')
         # called *after* on_validation_epoch_end, confusingly
         # do NOT log_all_metrics here. 
         # logging a metric resets it, and on_validation_epoch_end just logged and reset everything, so you will only log nans
@@ -139,6 +139,7 @@ class GenericBaseline(L.LightningModule):
         return super().on_validation_batch_start(batch, batch_idx, dataloader_idx)
 
     def on_validation_epoch_end(self) -> None:
+        logging.debug('on_validation_epoch_end called')
         self.log_all_metrics(split='validation')
 
     def on_test_epoch_end(self) -> None:
@@ -297,12 +298,13 @@ class RegressionBaseline(GenericBaseline):
 
 
     def log_all_metrics(self, split):
+        logging.debug(f'Logging all metrics for split: {split}')
         assert split is not None
         for metric_collection in (self.loss_metrics, self.regression_metrics):
-            prog_bar = metric_collection == self.loss_metrics  # don't log all
+            prog_bar = metric_collection == self.loss_metrics  # prog bar should only show losses
             for name, metric in metric_collection.items():
                 if split in name:
-                    # logging.info(name)
+                    logging.debug(f'logging {name}')
                     self.log(name, metric, on_epoch=True, on_step=False, prog_bar=prog_bar, logger=True)
 
 
@@ -319,12 +321,6 @@ class RegressionBaseline(GenericBaseline):
     def create_head(self):
         num_features = self.encoder.num_features
         question_answer_pairs = self.head_kwargs['question_answer_pairs']
-        # return torch.nn.Sequential(
-        #     # TODO global pooling layer?
-        #     torch.nn.Dropout(self.head_kwargs['dropout_rate']),
-        #     torch.nn.Linear(self.encoder.num_features, num_answers), 
-        #     torch.nn.Sigmoid()
-        # )
         return SoftmaxHeadPerAnswer(num_features, question_answer_pairs, dropout_rate=self.head_kwargs['dropout_rate'])
 
 class SoftmaxHeadPerAnswer(torch.nn.Module):
