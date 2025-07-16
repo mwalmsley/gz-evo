@@ -175,7 +175,7 @@ CFG_EFFICIENTNET_B0 = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.2
+    drop_path_rate=0.2,
     layer_decay=0.3  # low
 )
 
