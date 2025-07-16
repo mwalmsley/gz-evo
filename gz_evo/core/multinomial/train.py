@@ -19,7 +19,7 @@ def main():
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
@@ -39,10 +39,9 @@ def main():
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
 
-    # architecture_name = 'vit_so400m_siglip'
+    architecture_name = 'vit_small_patch16_224.dino'  # TODO first run
+    # architecture_name = 'vit_so400m_siglip'  # TODO crashed, redo
 
-    # with lr decay
-    # architecture_name = 'vit_so400m_siglip_finetune'
 
 
     dataset_name='gz_evo'
