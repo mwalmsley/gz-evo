@@ -109,7 +109,7 @@ class GenericBaseline(L.LightningModule):
         # e.g. {'smooth_yes: 12, 'smooth_no': 8, 'smooth_fraction': 0.6, ...}
         predictions = self(x)
         loss = self.calculate_loss_and_update_loss_metrics(predictions, labels, step_name)      
-        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}
+        outputs = {'loss': loss, 'prediction': predictions, 'label': labels}  # loss reduced. Fractions used for MSE metrics.
         self.update_other_metrics(outputs, step_name=step_name)
         return outputs
 
@@ -170,7 +170,7 @@ class ClassificationBaseline(GenericBaseline):
         super().__init__(*args, **kwargs)
 
         # use multi-class cross entropy as loss function
-        self.loss_fn = torch.nn.CrossEntropyLoss()
+        self.loss_fn = torch.nn.CrossEntropyLoss(reduction='mean')  # reduces to scalar
         self.num_classes = kwargs['head_kwargs']['num_classes']
 
     def setup_other_metrics(self):
@@ -277,7 +277,7 @@ class RegressionBaseline(GenericBaseline):
         loss = self.loss_fn(predictions, labels)  # expects predictions and labels to be cross-entropy ready e.g. one-hot labels
         reduced_loss = torch.nanmean(torch.sum(loss, dim=1))  # sum across questions, then mean across batch
         self.loss_metrics[f'{step_name}/supervised_loss'](reduced_loss)
-        return loss
+        return reduced_loss  # wasn't previously reduced
     
     def update_other_metrics(self, outputs, step_name):
         predictions = outputs['prediction']
@@ -404,18 +404,22 @@ class CustomMultiQuestionLoss(torch.nn.Module):
 
             q_answer_keys = [question + answer for answer in answers]
 
-            counts = torch.stack([targets[key] for key in q_answer_keys], dim=1).int()
-
+            # shape (B, A), where A is the number of answers for this question
+            counts = torch.stack([targets[key] for key in q_answer_keys], dim=1).int() 
             # work out the answer indices for the prediction vector
             answer_indices = [self.answer_keys.index(key) for key in q_answer_keys]
+            # shape (B, A) similarly
             predictions_for_answers = inputs[:, answer_indices]
             # now these are two vectors and ready for the functional loss
             
-            question_loss = self.question_functional_loss(predictions_for_answers, counts)
+            question_loss = self.question_functional_loss(predictions_for_answers, counts)  # log-likelihood of q preds, shape (B)
             q_losses.append(question_loss)
+    
+        total_loss = torch.stack(q_losses, dim=1)  # shape (B, numQ)
 
-        total_loss = torch.stack(q_losses, dim=1)
+        return total_loss  # reduction outside this func
+        # treating all answers equally, take a nanmean across batch (for same loss scale as we change batch size)
+        # total_loss_sum_by_q = torch.nansum(total_loss, dim=1)  # shape (B), sum across q
+        # return torch.nanmean(total_loss_sum_by_q, dim=0)  # scalar
 
-        # treating all answers equally, take a nanmean of everything
-        return torch.nanmean(total_loss, dim=0)  # and then with reduction, mean across batch. Never do mean across answers.
 
