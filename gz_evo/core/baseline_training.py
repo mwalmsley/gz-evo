@@ -36,8 +36,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         prefetch_factor = 4
 
     elif os.path.isdir('/share/nas2'):
-        # subset_name = 'default'
-        subset_name = 'tiny' 
+        subset_name = 'default'
+        # subset_name = 'tiny' 
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
         devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
@@ -62,8 +62,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             "No known system detected, using defaults for local debugging. See baseline_training.py to add system"
         )
         # defaults to local debugging mode
-        # subset_name = 'tiny' 
-        subset_name = 'default'
+        subset_name = 'tiny' 
+        # subset_name = 'default'
         num_workers = 4
         debug = True
         accelerator="auto"
