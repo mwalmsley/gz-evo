@@ -9,6 +9,7 @@
 #SBATCH --exclude=compute-0-103
 #SBATCH --ntasks-per-node=1
 #SBATCH --ntasks 1
+#SBATCH --exclusive
 
 
 
