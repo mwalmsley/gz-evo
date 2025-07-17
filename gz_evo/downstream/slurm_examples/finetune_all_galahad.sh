@@ -138,7 +138,7 @@ do
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=False \
+        ++pretrained=True \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
