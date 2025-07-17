@@ -88,6 +88,8 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # LEARNER="convnext_nano_gz_euclid"
 # ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
 
+
+
 # new MAE encoders
 # LEARNER="vit_small_custom"
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/gimg2gls/checkpoints/last.ckpt"
@@ -99,8 +101,8 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
 
 # vanilla vitso trained for several days on 16 A100, looks well-converged
-# LEARNER="vit_so400m_siglip"
-# ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
+LEARNER="vit_so400m_siglip"
+ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
 
 
 
