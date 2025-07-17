@@ -268,7 +268,6 @@ def log_images(wandb_logger, datamodule):
     logging.info(f"Logging {len(batch['image'])} images to wandb")
     images = batch['image']
     np_images = [image.numpy().transpose(2, 1, 0) for image in images[:5]]
-    exit()
 
     # check no nans
     assert not np.isnan(np_images).any(), "NaN values found in images"
