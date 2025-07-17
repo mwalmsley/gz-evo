@@ -133,7 +133,8 @@ do
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
-        ++learner.training_mode=head_only \
+        ++learner.layer_decay=0.5 \
+        ++learner.training_mode=full \
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++wandb=True \
@@ -146,7 +147,7 @@ do
 
 done
 
-    #         ++learner.layer_decay=0.5 \
+
         # ++learner.learning_rate=0.00001 \
 
     # ++learner.learning_rate=0.00001 \
