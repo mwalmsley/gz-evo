@@ -132,13 +132,13 @@ do
         $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
-        ++learner.layer_decay=0. \
+        ++learner.layer_decay=0.5 \
         ++learner.normalize=False \
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=False \
+        ++pretrained=True \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
