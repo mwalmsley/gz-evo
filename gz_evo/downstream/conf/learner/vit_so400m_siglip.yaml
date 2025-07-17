@@ -19,7 +19,7 @@ patience: 6
 stochastic_depth: 0.0
 
 # deep finetune with decay
-layer_decay: 0.9  # suuuuupppperrrr strong decay for lower layers. LR = LR * layer_decay ** i. siglip has 25 blocks so increase to 0.9
+layer_decay: 0.9  # suuuuupppperrrr WEAK decay for lower layers. LR = LR * layer_decay ** (max_i - i). siglip has 25 blocks so increase to 0.9
 weight_decay: 0.1
 dropout_prob: 0.5
 training_mode: full

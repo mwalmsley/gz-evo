@@ -99,8 +99,8 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
 
 # vanilla vitso trained for several days on 16 A100, looks well-converged
-LEARNER="vit_so400m_siglip"
-ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
+# LEARNER="vit_so400m_siglip"
+# ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
 
 
 
@@ -130,12 +130,13 @@ do
         $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
+        ++learner.layer_decay=0.2 \
         ++learner.normalize=False \
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
-        ++pretrained=True \
+        ++pretrained=False \
         ++divisor=$DIVISOR \
         ++seed=$RANDOM  
 
