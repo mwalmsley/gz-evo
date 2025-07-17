@@ -34,13 +34,18 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'v100_batch_size'
         devices = 1
         prefetch_factor = 4
+        nodes = 1
 
     elif os.path.isdir('/share/nas2'):
+
+        nodes = int(os.environ['SLURM_NNODES'])  # e.g. 4
+        devices = int(os.environ['SLURM_TASKS_PER_NODE'].split('(')[0])  # e.g. 2(x4) -> 2
+        # devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
         subset_name = 'default'
         # subset_name = 'tiny' 
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
-        devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
+
         prefetch_factor = 8
         num_workers = 16 // devices
         # of 24 per node on some, or 16 on others. 16 nodes are more reliable.
@@ -54,6 +59,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'debug'
         devices = 1
         prefetch_factor = 2
+        nodes = 1
     
     # TODO add your own system here
 
@@ -70,6 +76,9 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         batch_size_key = 'debug'
         devices = 1
         prefetch_factor = 2
+        nodes = 1
+
+
 
     cfg: omegaconf.DictConfig = omegaconf.OmegaConf.create(
         dict(
@@ -89,7 +98,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             channels=3,
             accelerator=accelerator,
             devices=devices,
-            nodes=1,
+            nodes=nodes,
             # epochs=3,
             epochs=1000,
             precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss

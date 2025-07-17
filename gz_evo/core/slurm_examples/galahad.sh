@@ -4,12 +4,27 @@
 #SBATCH --mem=80G  # high mem node is more reliable
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=16
-#SBATCH --nodes=1
-#SBATCH --exclude=compute-0-103
-#SBATCH --ntasks-per-node=1
-#SBATCH --ntasks 1
-#SBATCH --exclusive
+
+#SBATCH --nodes=8
+#SBATCH --mem=90G
+#SBATCH --cpus-per-task=8
+#SBATCH --job-name=mnodebs
+#SBATCH --ntasks-per-node=2
+#SBATCH --exclude compute-0-103
+
+GPUS=2
+
+#### SBATCH --cpus-per-task=16
+#### SBATCH --nodes=1
+#### SBATCH --exclude=compute-0-103
+#### SBATCH --ntasks-per-node=1
+#### SBATCH --ntasks 1
+#### SBATCH --exclusive
+
+# GPUS=1
+
+
+
 
 
 
@@ -22,8 +37,12 @@ export CUDA_DEVICE_ORDER=PCI_BUS_ID
 echo "CUDA_DEVICE_ORDER set to $CUDA_DEVICE_ORDER"
 
 export HYDRA_FULL_ERROR=1
+# for multi-node training
 export TORCH_NCCL_BLOCKING_WAIT=1
-# export NCCL_DEBUG=INFO
+export NCCL_SOCKET_IFNAME=eno1 # high mem nodes only
+export NCCL_DEBUG=INFO
+export NCCL_IB_DISABLE=1  # disable infiniband, crucial on galahad (no iband?)
+
 
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
@@ -46,12 +65,13 @@ export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  #
 # SEED=$RANDOM
 # echo Using seed $SEED
 
+
+
+
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
-echo SLURM_NTASKS $SLURM_NTASKS 
-echo SLURM_NTASKS_PER_NODE $SLURM_NTASKS_PER_NODE
-export SLURM_NTASKS_PER_NODE=$SLURM_NTASKS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
+export SLURM_NTASKS_PER_NODE=$GPUS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 
 # ----
