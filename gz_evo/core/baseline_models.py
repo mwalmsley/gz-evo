@@ -99,6 +99,12 @@ class GenericBaseline(L.LightningModule):
 
         # add head parameters to optimizer
         optimizer.add_param_group({'params': self.head.parameters(), 'lr': self.learning_rate})
+        logging.info("Learning rate scheduler not used")
+        logging.info("Manually applying lr_scale to optimizer param groups (because timm scheduler normally does this, but there is no scheduler)")
+        for group in optimizer.param_groups:
+            group['lr_scale'] = group.get('lr_scale', 1.0)
+            group['lr'] *= group['lr_scale']
+
 
         # for debugging - simplified version
         # optimizer = torch.optim.SGD(params=self.head.parameters(), lr=1e-4, weight_decay=0.)
