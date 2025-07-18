@@ -428,3 +428,14 @@ if __name__ == "__main__":
     )
 
     main()
+
+
+    # INFO:absl:Hyperparameters: {'accum_steps': 0, 'base_lr': 0.01, 'batch': 512, 'batch_eval': 120, 'checkpoint_every': 1000, 'dataset': './flower_photos', 'decay_type': 'cosine', 'eval_every': 100, 'grad_norm_clip': 1.0, 'model': {'classifier': 'token', 'hidden_size': 192, 'name': 'R+ViT-Ti_16', 'patches': {'size': (8, 8)}, 'representation_size': None, 'resnet': {'num_layers': (), 'width_factor': 1}, 'transformer': {'attention_dropout_rate': 0.0, 'dropout_rate': 0.0, 'mlp_dim': 768, 'num_heads': 3, 'num_layers': 12}}, 'model_or_filename': 'R_Ti_16', 'optim_dtype': 'bfloat16', 'pp': {'crop': 224, 'resize': 448, 'test': 'train[90%:]', 'train': 'train[:90%]'}, 'prefetch': 2, 'pretrained_dir': 'gs://vit_models/augreg', 'progress_every': 10, 'shuffle_buffer': 1000, 'tfds_data_dir': None, 'tfds_manual_dir': None, 'total_steps': 100, 'trainer': 'train', 'warmup_steps': 10}
+
+    # batch size 512
+
+    # cosine with warmup 
+    # https://github.com/google-research/vision_transformer/blob/main/vit_jax/train.py#L135
+
+    # sgd with momentum 0.9
+    # https://github.com/google-research/vision_transformer/blob/main/vit_jax/train.py#L140

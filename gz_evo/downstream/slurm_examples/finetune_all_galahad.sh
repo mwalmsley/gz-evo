@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --constraint=A100
 #SBATCH --time=10-23
-#SBATCH --mem=50G
+#SBATCH --mem=80G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
 #SBATCH --ntasks-per-node=2
@@ -151,9 +151,11 @@ do
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
         ++learner.training_mode=head_only \
+        ++learner.batch_size=128 \
+        ++learner.learning_rate=0.001 \
         ++dataset=${DATASET} \
         +hardware=galahad \
-        ++hardware.gpus=$GPUS \
+        ++hardware.devices=$GPUS \
         ++hardware.num_workers=$SLURM_CPUS_PER_TASK \
         ++wandb=True \
         ++debug=False \
@@ -164,7 +166,7 @@ do
 
 done
 
-# ++learner.batch_size=128
+
 
 
         # ++learner.layer_decay=0.5 \
