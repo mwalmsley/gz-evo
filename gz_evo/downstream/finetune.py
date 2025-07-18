@@ -141,10 +141,22 @@ def main(cfg):
         overfit_batches=4 if cfg.debug else 0
     )
     trainer.fit(model, datamodule)
-    trainer.test(datamodule=datamodule, ckpt_path="best")
-    # trainer.test(model=model, datamodule=datamodule)  # debugging - yes, it's already nan weirdly
 
-    save_predictions(model, datamodule, trainer, save_dir)
+    # if on rank zero process (might not work with distributed training)
+    if trainer.is_global_zero:
+        # get new trainer to avoid distributed datamodule
+        trainer = finetune.get_trainer(
+            save_dir,
+            accelerator=cfg.hardware.accelerator,
+            devices=1,
+            num_nodes=1,
+            strategy="auto",
+            precision=cfg.hardware.precision,
+            enable_progress_bar=True,  # temp
+            logger=logger,
+        )
+        trainer.test(model=model, datamodule=datamodule)#, ckpt_path="best")
+        save_predictions(model, datamodule, trainer, save_dir)
 
     logging.info("Finetuning complete")
 

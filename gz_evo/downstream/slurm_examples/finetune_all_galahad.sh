@@ -1,11 +1,21 @@
 #!/bin/bash
 #SBATCH --constraint=A100
 #SBATCH --time=10-23
-#SBATCH --ntasks-per-node=1
 #SBATCH --mem=50G
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=16
-#SBATCH --exclusive
+#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=2
+
+GPUS=2
+
+#### SBATCH --exclusive
+#### SBATCH --cpus-per-task=16
+#### SBATCH --ntasks-per-node=1
+
+# GPUS=1
+# NUM_NODES=1
+
+
 
 pwd; hostname; date
 
@@ -34,8 +44,7 @@ export HF_DATASETS_IN_MEMORY_MAX_SIZE=21474836480  # 20GB
 
 export NCCL_BLOCKING_WAIT=1
 
-GPUS=1
-NUM_NODES=1
+
 
 REPO_DIR=/share/nas2/walml/repos/gz-evo
 
@@ -140,6 +149,7 @@ do
         ++learner.training_mode=head_only \
         ++dataset=${DATASET} \
         +hardware=galahad \
+        ++hardware.gpus=$GPUS \
         ++wandb=True \
         ++debug=False \
         ++pretrained=True \
