@@ -216,7 +216,7 @@ def run_training(cfg, lightning_model, datamodule):
         accelerator=cfg.accelerator,
         devices=devices,  # single node only,
         num_nodes=cfg.nodes,
-        strategy="ddp_find_unused_parameters_true" if cfg.devices > 1 else None,
+        strategy="ddp_find_unused_parameters_true" if devices > 1 else "auto",
         precision=cfg.precision,
         logger=wandb_logger,
         callbacks=callbacks,

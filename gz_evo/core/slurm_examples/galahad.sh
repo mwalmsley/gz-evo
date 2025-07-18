@@ -7,7 +7,7 @@
 #SBATCH --output=%x.%A.out
 #SBATCH --cpus-per-task=8
 #SBATCH --ntasks-per-node=2
-#SBATCH --ntasks=1
+#SBATCH --ntasks=2
 #SBATCH --nodes=1
 
 GPUS=2
