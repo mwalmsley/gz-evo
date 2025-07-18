@@ -152,8 +152,8 @@ do
         +hardware=galahad \
         ++hardware.gpus=$GPUS \
         ++hardware.num_workers=$SLURM_CPUS_PER_TASK \
-        ++wandb=True \
-        ++debug=False \
+        ++wandb=False \
+        ++debug=True \
         ++pretrained=True \
         ++divisor=$DIVISOR
 
