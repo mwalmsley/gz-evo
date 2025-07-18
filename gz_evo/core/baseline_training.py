@@ -42,8 +42,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = int(os.environ['SLURM_TASKS_PER_NODE'].split('(')[0])  # e.g. 2(x4) -> 2
         # devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
         
-        # subset_name = 'default'
-        subset_name = 'tiny' 
+        subset_name = 'default'
+        # subset_name = 'tiny' 
         
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
