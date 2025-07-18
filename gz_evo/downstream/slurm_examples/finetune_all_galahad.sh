@@ -44,6 +44,9 @@ export HF_DATASETS_IN_MEMORY_MAX_SIZE=21474836480  # 20GB
 
 export NCCL_BLOCKING_WAIT=1
 
+# this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
+export SLURM_NTASKS_PER_NODE=$GPUS 
+echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 
 
 REPO_DIR=/share/nas2/walml/repos/gz-evo

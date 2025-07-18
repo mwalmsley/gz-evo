@@ -84,7 +84,10 @@ def main(cfg):
     results_dir = get_results_dir()
     save_dir = os.path.join(results_dir, cfg.version, cfg.run_id)
     if not os.path.isdir(save_dir):
-        os.makedirs(save_dir)
+        try:
+            os.makedirs(save_dir)
+        except FileExistsError:
+            logging.warning(f"Directory {save_dir} already exists, probably made in race condition, continuing...")
     logging.info(f"Saving to {save_dir}")
     # exit()
 
