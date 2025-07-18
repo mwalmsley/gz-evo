@@ -214,8 +214,9 @@ def run_training(cfg, lightning_model, datamodule):
         # num_sanity_val_steps=0,
         log_every_n_steps=150 if cfg.subset_name == 'default' else int(5000/cfg.device_batch_size),  # more frequent logging for tiny subset to avoid nan metrics
         accelerator=cfg.accelerator,
-        devices=devices,  # single node only
+        devices=devices,  # single node only,
         num_nodes=cfg.nodes,
+        strategy="ddp_find_unused_parameters_true" if cfg.devices > 1 else None,
         precision=cfg.precision,
         logger=wandb_logger,
         callbacks=callbacks,
