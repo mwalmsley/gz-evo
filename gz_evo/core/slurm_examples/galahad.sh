@@ -4,24 +4,24 @@
 #SBATCH --mem=80G  # high mem node is more reliable
 #SBATCH --job-name=baseln
 #SBATCH --output=%x.%A.out
+#SBATCH --cpus-per-task=16
+#SBATCH --nodes=1
+#SBATCH --exclude=compute-0-103
+#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks 1
+#SBATCH --exclusive
 
-#SBATCH --nodes=8
-#SBATCH --mem=90G
-#SBATCH --cpus-per-task=8
-#SBATCH --job-name=mnodebs
-#SBATCH --ntasks-per-node=2
-#SBATCH --exclude compute-0-103
+GPUS=1
 
-GPUS=2
+####SBATCH --nodes=8
+####SBATCH --mem=90G
+####SBATCH --cpus-per-task=8
+####SBATCH --job-name=mnodebs
+####SBATCH --ntasks-per-node=2
+####SBATCH --exclude compute-0-103
 
-#### SBATCH --cpus-per-task=16
-#### SBATCH --nodes=1
-#### SBATCH --exclude=compute-0-103
-#### SBATCH --ntasks-per-node=1
-#### SBATCH --ntasks 1
-#### SBATCH --exclusive
+# GPUS=2
 
-# GPUS=1
 
 
 
