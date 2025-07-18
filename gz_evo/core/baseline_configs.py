@@ -6,12 +6,13 @@ from dataclasses import dataclass
 class ModelConfig:
     architecture_name: str
     v100_batch_size: int
-    a100_batch_size: int
+    a100_batch_size: int  # the batch size that fits on one A100 GPU
     dropout_rate: float
     learning_rate: float
     weight_decay: float
     layer_decay: Optional[float] = 1.  # no effect
     drop_path_rate: Optional[float] = 0.
+    target_batch_size: int = 4096  # effective batch size for training, summed over devices and after accumulation
 
 
 
@@ -307,7 +308,7 @@ CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
 CFG_VIT_SO400M_SIGLIP = ModelConfig(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
     v100_batch_size=8,  # will likely fail, need higher cuda compute capability
-    a100_batch_size=64,  # trying it
+    a100_batch_size=128,  # requires two devices
     dropout_rate=0.5,
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,

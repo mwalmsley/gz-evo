@@ -64,7 +64,7 @@ def main():
     # cfg.accumulate_grad_batches = 4 * 4096 / (cfg.batch_size * cfg.devices)
     # cfg.accumulate_grad_batches = 1024 / (cfg.batch_size * cfg.devices)
     # even smaller
-    cfg.accumulate_grad_batches = max((256 / (cfg.batch_size * cfg.devices), 1))
+    # cfg.accumulate_grad_batches = max((256 / (cfg.batch_size * cfg.devices), 1))
 
     # paper: There is a 20-epoch linear warmup and a cosine decaying schedule afterward.
     # https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingWarmRestarts.html#torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
@@ -99,7 +99,7 @@ def set_up_task_data(cfg):
         dataset_dict=dataset_dict,
         train_transform=get_galaxy_transform(train_transform_config),
         test_transform=get_galaxy_transform(test_transform_config),
-        batch_size=cfg.batch_size,
+        batch_size=cfg.device_batch_size,
         num_workers=cfg.num_workers,
         iterable=cfg.iterable,
         prefetch_factor=cfg.prefetch_factor,

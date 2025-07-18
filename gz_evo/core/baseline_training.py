@@ -41,8 +41,10 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         nodes = int(os.environ['SLURM_NNODES'])  # e.g. 4
         devices = int(os.environ['SLURM_TASKS_PER_NODE'].split('(')[0])  # e.g. 2(x4) -> 2
         # devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
-        subset_name = 'default'
-        # subset_name = 'tiny' 
+        
+        # subset_name = 'default'
+        subset_name = 'tiny' 
+        
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
 
@@ -99,10 +101,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             accelerator=accelerator,
             devices=devices,
             nodes=nodes,
-            # epochs=3,
             epochs=1000,
-            precision="16-mixed",  # bf16 doesn't support lgamma for dirichlet loss
-            # precision="32-true",  # some trouble with nans at half, now, strangely
+            precision="32-true" if subset_name == 'tiny' else "bf16-mixed",  # can now use bf 
             plugins=None,
             patience=5,
             grad_clip_val=10.0, # much more generous
@@ -113,14 +113,18 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     )
     cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, etc.
     if debug:
-        cfg.batch_size = 8
+        cfg.device_batch_size = 4
+        cfg.total_batch_size = 8
         cfg.accumulate_grad_batches = 2
         cfg.epochs = 20
         cfg.overfit_batches = 5
     else:
-        cfg.batch_size = cfg[cfg.batch_size_key]
-        # always the same effective batch size, after accumulation
-        cfg.accumulate_grad_batches = 4096 // (cfg.batch_size  * cfg.devices)  # 4096 is the effective batch size, per node
+        cfg.device_batch_size = cfg[cfg.batch_size_key]  # e.g. cfg.a100_batch_size=64, the size that fits on one device
+        # cfg.total_batch_size is the ddp total batch size, before accumulation
+        cfg.total_batch_size = cfg.device_batch_size * cfg.devices  # e.g. cfg.a100_batch_size=64, the size that fits on one device
+        # cfg.accumulated_batch_size = 4096  # now part of baseline configs, per model
+        # set accumulate grad batches to get to effective batch size
+        cfg.accumulate_grad_batches = cfg.target_batch_size // cfg.total_batch_size  # assuming one node
         cfg.debug = debug
         cfg.overfit_batches = 0
 
@@ -180,7 +184,7 @@ def run_training(cfg, lightning_model, datamodule):
     # only do on main process
     # sometimes raises StopIteration
     if os.environ.get('SLURM_PROCID', '0') == '0':  # slurm env var
-        if (cfg.batch_size * cfg.num_workers) < 5000:  # only log if dataset is large enough for all workers
+        if (cfg.device_batch_size * cfg.num_workers) < 3000:  # only log if dataset is large enough for all workers
             log_images(wandb_logger, datamodule)
 
     monitor_metric = 'validation/supervised_loss' 
@@ -208,7 +212,7 @@ def run_training(cfg, lightning_model, datamodule):
 
     trainer = L.Trainer(
         # num_sanity_val_steps=0,
-        log_every_n_steps=150 if cfg.subset_name == 'default' else int(5000/cfg.batch_size),  # more frequent logging for tiny subset to avoid nan metrics
+        log_every_n_steps=150 if cfg.subset_name == 'default' else int(5000/cfg.device_batch_size),  # more frequent logging for tiny subset to avoid nan metrics
         accelerator=cfg.accelerator,
         devices=devices,  # single node only
         num_nodes=cfg.nodes,
