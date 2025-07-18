@@ -2,23 +2,40 @@
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --mem=80G  # high mem node is more reliable
-#SBATCH --job-name=baseln
-#SBATCH --output=%x.%A.out
-#SBATCH --cpus-per-task=16
-#SBATCH --nodes=1
 #SBATCH --exclude=compute-0-103
-#SBATCH --ntasks-per-node=1
-#SBATCH --ntasks 1
-#SBATCH --exclusive
+#SBATCH --job-name=mnodebs
+#SBATCH --output=%x.%A.out
+#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
 
-GPUS=1
+GPUS=2
+
+# 1x2 version (above)
+
+
+
+
+
+# 1x1 version
+
+###SBATCH --cpus-per-task=16
+###SBATCH --ntasks-per-node=1
+###SBATCH --ntasks 1
+###SBATCH --exclusive
+
+# GPUS=1
+
+
+# GPUS=2
+
+# 8x2 version
 
 ####SBATCH --nodes=8
 ####SBATCH --mem=90G
 ####SBATCH --cpus-per-task=8
-####SBATCH --job-name=mnodebs
 ####SBATCH --ntasks-per-node=2
-####SBATCH --exclude compute-0-103
 
 # GPUS=2
 
