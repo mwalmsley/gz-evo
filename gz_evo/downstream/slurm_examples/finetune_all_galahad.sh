@@ -132,8 +132,8 @@ ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results
 
 # DIVISOR=1
 
-# for DATASET in "gz_euclid"
-for DATASET in "euclid_strong_lens_expert_judges"
+for DATASET in "gz_euclid"
+# for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
@@ -155,8 +155,8 @@ do
         +hardware=galahad \
         ++hardware.gpus=$GPUS \
         ++hardware.num_workers=$SLURM_CPUS_PER_TASK \
-        ++wandb=False \
-        ++debug=True \
+        ++wandb=True \
+        ++debug=False \
         ++pretrained=True \
         ++divisor=$DIVISOR
 
