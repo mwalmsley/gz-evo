@@ -1,7 +1,7 @@
 gpu_memory: 32  # gb, with a safety factor
 
 prefetch_factor: 20
-num_workers: 5
+num_workers: 8
 pin_memory: True
 
 devices: 1

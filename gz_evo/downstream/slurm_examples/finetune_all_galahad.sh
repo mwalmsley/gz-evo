@@ -129,7 +129,8 @@ ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results
 
 # DIVISOR=1
 
-for DATASET in "gz_euclid"
+# for DATASET in "gz_euclid"
+for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
@@ -142,7 +143,7 @@ do
     do
         echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset"
 
-        $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
+        srun $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
@@ -150,6 +151,7 @@ do
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++hardware.gpus=$GPUS \
+        ++hardware.num_workers=$SLURM_CPUS_PER_TASK \
         ++wandb=True \
         ++debug=False \
         ++pretrained=True \
@@ -158,6 +160,9 @@ do
     done
 
 done
+
+# ++learner.batch_size=128
+
 
         # ++learner.layer_decay=0.5 \
 
