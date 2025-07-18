@@ -42,7 +42,7 @@ export HF_TOKEN_PATH=/share/nas2/walml/cache/huggingface/token
 # cache datasets in memory
 export HF_DATASETS_IN_MEMORY_MAX_SIZE=21474836480  # 20GB
 
-export NCCL_BLOCKING_WAIT=1
+export TORCH_NCCL_BLOCKING_WAIT=1
 
 # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 export SLURM_NTASKS_PER_NODE=$GPUS 
