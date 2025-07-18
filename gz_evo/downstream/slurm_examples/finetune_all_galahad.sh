@@ -100,9 +100,13 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # dies with nan immediately, even without any training
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
 
-# vanilla vitso trained for several days on 16 A100, looks well-converged
 LEARNER="vit_so400m_siglip"
-ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
+# vanilla vitso trained for several days on 16 A100, looks well-converged
+# ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
+# vitso + 3 layer decoder, only partially trained so far
+ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/4vfhdqzi/checkpoints/model.ckpt"
+
+
 
 
 
@@ -133,20 +137,19 @@ do
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
-        ++learner.layer_decay=0.5 \
-        ++learner.training_mode=full \
+        ++learner.training_mode=head_only \
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++wandb=True \
         ++debug=False \
         ++pretrained=True \
-        ++divisor=$DIVISOR \
-        ++seed=$RANDOM  
+        ++divisor=$DIVISOR
 
     done
 
 done
 
+        # ++learner.layer_decay=0.5 \
 
         # ++learner.learning_rate=0.00001 \
 
@@ -156,7 +159,8 @@ done
 
     #         ++pretrained=imagenet
 
-    
+     \
+        # ++seed=$RANDOM  
 
     # DATASET="euclid_strong_lens_expert_judges"
 # for LEARNER in "convnext_nano" "efficientnet_b0"
