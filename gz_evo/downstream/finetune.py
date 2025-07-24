@@ -214,51 +214,51 @@ def prepare_experiment(cfg, token=None):
         )
         dataset_dict = load_dataset("mwalmsley/gz_rings", "regression", token=token)  # type: ignore
         # target_transform = ToFloat_Transform() # should already be float
-        target_transform = None
+        # target_transform = None
 
     elif cfg.dataset == "gz-rings-binary":
         model = finetune.FinetuneableZoobotClassifier(num_classes=2, **init_args_for_all_models)
         dataset_dict = load_dataset("mwalmsley/gz_rings", "classification", token=token)  # type: ignore
         # target_transform = ToFloat_Transform()
         target_transform = None # hmm, this is classification, should be int
-        label_cols = ['label']
+        # label_cols = ['label']
 
     # is-lsb
     elif cfg.dataset == "is-lsb":
         model = finetune.FinetuneableZoobotClassifier(num_classes=2, **init_args_for_all_models)
         dataset_dict = load_dataset("mwalmsley/is-lsb", token=token)  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     # which-lsb
     elif cfg.dataset == "which-lsb":
         model = finetune.FinetuneableZoobotClassifier(num_classes=4, **init_args_for_all_models)
         dataset_dict = load_dataset("mwalmsley/which-lsb", token=token)  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     # galaxy10_decals
     elif cfg.dataset == "decals10":
         model = finetune.FinetuneableZoobotClassifier(num_classes=10, **init_args_for_all_models)
         dataset_dict = load_dataset("mwalmsley/galaxy10_decals", "galaxyzoo", token=token)  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     # jwst
     elif cfg.dataset == "jwst":
         model = finetune.FinetuneableZoobotClassifier(num_classes=5, **init_args_for_all_models)
         dataset_dict = load_dataset("mwalmsley/jwst", token=token)  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     elif cfg.dataset == "euclid_strong_lens_expert_judges":
         model = finetune.FinetuneableZoobotClassifier(num_classes=2, **init_args_for_all_models)
         logging.info("Loading euclid_strong_lens_expert_judges dataset")
         dataset_dict = load_dataset("mwalmsley/euclid_strong_lens_expert_judges", "classification")  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     elif cfg.dataset == "gz_euclid":
         from zoobot.shared import schemas
         schema = schemas.euclid_ortho_schema
         model = finetune.FinetuneableZoobotTree(schema=schema, **init_args_for_all_models)
         dataset_dict: DatasetDict = load_dataset("mwalmsley/gz_euclid", token=token)  # type: ignore
-        target_transform = None
+        # target_transform = None
 
     # TODO JWST COSMOS tree
 
@@ -277,7 +277,6 @@ def prepare_experiment(cfg, token=None):
         dataset_dict=dataset_dict,
         train_transform=train_transform,
         test_transform=test_transform,
-        target_transform=target_transform,
         batch_size=cfg.learner.batch_size,
         num_workers=cfg.hardware.num_workers,
         prefetch_factor=cfg.hardware.prefetch_factor,
