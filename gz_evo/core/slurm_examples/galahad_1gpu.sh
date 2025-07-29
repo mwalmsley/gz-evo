@@ -24,10 +24,10 @@ export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
 
 # export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads including models
-export HF_HOME="/share/nas2/walml/cache/huggingface_tmp"
+# export HF_HOME="/share/nas2/walml/cache/huggingface_tmp"
 
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
-export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
+# export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
 
 
 # export HF_LOCAL_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets' # evo manual only
