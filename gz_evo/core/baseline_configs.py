@@ -24,7 +24,8 @@ CFG_CONVNEXT_ATTO = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    distribution_strategy='ddp'
     
 )
 
@@ -35,7 +36,8 @@ CFG_CONVNEXT_PICO = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4
+    drop_path_rate=0.4,
+    distribution_strategy='ddp'
 )
 
 
@@ -47,7 +49,8 @@ CFG_CONVNEXT_NANO = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1. # no decay
+    layer_decay=1., # no decay
+    distribution_strategy='ddp'
 )
 
 # CFG_CONVNEXT_NANO_FINETUNE = ModelConfig(
@@ -70,7 +73,8 @@ CFG_CONVNEXTV2_NANO_FCMAE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1. # no decay
+    layer_decay=1., # no decay
+    distribution_strategy='ddp'
 )
 
 CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
@@ -81,7 +85,8 @@ CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1. # no decay
+    layer_decay=1., # no decay
+    distribution_strategy='ddp'
 )
 
 
@@ -93,7 +98,8 @@ CFG_CONVNEXT_BASE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1. # no decay
+    layer_decay=1., # no decay
+    distribution_strategy='ddp'
 )
 
 CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
@@ -104,7 +110,8 @@ CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=0.7 # meaningful (aggressive) decay
+    layer_decay=0.7, # meaningful (aggressive) decay
+    distribution_strategy='ddp'
 )
 
 CFG_CONVNEXT_BASE_LAION = ModelConfig(
@@ -115,7 +122,8 @@ CFG_CONVNEXT_BASE_LAION = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=0.7
+    layer_decay=0.7,
+    distribution_strategy='ddp'
 )
 
 CFG_CONVNEXT_LARGE = ModelConfig(
@@ -126,7 +134,8 @@ CFG_CONVNEXT_LARGE = ModelConfig(
     learning_rate=2e-5,  # reduced
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=0.7
+    layer_decay=0.7,
+    distribution_strategy='ddp'
 )
 
 
