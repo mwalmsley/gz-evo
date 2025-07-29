@@ -43,9 +43,9 @@ def main():
     # architecture_name = 'vit_base_patch16_clip_224.openai'  # TODO first run
     # architecture_name = 'vit_so400m_siglip'  # ran
 
-    # architecture_name = 'beit3_base_patch16_224'
+    architecture_name = 'beit3_base_patch16_224'
 
-    architecture_name = 'efficientformerv2_s0'
+    # architecture_name = 'efficientformerv2_s0'
 
 
     dataset_name='gz_evo'
