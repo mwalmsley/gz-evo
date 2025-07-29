@@ -94,5 +94,7 @@ echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 # echo 'Running classification baseline'
 # srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
-# echo 'Running multinomial baseline'
+echo 'Running multinomial baseline'
 srun $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+
+echo 'Exiting'
