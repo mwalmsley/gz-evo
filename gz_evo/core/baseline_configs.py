@@ -288,8 +288,8 @@ CFG_VIT_SMALL_DINO = ModelConfig(
 
 CFG_VIT_BASE_CLIP = ModelConfig(
     architecture_name="vit_base_patch16_clip_224.openai",
-    v100_batch_size=32,
-    a100_batch_size=128,
+    v100_batch_size=64,
+    a100_batch_size=256,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -333,7 +333,7 @@ CFG_BEIT3_BASE = ModelConfig(
 CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
     architecture_name="mobilenetv4_conv_small.e2400_r224_in1k",
     v100_batch_size=1024,
-    a100_batch_size=8192, # huge!
+    a100_batch_size=4096, # huge!
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -344,7 +344,7 @@ CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
 CFG_MOBILENETV4_HYBRID_MEDIUM = ModelConfig(
     architecture_name="mobilenetv4_hybrid_medium.e500_r224_in1k",
     v100_batch_size=1024,
-    a100_batch_size=8192,
+    a100_batch_size=4096,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -355,7 +355,7 @@ CFG_MOBILENETV4_HYBRID_MEDIUM = ModelConfig(
 CFG_MOBILENETV4_CONV_MEDIUM = ModelConfig(
     architecture_name="mobilenetv4_conv_medium.e500_r224_in1k",
     v100_batch_size=1024,
-    a100_batch_size=8192,
+    a100_batch_size=4096,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -431,7 +431,9 @@ MODEL_CONFIGS = {
 
     "beit3_base_patch16": CFG_BEIT3_BASE,
 
-    # crazy low memory usage
+    # fails if you try to use a very large batch in 16 bit
+    # RuntimeError: Expected canUse32BitIndexMath(input) && canUse32BitIndexMath(output) to be true, but got false.
+    # https://discuss.pytorch.org/t/runtimeerror-expected-canuse32bitindexmath-input/219427/7
     "mobilenetv4_conv_small": CFG_MOBILENETV4_CONV_SMALL,
     "mobilenetv4_conv_medium": CFG_MOBILENETV4_CONV_MEDIUM,
     "mobilenetv4_hybrid_medium": CFG_MOBILENETV4_HYBRID_MEDIUM,
