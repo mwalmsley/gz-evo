@@ -333,7 +333,7 @@ CFG_BEIT3_BASE = ModelConfig(
 CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
     architecture_name="mobilenetv4_conv_small.e2400_r224_in1k",
     v100_batch_size=1024,
-    a100_batch_size=8192 * 4,  # huge!
+    a100_batch_size=8192, # huge!
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -431,6 +431,7 @@ MODEL_CONFIGS = {
 
     "beit3_base_patch16": CFG_BEIT3_BASE,
 
+    # crazy low memory usage
     "mobilenetv4_conv_small": CFG_MOBILENETV4_CONV_SMALL,
     "mobilenetv4_conv_medium": CFG_MOBILENETV4_CONV_MEDIUM,
     "mobilenetv4_hybrid_medium": CFG_MOBILENETV4_HYBRID_MEDIUM,
