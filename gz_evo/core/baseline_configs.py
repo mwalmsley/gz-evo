@@ -319,12 +319,13 @@ CFG_VIT_SO400M_SIGLIP = ModelConfig(
 # https://huggingface.co/timm/beit3_base_patch16_224.pt
 CFG_BEIT3_BASE = ModelConfig(
     architecture_name="beit3_base_patch16_224",
-    v100_batch_size=16,  # will likely fail, need higher cuda compute capability
-    a100_batch_size=64, 
+    v100_batch_size=32,  # will likely fail, need higher cuda compute capability
+    a100_batch_size=128, 
     dropout_rate=0.5,
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,
-    layer_decay=0.5
+    layer_decay=0.5,
+    distribution_strategy='ddp'
 )
 
 # https://huggingface.co/blog/gemma3n hopefully v5 soon
