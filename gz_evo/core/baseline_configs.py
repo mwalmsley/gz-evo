@@ -98,7 +98,7 @@ CFG_CONVNEXT_BASE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1., # no decay
+    layer_decay=1., # no decay TODO
     distribution_strategy='ddp'
 )
 
@@ -147,7 +147,8 @@ CFG_CONVNEXTV2_BASE_FCMAE= ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=0.7
+    layer_decay=0.7,  # some decay
+    distribution_strategy='ddp'
 )
 
 CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
@@ -158,7 +159,8 @@ CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=0.7
+    layer_decay=0.7,  # some decay
+    distribution_strategy='ddp'
 )
 
 
