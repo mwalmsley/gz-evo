@@ -129,7 +129,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         cfg.total_batch_size = cfg.device_batch_size * cfg.devices  # e.g. cfg.a100_batch_size=64, the size that fits on one device
         # cfg.accumulated_batch_size = 4096  # now part of baseline configs, per model
         # set accumulate grad batches to get to effective batch size
-        cfg.accumulate_grad_batches = min(cfg.target_batch_size // cfg.total_batch_size, 1)  # assuming one node
+        cfg.accumulate_grad_batches = max(cfg.target_batch_size // cfg.total_batch_size, 1)  # assuming one node
         cfg.debug = debug
         cfg.overfit_batches = 0
 
