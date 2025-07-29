@@ -443,6 +443,8 @@ MODEL_CONFIGS = {
     # fails if you try to use a very large batch in 16 bit
     # RuntimeError: Expected canUse32BitIndexMath(input) && canUse32BitIndexMath(output) to be true, but got false.
     # https://discuss.pytorch.org/t/runtimeerror-expected-canuse32bitindexmath-input/219427/7
+    # but making it smaller gives a shape error
+    # RuntimeError: mat1 and mat2 shapes cannot be multiplied (2048x1280 and 960x3)
     "mobilenetv4_conv_small": CFG_MOBILENETV4_CONV_SMALL,
     "mobilenetv4_conv_medium": CFG_MOBILENETV4_CONV_MEDIUM,
     "mobilenetv4_hybrid_medium": CFG_MOBILENETV4_HYBRID_MEDIUM,

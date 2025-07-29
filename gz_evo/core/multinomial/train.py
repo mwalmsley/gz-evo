@@ -18,7 +18,7 @@ def main():
 
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
-    # architecture_name = 'convnext_nano'
+    architecture_name = 'convnext_nano'
     # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
@@ -50,7 +50,7 @@ def main():
     
     # batch size is strange on these
     # architecture_name = 'mobilenetv4_conv_small'
-    architecture_name = 'mobilenetv4_conv_medium'
+    # architecture_name = 'mobilenetv4_conv_medium'
     # architecture_name = 'mobilenetv4_hybrid_medium'
     
 
