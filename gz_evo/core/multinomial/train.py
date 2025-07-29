@@ -48,8 +48,8 @@ def main():
     # architecture_name = 'efficientformerv2_s0'
     # architecture_name = 'efficientformerv2_l'
     
-    architecture_name = 'mobilenetv4_conv_small'
-    # architecture_name = 'mobilenetv4_conv_medium'
+    # architecture_name = 'mobilenetv4_conv_small'
+    architecture_name = 'mobilenetv4_conv_medium'
     # architecture_name = 'mobilenetv4_hybrid_medium'
     
 
