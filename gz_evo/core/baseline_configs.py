@@ -278,8 +278,8 @@ CFG_MAXVIT_LARGE = ModelConfig(
 
 CFG_VIT_SMALL_DINO = ModelConfig(
     architecture_name="vit_small_patch16_224.dino",
-    v100_batch_size=64,
-    a100_batch_size=256,
+    v100_batch_size=128,
+    a100_batch_size=512,  # doubled
     dropout_rate=0.5,
     learning_rate=1e-5,  # lower
     weight_decay=0.05,
