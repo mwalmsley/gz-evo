@@ -213,10 +213,10 @@ def run_training(cfg, lightning_model, datamodule):
 
     if cfg.devices == 1:
         devices = [get_highest_free_memory_device()]  # list of ints interpreted as device indices
-        strategy = "auto"  # single device, no ddp
+        strategy = "auto"  # single device = no strategy
     else:
         devices = cfg.devices
-        strategy = "ddp_find_unused_parameters_true"  # ddp with unused parameters, as we have a lot of them
+        strategy = cfg.distribution_strategy
     logging.info(f"Using {devices} devices for training")
 
     trainer = L.Trainer(

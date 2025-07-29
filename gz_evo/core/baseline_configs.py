@@ -13,7 +13,7 @@ class ModelConfig:
     layer_decay: Optional[float] = 1.  # no effect
     drop_path_rate: Optional[float] = 0.
     target_batch_size: int = 4096  # effective batch size for training, summed over devices and after accumulation
-
+    distribution_strategy: str = "ddp_find_unused_parameters_true"  # override with ddp where possible
 
 
 # weak baseline
@@ -350,6 +350,7 @@ CFG_EFFICIENTFORMER_V2L = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     layer_decay=0.9,  # small decay
+    distribution_strategy='ddp'
 )
 
 # https://huggingface.co/timm/efficientformerv2_s0.snap_dist_in1k
@@ -361,6 +362,7 @@ CFG_EFFICIENTFORMER_V2S0 = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     layer_decay=0.9,  # small decay
+    distribution_strategy='ddp'
 )
 
 # https://huggingface.co/collections/timm/timm-backbones-6568c5b32f335c33707407f8

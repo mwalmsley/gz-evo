@@ -5,6 +5,7 @@ import torchmetrics
 import lightning as L
 import timm
 from timm.optim import create_optimizer_v2
+# from timm.schedulers import create_scheduler_v2
 import pandas as pd
 
 from gz_evo.core import baseline_datamodules
@@ -111,6 +112,8 @@ class GenericBaseline(L.LightningModule):
 
 
         logging.info("Optimizer ready")
+
+        # scheduler = 
 
         return optimizer
         
