@@ -22,8 +22,13 @@ export HYDRA_FULL_ERROR=1
 export WANDB_DIR=/share/nas2/walml/wandb
 export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 
+# optional - clear cache to avoid loading old datasets
+# rm -r /state/partition1/walml/cache
 
-# export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads including models
+# hub downloads, including both models and datasets
+# somewhat unpredictably, I get lock acquisition errors when using the nas
+# so for now, I will use the node storage (duplicate on each node)
+# export HF_HOME="/share/nas2/walml/cache/huggingface" 
 # export HF_HOME="/share/nas2/walml/cache/huggingface_tmp"
 export HF_HOME="/state/partition1/walml/cache/huggingface"  # hub downloads including models
 
@@ -32,11 +37,10 @@ export HF_HOME="/state/partition1/walml/cache/huggingface"  # hub downloads incl
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
 export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
 
- # clear cache to avoid loading old datasets
-rm -r /state/partition1/walml/cache
+
 # rm -r $HF_DATASETS_CACHE 
-mkdir -p $HF_DATASETS_CACHE
-echo $(ls $HF_DATASETS_CACHE)
+# mkdir -p $HF_DATASETS_CACHE
+# echo $(ls $HF_DATASETS_CACHE)
 
 # scripts read seed from SEED, default is 42
 # SEED=$RANDOM
