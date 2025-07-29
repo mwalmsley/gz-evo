@@ -46,9 +46,9 @@ def main():
     # architecture_name = 'beit3_base_patch16'
 
     # architecture_name = 'efficientformerv2_s0'
-    architecture_name = 'efficientformerv2_l'
+    # architecture_name = 'efficientformerv2_l'
     
-    # architecture_name = 'mobilenetv4_conv_small'
+    architecture_name = 'mobilenetv4_conv_small'
 
 
     dataset_name='gz_evo'
