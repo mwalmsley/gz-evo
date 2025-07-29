@@ -2,7 +2,7 @@
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
 #SBATCH --mem=80G  # high mem node is more reliable
-#SBATCH --exclude=compute-0-103
+#SBATCH --exclude=compute-0-10[3-4]
 #SBATCH --job-name=mnodebs
 #SBATCH --output=%x.%A.out
 #SBATCH --cpus-per-task=8
