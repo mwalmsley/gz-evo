@@ -16,8 +16,6 @@ GPUS=2
 
 
 
-
-
 # 1x1 version
 
 ###SBATCH --cpus-per-task=16
@@ -96,9 +94,7 @@ echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 # echo 'Running classification baseline'
 # srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
-echo 'Running multinomial baseline'
-srun $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+# echo 'Running multinomial baseline'
+# srun $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
 
-# publish to hub
-# echo 'Publishing encoders to hub'
-# $PYTHON $REPO_DIR/gz_evo/encoder_to_hub.py
+
