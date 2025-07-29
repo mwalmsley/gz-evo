@@ -21,7 +21,7 @@ nvidia-smi
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
 
-echo 'Running multinomial baseline'
+echo 'Running multinomial baseline predictions'
 $PYTHON $REPO_DIR/gz_evo/core/multinomial/test.py
 
 # publish to hub
