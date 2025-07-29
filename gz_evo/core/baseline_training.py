@@ -35,6 +35,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = 1
         prefetch_factor = 4
         nodes = 1
+        precision = 'bf16-mixed'
 
     elif os.path.isdir('/share/nas2'):
 
@@ -52,6 +53,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         num_workers = 16 // devices
         # of 24 per node on some, or 16 on others. 16 nodes are more reliable.
 
+        precision = 'bf16-mixed'
+
     elif os.path.isdir('/Users/user'):
         # macbook
         subset_name = 'tiny' 
@@ -62,6 +65,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = 1
         prefetch_factor = 2
         nodes = 1
+        precision = '32-true'
     
     # TODO add your own system here
 
@@ -79,6 +83,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = 1
         prefetch_factor = 2
         nodes = 1
+        precision = '32-true'
 
 
 
@@ -102,7 +107,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             devices=devices,
             nodes=nodes,
             epochs=1000,
-            precision="32-true" if subset_name == 'tiny' else "bf16-mixed",  # can now use bf 
+            precision=precision,
             plugins=None,
             patience=5,
             grad_clip_val=10.0, # much more generous
