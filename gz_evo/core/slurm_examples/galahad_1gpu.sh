@@ -26,10 +26,16 @@ export WANDB_ARTIFACT_DIR=/share/nas2/walml/wandb/artifacts
 # export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads including models
 export HF_HOME="/share/nas2/walml/cache/huggingface_tmp"
 
+
+
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
 export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
-rm -r $HF_DATASETS_CACHE  # clear cache to avoid loading old datasets
-echo ls $HF_DATASETS_CACHE
+
+ # clear cache to avoid loading old datasets
+rm -r /state/partition1/walml/cache
+# rm -r $HF_DATASETS_CACHE 
+mkdir -p $HF_DATASETS_CACHE
+echo $(ls $HF_DATASETS_CACHE)
 
 # scripts read seed from SEED, default is 42
 # SEED=$RANDOM
@@ -38,6 +44,9 @@ echo ls $HF_DATASETS_CACHE
 
 PYTHON="/share/nas2/walml/miniconda3/envs/zoobot39_cu118_dev/bin/python"
 REPO_DIR="/share/nas2/walml/repos/gz-evo"
+
+echo HF_HOME $HF_HOME
+echo HF_DATASETS_CACHE $HF_DATASETS_CACHE
 
 export SLURM_NTASKS_PER_NODE=$GPUS # this isn't set correctly by old galahad slurm, it sets NTASKS_PER_NODE not SLURM_NTASKS_PER_NODE
 echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
