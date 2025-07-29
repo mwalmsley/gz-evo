@@ -22,8 +22,8 @@ def main():
     # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
-    architecture_name = "convnextv2_base.fcmae"
-    # architecture_name = "convnextv2_base.fcmae_ft_in22k_in1k"
+    # architecture_name = "convnextv2_base.fcmae"
+    architecture_name = "convnextv2_base.fcmae_ft_in22k_in1k"
 
     # architecture_name = 'efficientnet_b0'
 
