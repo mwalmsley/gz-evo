@@ -70,15 +70,18 @@ export TORCHINDUCTOR_CACHE_DIR="/share/nas2/walml/cache/torchinductor"
 # seems to make dataset.filter() very slow, perhaps it turns off the column selection
 # avoid for classification baseline
 
-export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads
+# export HF_HOME="/share/nas2/walml/cache/huggingface" # hub downloads
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
-export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
+# export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
 
 # export HF_LOCAL_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets' # evo manual only
 # export GZ_EVO_MANUAL_DOWNLOAD_LOC='/share/nas2/walml/tmp/gz-evo'  # evo manual only
 # scripts read seed from SEED, default is 42
 # SEED=$RANDOM
 # echo Using seed $SEED
+
+export HF_HOME="/state/partition1/walml/cache/huggingface" 
+export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'
 
 
 
