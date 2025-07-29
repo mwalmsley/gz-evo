@@ -325,7 +325,7 @@ CFG_BEIT3_BASE = ModelConfig(
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,
     layer_decay=0.5,
-    distribution_strategy='ddp'
+    # distribution_strategy='ddp' # no, needs find_unused
 )
 
 # https://huggingface.co/blog/gemma3n hopefully v5 soon
@@ -407,9 +407,9 @@ MODEL_CONFIGS = {
 
     "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,
 
-    "beit3_base_patch16_224": CFG_BEIT3_BASE,
+    "beit3_base_patch16": CFG_BEIT3_BASE,
 
-    "mobilenetv4_conv_small.e2400_r224_in1k": CFG_MOBILENETV4_CONV_SMALL,
+    "mobilenetv4_conv_small": CFG_MOBILENETV4_CONV_SMALL,
 
     "efficientformerv2_s0": CFG_EFFICIENTFORMER_V2S0,
     "efficientformerv2_l": CFG_EFFICIENTFORMER_V2L
