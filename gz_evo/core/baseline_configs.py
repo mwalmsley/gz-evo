@@ -332,8 +332,30 @@ CFG_BEIT3_BASE = ModelConfig(
 # https://huggingface.co/timm/mobilenetv4_conv_small.e2400_r224_in1k
 CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
     architecture_name="mobilenetv4_conv_small.e2400_r224_in1k",
-    v100_batch_size=128,
-    a100_batch_size=512,
+    v100_batch_size=1024,
+    a100_batch_size=8192,  # huge!
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    layer_decay=0.9 # small decay
+)
+
+# https://huggingface.co/timm/mobilenetv4_hybrid_medium.e500_r224_in1k
+CFG_MOBILENETV4_HYBRID_MEDIUM = ModelConfig(
+    architecture_name="mobilenetv4_hybrid_medium.e500_r224_in1k",
+    v100_batch_size=1024,
+    a100_batch_size=2048,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    layer_decay=0.9 # small decay
+)
+
+# https://huggingface.co/timm/mobilenetv4_conv_medium.e500_r224_in1k
+CFG_MOBILENETV4_CONV_MEDIUM = ModelConfig(
+    architecture_name="mobilenetv4_conv_medium.e500_r224_in1k",
+    v100_batch_size=1024,
+    a100_batch_size=2048,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -345,8 +367,8 @@ CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
 # https://huggingface.co/timm/efficientformerv2_l.snap_dist_in1k
 CFG_EFFICIENTFORMER_V2L = ModelConfig(
     architecture_name='efficientformerv2_l.snap_dist_in1k',
-    v100_batch_size=16,
-    a100_batch_size=64,
+    v100_batch_size=32,
+    a100_batch_size=128,
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
@@ -410,6 +432,8 @@ MODEL_CONFIGS = {
     "beit3_base_patch16": CFG_BEIT3_BASE,
 
     "mobilenetv4_conv_small": CFG_MOBILENETV4_CONV_SMALL,
+    "mobilenetv4_conv_medium": CFG_MOBILENETV4_CONV_MEDIUM,
+    "mobilenetv4_hybrid_medium": CFG_MOBILENETV4_HYBRID_MEDIUM,
 
     "efficientformerv2_s0": CFG_EFFICIENTFORMER_V2S0,
     "efficientformerv2_l": CFG_EFFICIENTFORMER_V2L
