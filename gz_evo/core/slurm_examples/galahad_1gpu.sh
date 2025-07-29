@@ -28,7 +28,7 @@ export HF_HOME="/share/nas2/walml/cache/huggingface_tmp"
 
 # export HF_DATASETS_CACHE="/share/nas2/walml/cache/huggingface/datasets" # load prepared dataset on nas
 export HF_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets'  # load on node
-rm -rf $HF_DATASETS_CACHE  # clear cache to avoid loading old datasets
+rm -r $HF_DATASETS_CACHE  # clear cache to avoid loading old datasets
 
 # export HF_LOCAL_DATASETS_CACHE='/state/partition1/walml/cache/huggingface/datasets' # evo manual only
 # export GZ_EVO_MANUAL_DOWNLOAD_LOC='/share/nas2/walml/tmp/gz-evo'  # evo manual only
