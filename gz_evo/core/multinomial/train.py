@@ -39,17 +39,18 @@ def main():
     # architecture_name = 'resnet50'
     # architecture_name = 'resnet50_clip.openai'
 
-    architecture_name = 'vit_small_patch16_224.dino' 
+    # architecture_name = 'vit_small_patch16_224.dino' 
     # architecture_name = 'vit_base_patch16_clip_224.openai'  # TODO first run
     # architecture_name = 'vit_so400m_siglip'  # ran
 
     # architecture_name = 'beit3_base_patch16'
 
     # architecture_name = 'efficientformerv2_s0'
-    # architecture_name = 'efficientformerv2_l' # may need batch size adjustment
+    # architecture_name = 'efficientformerv2_l'
     
+    # batch size is strange on these
     # architecture_name = 'mobilenetv4_conv_small'
-    # architecture_name = 'mobilenetv4_conv_medium'
+    architecture_name = 'mobilenetv4_conv_medium'
     # architecture_name = 'mobilenetv4_hybrid_medium'
     
 
