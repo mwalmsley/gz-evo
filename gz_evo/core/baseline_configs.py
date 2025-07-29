@@ -270,6 +270,7 @@ CFG_MAXVIT_LARGE = ModelConfig(
     layer_decay=0.3
 )
 
+# additional models not yet in paper draft
 
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
@@ -315,6 +316,7 @@ CFG_VIT_SO400M_SIGLIP = ModelConfig(
     layer_decay=0.5
 )
 
+# https://huggingface.co/timm/beit3_base_patch16_224.pt
 CFG_BEIT3_BASE = ModelConfig(
     architecture_name="beit3_base_patch16_224",
     v100_batch_size=16,  # will likely fail, need higher cuda compute capability
@@ -323,6 +325,42 @@ CFG_BEIT3_BASE = ModelConfig(
     learning_rate=1e-5,  # may be low
     weight_decay=0.05,
     layer_decay=0.5
+)
+
+# https://huggingface.co/blog/gemma3n hopefully v5 soon
+# https://huggingface.co/timm/mobilenetv4_conv_small.e2400_r224_in1k
+CFG_MOBILENETV4_CONV_SMALL = ModelConfig(
+    architecture_name="mobilenetv4_conv_small.e2400_r224_in1k",
+    v100_batch_size=128,
+    a100_batch_size=512,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    layer_decay=0.9 # small decay
+)
+
+# https://github.com/snap-research/EfficientFormer
+
+# https://huggingface.co/timm/efficientformerv2_l.snap_dist_in1k
+CFG_EFFICIENTFORMER_V2L = ModelConfig(
+    architecture_name='efficientformerv2_l.snap_dist_in1k',
+    v100_batch_size=16,
+    a100_batch_size=64,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    layer_decay=0.9,  # small decay
+)
+
+# https://huggingface.co/timm/efficientformerv2_s0.snap_dist_in1k
+CFG_EFFICIENTFORMER_V2S0 = ModelConfig(
+    architecture_name='efficientformerv2_s0.snap_dist_in1k',
+    v100_batch_size=256,
+    a100_batch_size=512,
+    dropout_rate=0.5,
+    learning_rate=1e-4,
+    weight_decay=0.05,
+    layer_decay=0.9,  # small decay
 )
 
 # https://huggingface.co/collections/timm/timm-backbones-6568c5b32f335c33707407f8
@@ -366,7 +404,12 @@ MODEL_CONFIGS = {
 
     "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,
 
-    "beit3_base_patch16_224": CFG_BEIT3_BASE
+    "beit3_base_patch16_224": CFG_BEIT3_BASE,
+
+    "mobilenetv4_conv_small.e2400_r224_in1k": CFG_MOBILENETV4_CONV_SMALL,
+
+    "efficientformerv2_s0": CFG_EFFICIENTFORMER_V2S0,
+    "efficientformerv2_l": CFG_EFFICIENTFORMER_V2L
 
 }
 
