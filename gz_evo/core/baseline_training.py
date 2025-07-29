@@ -147,30 +147,32 @@ def get_dataset_dict(cfg):
     # else:
     dataset_loc = f"mwalmsley/{cfg.dataset_name}"
     logging.info(f"Loading dataset from {dataset_loc}, subset {cfg.subset_name}")
+    # https://huggingface.co/docs/datasets/v4.0.0/en/package_reference/loading_methods#datasets.load_dataset
     dataset_dict = load_dataset(
         dataset_loc, 
         name=cfg.subset_name, 
         # typically stick to defaults here
-        keep_in_memory=cfg.keep_in_memory,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
+        keep_in_memory=False,  # None: keep if it fits in HF_DATASETS_IN_MEMORY_MAX_SIZE. Override with False.
         download_mode=cfg.download_mode,  # reuse_dataset_if_exists
         verification_mode=cfg.verification_mode,  # basic_checks
+        token=os.environ.get('HF_TOKEN', None),  # optional, for private datasets
     )
     logging.info(f"Dataset loaded: {cfg.dataset_name} ({cfg.subset_name})")
     return dataset_dict
 
 
-def manually_load_gz_evo():
-    gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
-    train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
-    test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
-    assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
-    return load_dataset(
-        path=gz_evo_manual_download_loc,
-        # data_files must be explicit paths seemingly, not just glob strings. Weird.
-        data_files={'train': train_locs, 'test': test_locs},
-        # load LOCALLY to this machine
-        cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
-    )
+# def manually_load_gz_evo():
+#     gz_evo_manual_download_loc = os.environ['GZ_EVO_MANUAL_DOWNLOAD_LOC']
+#     train_locs = glob.glob(gz_evo_manual_download_loc + '/data/train*.parquet')
+#     test_locs = glob.glob(gz_evo_manual_download_loc + '/data/test*.parquet')
+#     assert train_locs, f"no train files found in {gz_evo_manual_download_loc}"
+#     return load_dataset(
+#         path=gz_evo_manual_download_loc,
+#         # data_files must be explicit paths seemingly, not just glob strings. Weird.
+#         data_files={'train': train_locs, 'test': test_locs},
+#         # load LOCALLY to this machine
+#         cache_dir=os.environ['HF_LOCAL_DATASETS_CACHE']
+#     )
 
 
 def run_training(cfg, lightning_model, datamodule):
