@@ -19,7 +19,7 @@ def main():
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
     # architecture_name = 'convnextv2_base.fcmae_ft_in22k_in1k'
@@ -43,6 +43,7 @@ def main():
     # architecture_name = 'vit_base_patch16_clip_224.openai'  # TODO first run
     # architecture_name = 'vit_so400m_siglip'  # ran
 
+    architecture_name = 'beit3_base_patch16_224'
 
 
     dataset_name='gz_evo'

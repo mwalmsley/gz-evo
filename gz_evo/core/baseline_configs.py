@@ -315,6 +315,16 @@ CFG_VIT_SO400M_SIGLIP = ModelConfig(
     layer_decay=0.5
 )
 
+CFG_BEIT3_BASE = ModelConfig(
+    architecture_name="beit3_base_patch16_224",
+    v100_batch_size=16,  # will likely fail, need higher cuda compute capability
+    a100_batch_size=64, 
+    dropout_rate=0.5,
+    learning_rate=1e-5,  # may be low
+    weight_decay=0.05,
+    layer_decay=0.5
+)
+
 # https://huggingface.co/collections/timm/timm-backbones-6568c5b32f335c33707407f8
 
 MODEL_CONFIGS = {
@@ -354,7 +364,9 @@ MODEL_CONFIGS = {
     "vit_base_patch16_clip_224.openai": CFG_VIT_BASE_CLIP,
     "vit_medium_patch32_clip_224.tinyclip_laion400m": CFG_VIT_MEDIUM_TINYCLIP,
 
-    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP
+    "vit_so400m_siglip": CFG_VIT_SO400M_SIGLIP,
+
+    "beit3_base_patch16_224": CFG_BEIT3_BASE
 
 }
 
