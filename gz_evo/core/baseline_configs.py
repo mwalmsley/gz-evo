@@ -98,7 +98,7 @@ CFG_CONVNEXT_BASE = ModelConfig(
     learning_rate=1e-4,
     weight_decay=0.05,
     drop_path_rate=0.4,
-    layer_decay=1., # no decay TODO
+    layer_decay=.5, # more decay
     distribution_strategy='ddp'
 )
 
