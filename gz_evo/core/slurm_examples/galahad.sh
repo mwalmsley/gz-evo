@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --mem=80G  # high mem node is more reliable
+#SBATCH --mem=60G  # allow low mem
 #SBATCH --exclude=compute-0-103,compute-0-104
 #SBATCH --job-name=mnodebs
 #SBATCH --output=%x.%A.out
@@ -15,6 +15,7 @@ GPUS=2
 # 1x2 version (above)
 
 
+#### SBATCH --mem=80G  # high mem node is more reliable
 
 # 1x1 version
 
@@ -52,11 +53,12 @@ export CUDA_DEVICE_ORDER=PCI_BUS_ID
 echo "CUDA_DEVICE_ORDER set to $CUDA_DEVICE_ORDER"
 
 export HYDRA_FULL_ERROR=1
+
 # for multi-node training
-export TORCH_NCCL_BLOCKING_WAIT=1
-export NCCL_SOCKET_IFNAME=eno1 # high mem nodes only
-export NCCL_DEBUG=INFO
-export NCCL_IB_DISABLE=1  # disable infiniband, crucial on galahad (no iband?)
+# export TORCH_NCCL_BLOCKING_WAIT=1
+# export NCCL_SOCKET_IFNAME=eno1 # high mem nodes only
+# export NCCL_DEBUG=INFO
+# export NCCL_IB_DISABLE=1  # disable infiniband, crucial on galahad (no iband?)
 
 
 export WANDB_DIR=/share/nas2/walml/wandb
