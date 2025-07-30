@@ -91,15 +91,20 @@ CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
 )
 
 
+# experiments:
+# small batch large decay
+# large decay only
+# small batch high drop path rate
+# small batch high drop path rate and high learning rate
 CFG_CONVNEXT_BASE = ModelConfig(
     architecture_name="convnext_base",
     v100_batch_size=64,
     a100_batch_size=256,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.6,
-    layer_decay=.5, # more decay
+    layer_decay=.3, # more decay
     distribution_strategy='ddp'
 )
 
