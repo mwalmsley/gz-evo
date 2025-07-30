@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --mem=60G  # allow low mem
-#SBATCH --exclude=compute-0-103,compute-0-104
+#SBATCH --mem=60G
+#SBATCH --exclude=compute-0-103
 #SBATCH --job-name=mnodebs
 #SBATCH --output=%x.%A.out
 #SBATCH --cpus-per-task=8
