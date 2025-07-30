@@ -13,7 +13,7 @@ class ModelConfig:
     layer_decay: Optional[float] = 1.  # no effect
     drop_path_rate: Optional[float] = 0.
     # TEMP changed from 4096 to 1024?
-    target_batch_size: int = 4096  # effective batch size for training, summed over devices and after accumulation
+    target_batch_size: int = 1024  # effective batch size for training, summed over devices and after accumulation
     distribution_strategy: str = "ddp_find_unused_parameters_true"  # override with ddp where possible
 
 
@@ -98,7 +98,7 @@ CFG_CONVNEXT_BASE = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.4,
+    drop_path_rate=0.6,
     layer_decay=.5, # more decay
     distribution_strategy='ddp'
 )
