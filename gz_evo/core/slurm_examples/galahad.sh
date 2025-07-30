@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --time=300:00:00                                # Time limit hrs:min:sec
 #SBATCH --constraint=A100 
-#SBATCH --mem=60G
+#SBATCH --mem=90G
 #SBATCH --exclude=compute-0-103
 #SBATCH --job-name=mnodebs
 #SBATCH --output=%x.%A.out
