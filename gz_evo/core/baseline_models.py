@@ -5,7 +5,7 @@ import torchmetrics
 import lightning as L
 import timm
 from timm.optim import create_optimizer_v2
-# from timm.schedulers import create_scheduler_v2
+from timm.scheduler import create_scheduler_v2
 import pandas as pd
 
 from gz_evo.core import baseline_datamodules
@@ -100,23 +100,36 @@ class GenericBaseline(L.LightningModule):
 
         # add head parameters to optimizer
         optimizer.add_param_group({'params': self.head.parameters(), 'lr': self.learning_rate})
-        logging.info("Learning rate scheduler not used")
-        logging.info("Manually applying lr_scale to optimizer param groups (because timm scheduler normally does this, but there is no scheduler)")
-        for group in optimizer.param_groups:
-            group['lr_scale'] = group.get('lr_scale', 1.0)
-            group['lr'] *= group['lr_scale']
-
 
         # for debugging - simplified version
         # optimizer = torch.optim.SGD(params=self.head.parameters(), lr=1e-4, weight_decay=0.)
 
 
-        logging.info("Optimizer ready")
+        if self.scheduler_kwargs is not None:
+            logging.info(f"Using scheduler with kwargs: {self.scheduler_kwargs}")
+            # https://github.com/rwightman/timm/blob/main/timm/scheduler/scheduler_factory.py#L63
+            # https://github.com/rwightman/timm/blob/main/timm/scheduler/scheduler_factory.py#L134C24-L134C41
+            # https://github.com/rwightman/timm/blob/main/timm/scheduler/cosine_lr.py#L19
+            # e.g. {sched='cosine', warmup_lr=1e-5, warmup_epochs=5, num_epochs=300, min_lr=0}
+            scheduler, _ = create_scheduler_v2(optimizer, **self.scheduler_kwargs) 
+            return {
+                "optimizer": optimizer,
+                "lr_scheduler": {
+                    "scheduler": scheduler,
+                    "interval": "epoch",
+                    "frequency": 1,
+                },
+            }
+        else:
 
-        # scheduler = 
+            logging.info("Learning rate scheduler not used")
+            logging.info("Manually applying lr_scale to optimizer param groups (because timm scheduler normally does this, but there is no scheduler)")
+            for group in optimizer.param_groups:
+                group['lr_scale'] = group.get('lr_scale', 1.0)
+                group['lr'] *= group['lr_scale']
 
-        return optimizer
-        
+            return optimizer
+            
     def forward(self, x):
         #assert no nans
         # assert not torch.isnan(x).any(), "Input tensor contains NaNs"

@@ -10,7 +10,7 @@ import omegaconf
 import wandb
 import torch
 import lightning as L
-from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping
+from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
 from lightning.pytorch.loggers import WandbLogger
 
 from datasets import load_dataset
@@ -43,8 +43,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         devices = int(os.environ['SLURM_TASKS_PER_NODE'].split('(')[0])  # e.g. 2(x4) -> 2
         # devices = int(os.environ.get('SLURM_NTASKS_PER_NODE', 1))
         
-        subset_name = 'default'
-        # subset_name = 'tiny' 
+        # subset_name = 'default'
+        subset_name = 'tiny' 
         
         batch_size_key = 'a100_batch_size'
         accelerator="gpu"
@@ -116,7 +116,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
             batch_size_key=batch_size_key
         )
     )
-    cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, etc.
+    cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, scheduler_kwargs, etc.
     if debug:
         cfg.device_batch_size = 4
         cfg.total_batch_size = 8
@@ -202,9 +202,9 @@ def run_training(cfg, lightning_model, datamodule):
             mode='min',
     )
     early_stopping_callback = EarlyStopping(monitor=monitor_metric, patience=cfg.patience, check_finite=True)
-    callbacks = [checkpoint_callback, early_stopping_callback]
-    # TEMP
-    callbacks = []
+    # https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.LearningRateMonitor.html
+    lr_monitor = LearningRateMonitor(logging_interval='epoch')
+    callbacks = [checkpoint_callback, early_stopping_callback, lr_monitor]
 
     # galahad cluster has old slurm and doesn't set correctly
     # os.environ['SLURM_NTASKS_PER_NODE'] = str(cfg.devices)  

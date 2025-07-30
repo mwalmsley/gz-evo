@@ -19,7 +19,7 @@ def main():
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
     # architecture_name = "convnextv2_base.fcmae"
@@ -46,7 +46,7 @@ def main():
     # architecture_name = 'beit3_base_patch16'
 
     # architecture_name = 'efficientformerv2_s0'
-    # architecture_name = 'efficientformerv2_l'
+    architecture_name = 'efficientformerv2_l'
     
     # batch size is strange on these
     # architecture_name = 'mobilenetv4_conv_small'

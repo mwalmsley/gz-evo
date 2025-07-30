@@ -15,6 +15,7 @@ class ModelConfig:
     # TEMP changed from 4096 to 1024?
     target_batch_size: int = 1024  # effective batch size for training, summed over devices and after accumulation
     distribution_strategy: str = "ddp_find_unused_parameters_true"  # override with ddp where possible
+    scheduler_kwargs: Optional[dict] = None  # additional kwargs for the scheduler, if needed
 
 
 # weak baseline
@@ -387,10 +388,12 @@ CFG_EFFICIENTFORMER_V2L = ModelConfig(
     v100_batch_size=32,
     a100_batch_size=128,
     dropout_rate=0.5,
-    learning_rate=1e-4,
     weight_decay=0.05,
     layer_decay=0.9,  # small decay
-    distribution_strategy='ddp'
+    distribution_strategy='ddp',
+    # learning_rate=1e-4,  # this worked very well
+    learning_rate=1e-3,  # increased
+    scheduler_kwargs={'sched':'cosine', 'warmup_lr':1e-5, 'warmup_epochs':5, 'num_epochs':300, 'min_lr':0}
 )
 
 # https://huggingface.co/timm/efficientformerv2_s0.snap_dist_in1k
