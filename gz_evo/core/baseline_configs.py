@@ -13,7 +13,8 @@ class ModelConfig:
     layer_decay: Optional[float] = 1.  # no effect
     drop_path_rate: Optional[float] = 0.
     # TEMP changed from 4096 to 1024?
-    target_batch_size: int = 1024  # effective batch size for training, summed over devices and after accumulation
+    target_batch_size: int = 4096
+    # target_batch_size: int = 1024  # effective batch size for training, summed over devices and after accumulation
     distribution_strategy: str = "ddp_find_unused_parameters_true"  # override with ddp where possible
     scheduler_kwargs: Optional[dict] = None  # additional kwargs for the scheduler, if needed
 
