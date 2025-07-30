@@ -142,6 +142,7 @@ def get_lightning_model(cfg):
             'dropout_rate': cfg.dropout_rate,
             'question_answer_pairs': question_answer_pairs
         },
+        scheduler_kwargs=cfg.scheduler_kwargs,
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay
     )
