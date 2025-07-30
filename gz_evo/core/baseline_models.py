@@ -29,6 +29,7 @@ class GenericBaseline(L.LightningModule):
         from_scratch: bool = False, # override the above
         # args for the head
         head_kwargs = {},
+        scheduler_kwargs = None,  # e.g. {'sched':'cosine', 'warmup_lr':1e-5, 'warmup_epochs':5, 'num_epochs':300, 'min_lr':0}
         ):
 
         super().__init__()
@@ -37,6 +38,7 @@ class GenericBaseline(L.LightningModule):
 
         self.head_kwargs = head_kwargs
         self.timm_kwargs = timm_kwargs
+        self.scheduler_kwargs = scheduler_kwargs
         self.save_hyperparameters()  # saves all args by default
     
         self.encoder = timm.create_model(architecture_name, in_chans=channels, num_classes=0, **timm_kwargs)
