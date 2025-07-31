@@ -33,7 +33,7 @@ def main():
     
     # architecture_name = 'maxvit_tiny'
     # architecture_name = 'maxvit_small'
-    architecture_name = 'maxvit_base'
+    # architecture_name = 'maxvit_base'
     # architecture_name = 'maxvit_large'
 
     # architecture_name = 'resnet50'
@@ -46,7 +46,7 @@ def main():
     # architecture_name = 'beit3_base_patch16'
 
     # architecture_name = 'efficientformerv2_s0'
-    # architecture_name = 'efficientformerv2_l'
+    architecture_name = 'efficientformerv2_l'
     
     # batch size is strange on these
     # architecture_name = 'mobilenetv4_conv_small'
