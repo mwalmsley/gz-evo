@@ -40,8 +40,8 @@ def main():
     # architecture_name = 'resnet50_clip.openai'
 
     # architecture_name = 'vit_small_patch16_224.dino' 
-    architecture_name = 'vit_base_patch16_clip_224.openai'
-    # architecture_name = 'vit_so400m_siglip'
+    # architecture_name = 'vit_base_patch16_clip_224.openai'
+    architecture_name = 'vit_so400m_siglip'
 
     # architecture_name = 'beit3_base_patch16'
 
