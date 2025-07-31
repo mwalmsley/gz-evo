@@ -53,6 +53,9 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         num_workers = 16 // devices
         # of 24 per node on some, or 16 on others. 16 nodes are more reliable.
 
+        # tmp
+        debug = True
+
         precision = 'bf16-mixed'
 
     elif os.path.isdir('/Users/user'):
@@ -121,7 +124,7 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         cfg.device_batch_size = 4
         cfg.total_batch_size = 8
         cfg.accumulate_grad_batches = 2
-        cfg.epochs = 20
+        cfg.epochs = 2
         cfg.overfit_batches = 5
     else:
         cfg.device_batch_size = cfg[cfg.batch_size_key]  # e.g. cfg.a100_batch_size=64, the size that fits on one device
@@ -241,11 +244,13 @@ def run_training(cfg, lightning_model, datamodule):
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
-    # can test as per the below, but note that datamodule must have a test dataset attribute as per pytorch lightning docs.
-    # also be careful not to test regularly, as this breaks train/val/test conceptual separation and may cause hparam overfitting
-
+    
     # make new test trainer
     if os.environ.get('SLURM_PROCID', '0') == '0':  # only on main process
+        # if we don't need to be perfectly precise, we could just test on all gpus
+        # torchmetrics should automatically sync
+        # but distributedsampler can duplicate batches, which would mess up metrics
+        # so we use a single gpu for testing, to be safe
         logging.info("Training finished, now testing the best model")
     
         test_trainer = L.Trainer(
@@ -263,12 +268,20 @@ def run_training(cfg, lightning_model, datamodule):
             logging.info(
                 f"Testing on {checkpoint_callback.best_model_path} with single GPU. Be careful not to overfit your choices to the test data..."
             )
-            datamodule.setup(stage="test")
+            datamodule.batch_size = cfg.device_batch_size  # only one gpu
+            datamodule.setup(stage="test")  # hopefully this resets distributed sampler
+            logging.warning(type(datamodule), type(datamodule.test_dataloader))
             test_trainer.test(
                 model=lightning_model,
                 datamodule=datamodule,
                 ckpt_path=checkpoint_callback.best_model_path,  # can optionally point to a specific checkpoint here e.g. "/share/nas2/walml/repos/gz-decals-classifiers/results/early_stopping_1xgpu_greyscale/checkpoints/epoch=26-step=16847.ckpt"
             )
+            logging.info('Testing finished')
+
+
+
+    logging.info("Training (maybe testing) finished, now waiting for all processes to finish")
+    trainer.strategy.barrier()
 
     logging.info({os.environ.get('SLURM_PROCID', '0'): "Run finished"})
 
