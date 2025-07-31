@@ -100,6 +100,8 @@ echo SLURM_NTASKS_PER_NODE now $SLURM_NTASKS_PER_NODE
 # srun $PYTHON $REPO_DIR/gz_evo/core/classification/train.py 
 
 echo 'Running multinomial baseline'
-srun $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+srun --wait 50000 $PYTHON $REPO_DIR/gz_evo/core/multinomial/train.py 
+# wait 50k seconds between one job finishing and cancelling all jobs
+# because job_0 will run test predictions
 
 echo 'Exiting'

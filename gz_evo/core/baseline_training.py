@@ -244,9 +244,13 @@ def run_training(cfg, lightning_model, datamodule):
     logging.info(f'logging config for wandb:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
     trainer.fit(lightning_model, datamodule)  # uses batch size of datamodule
-    
+
     # make new test trainer
-    if os.environ.get('SLURM_PROCID', '0') == '0':  # only on main process
+
+    # https://github.com/Lightning-AI/pytorch-lightning/issues/8375#issuecomment-878739663
+    torch.distributed.destroy_process_group()
+    # if os.environ.get('SLURM_PROCID', '0') == '0':  # only on main process
+    if trainer.is_global_zero:  # only on main process
         # if we don't need to be perfectly precise, we could just test on all gpus
         # torchmetrics should automatically sync
         # but distributedsampler can duplicate batches, which would mess up metrics
@@ -269,8 +273,8 @@ def run_training(cfg, lightning_model, datamodule):
                 f"Testing on {checkpoint_callback.best_model_path} with single GPU. Be careful not to overfit your choices to the test data..."
             )
             datamodule.batch_size = cfg.device_batch_size  # only one gpu
-            datamodule.setup(stage="test")  # hopefully this resets distributed sampler
-            logging.warning(type(datamodule), type(datamodule.test_dataloader))
+            datamodule.setup(stage="test")  # hopefully distributedsampler is a wrapper made within trainer
+            logging.warning('{} {} '.format(type(datamodule), type(datamodule.test_dataloader)))
             test_trainer.test(
                 model=lightning_model,
                 datamodule=datamodule,
@@ -280,8 +284,10 @@ def run_training(cfg, lightning_model, datamodule):
 
 
 
-    logging.info("Training (maybe testing) finished, now waiting for all processes to finish")
-    trainer.strategy.barrier()
+    # possible, but kinda hacky because now we have distributed and non-distributed Trainer
+    # logging.info("Training (maybe testing) finished, now waiting for all processes to finish")
+    # trainer.strategy.barrier()
+    # instead, make sure srun has --wait so we don't kill everything if one process finishes
 
     logging.info({os.environ.get('SLURM_PROCID', '0'): "Run finished"})
 
