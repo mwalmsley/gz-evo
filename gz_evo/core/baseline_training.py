@@ -123,9 +123,13 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     if debug:
         # cfg.device_batch_size = 4
         # cfg.total_batch_size = 8
-        # cfg.accumulate_grad_batches = 2
+        cfg.device_batch_size = cfg[cfg.batch_size_key]
+        cfg.total_batch_size = cfg.device_batch_size * cfg.devices
+
+        cfg.accumulate_grad_batches = 2
         cfg.epochs = 2
         cfg.overfit_batches = 5
+        logging.warning('Debug mode, overfitting batches')
     else:
         cfg.device_batch_size = cfg[cfg.batch_size_key]  # e.g. cfg.a100_batch_size=64, the size that fits on one device
         # cfg.total_batch_size is the ddp total batch size, before accumulation
@@ -133,8 +137,8 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         # cfg.accumulated_batch_size = 4096  # now part of baseline configs, per model
         # set accumulate grad batches to get to effective batch size
         cfg.accumulate_grad_batches = max(cfg.target_batch_size // cfg.total_batch_size, 1)  # assuming one node
-        cfg.debug = debug
         cfg.overfit_batches = 0
+    cfg.debug = debug
 
     logging.info(f'using config before updates:\n{omegaconf.OmegaConf.to_yaml(cfg)}')
 
