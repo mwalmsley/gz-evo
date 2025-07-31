@@ -94,11 +94,7 @@ CFG_CONVNEXTV2_NANO_FCMAE_FTIM = ModelConfig(
 )
 
 
-# experiments:
-# small batch large decay
-# large decay only
-# small batch high drop path rate
-# small batch high drop path rate and high learning rate
+# keep learning rate at 1e-3, reduce layer decay to train faster
 CFG_CONVNEXT_BASE = ModelConfig(
     architecture_name="convnext_base",
     v100_batch_size=64,
@@ -107,65 +103,56 @@ CFG_CONVNEXT_BASE = ModelConfig(
     learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.6,
-    layer_decay=.3, # more decay
+    layer_decay=0.8, # decay reduced
     distribution_strategy='ddp'
 )
 
-CFG_CONVNEXT_BASE_FINETUNE = ModelConfig(
-    architecture_name="convnext_base",
-    v100_batch_size=64,
-    a100_batch_size=256,
-    dropout_rate=0.5,
-    learning_rate=1e-4,
-    weight_decay=0.05,
-    drop_path_rate=0.4,
-    layer_decay=0.7, # meaningful (aggressive) decay
-    distribution_strategy='ddp'
-)
-
+# not used
 CFG_CONVNEXT_BASE_LAION = ModelConfig(
     architecture_name="convnext_base.clip_laion2b_augreg_ft_in12k",
     v100_batch_size=64,
     a100_batch_size=256,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4,
     layer_decay=0.7,
     distribution_strategy='ddp'
 )
 
+# not used
 CFG_CONVNEXT_LARGE = ModelConfig(
     architecture_name="convnext_large",
     v100_batch_size=32,
     a100_batch_size=128,
     dropout_rate=0.5,
-    learning_rate=2e-5,  # reduced
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4,
     layer_decay=0.7,
     distribution_strategy='ddp'
 )
 
-
+# not used (FTIM required)
 CFG_CONVNEXTV2_BASE_FCMAE= ModelConfig(
     architecture_name="convnextv2_base.fcmae",
     v100_batch_size=32,
     a100_batch_size=128,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4,
     layer_decay=0.7,  # some decay
     distribution_strategy='ddp'
 )
 
+# raised learning rate from 1e-4 to 1e-3
 CFG_CONVNEXTV2_BASE_FCMAE_FTIM = ModelConfig(
     architecture_name="convnextv2_base.fcmae_ft_in22k_in1k",
     v100_batch_size=32,
     a100_batch_size=128,
     dropout_rate=0.5,
-    learning_rate=1e-4,
+    learning_rate=1e-3,
     weight_decay=0.05,
     drop_path_rate=0.4,
     layer_decay=0.7,  # some decay
@@ -267,14 +254,15 @@ CFG_MAXVIT_SMALL = ModelConfig(
     layer_decay=0.3
 )
 
+# lr 5e-5 works well, trying small tinker with 1e-4
 CFG_MAXVIT_BASE = ModelConfig(
     architecture_name="maxvit_rmlp_base_rw_224",
     v100_batch_size=16,
     a100_batch_size=64,
     dropout_rate=0.5,
-    learning_rate=5e-5,
+    learning_rate=1e-4,
     weight_decay=0.05,
-    drop_path_rate=0.45,
+    drop_path_rate=0.45,  # from paper
     layer_decay=0.3
 )
 
@@ -295,17 +283,18 @@ CFG_MAXVIT_LARGE = ModelConfig(
 # https://huggingface.co/timm?search_models=dinov2
 # https://huggingface.co/timm/vit_small_patch14_reg4_dinov2.lvd142m
 # https://huggingface.co/timm/vit_small_patch16_224.dino
-
+# raise learning rate from 1e-5 to 1e-4
 CFG_VIT_SMALL_DINO = ModelConfig(
     architecture_name="vit_small_patch16_224.dino",
     v100_batch_size=128,
-    a100_batch_size=512,  # doubled
+    a100_batch_size=512,
     dropout_rate=0.5,
-    learning_rate=1e-5,  # lower
+    learning_rate=1e-4, 
     weight_decay=0.05,
     layer_decay=0.5
 )
 
+# new - added drop path rate for reg
 CFG_VIT_BASE_CLIP = ModelConfig(
     architecture_name="vit_base_patch16_clip_224.openai",
     v100_batch_size=64,
@@ -313,7 +302,8 @@ CFG_VIT_BASE_CLIP = ModelConfig(
     dropout_rate=0.5,
     learning_rate=1e-4,
     weight_decay=0.05,
-    layer_decay=0.5
+    layer_decay=0.5,
+    drop_path_rate=0.2
 )
 
 CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
@@ -326,23 +316,25 @@ CFG_VIT_MEDIUM_TINYCLIP = ModelConfig(
     layer_decay=0.5
 )
 
+# increased learning rate from 1e-5 to 1e-4
 CFG_VIT_SO400M_SIGLIP = ModelConfig(
     architecture_name="vit_so400m_patch14_siglip_224.v2_webli",
     v100_batch_size=8,  # will likely fail, need higher cuda compute capability
     a100_batch_size=32,  # per device. ALMOST fits 64...
     dropout_rate=0.5,
-    learning_rate=1e-5,  # may be low
+    learning_rate=1e-4,  
     weight_decay=0.05,
     layer_decay=0.5
 )
 
+# raised learning rate from 1e-5 to 1e-4
 # https://huggingface.co/timm/beit3_base_patch16_224.pt
 CFG_BEIT3_BASE = ModelConfig(
     architecture_name="beit3_base_patch16_224",
     v100_batch_size=32,  # will likely fail, need higher cuda compute capability
     a100_batch_size=128, 
     dropout_rate=0.5,
-    learning_rate=1e-5,  # may be low
+    learning_rate=1e-4,
     weight_decay=0.05,
     layer_decay=0.5,
     # distribution_strategy='ddp' # no, needs find_unused
@@ -393,9 +385,9 @@ CFG_EFFICIENTFORMER_V2L = ModelConfig(
     weight_decay=0.05,
     layer_decay=0.9,  # small decay
     distribution_strategy='ddp',
-    learning_rate=1e-4,  # this worked very well with batch 4k
-    # learning_rate=1e-3,  # increased
-    # scheduler_kwargs={'sched':'cosine', 'warmup_lr':1e-5, 'warmup_epochs':5, 'num_epochs':300, 'min_lr':0}
+    learning_rate=1e-4,  # 1e-3 is too high at batch size 1k
+    # trying: short warmup, max at 1e-4, decay over 75
+    scheduler_kwargs={'sched':'cosine', 'warmup_lr': 1e-5, 'warmup_epochs': 3, 'num_epochs': 75, 'min_lr': 0}
 )
 
 # https://huggingface.co/timm/efficientformerv2_s0.snap_dist_in1k

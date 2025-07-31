@@ -53,9 +53,6 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
         num_workers = 16 // devices
         # of 24 per node on some, or 16 on others. 16 nodes are more reliable.
 
-        # tmp
-        debug = True
-
         precision = 'bf16-mixed'
 
     elif os.path.isdir('/Users/user'):
