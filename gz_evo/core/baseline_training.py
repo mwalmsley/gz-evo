@@ -121,9 +121,9 @@ def get_config(architecture_name, dataset_name, save_dir, debug=False):
     )
     cfg.update(asdict(baseline_configs.MODEL_CONFIGS[cfg.architecture_name]))  # arch, batch_size, scheduler_kwargs, etc.
     if debug:
-        cfg.device_batch_size = 4
-        cfg.total_batch_size = 8
-        cfg.accumulate_grad_batches = 2
+        # cfg.device_batch_size = 4
+        # cfg.total_batch_size = 8
+        # cfg.accumulate_grad_batches = 2
         cfg.epochs = 2
         cfg.overfit_batches = 5
     else:
@@ -273,8 +273,10 @@ def run_training(cfg, lightning_model, datamodule):
                 f"Testing on {checkpoint_callback.best_model_path} with single GPU. Be careful not to overfit your choices to the test data..."
             )
             datamodule.batch_size = cfg.device_batch_size  # only one gpu
-            datamodule.setup(stage="test")  # hopefully distributedsampler is a wrapper made within trainer
-            logging.warning('{} {} '.format(type(datamodule), type(datamodule.test_dataloader)))
+            datamodule.setup(stage="test")  
+            # hopefully distributedsampler is a wrapper made within trainer
+            # yes, seems to be right number of samples and right class
+            # logging.warning('{} {} '.format(type(datamodule), type(datamodule.test_dataloader)))
             test_trainer.test(
                 model=lightning_model,
                 datamodule=datamodule,
