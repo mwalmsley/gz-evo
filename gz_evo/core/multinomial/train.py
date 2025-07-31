@@ -19,7 +19,7 @@ def main():
     # architecture_name = 'convnext_atto'
     # architecture_name = 'convnext_pico'
     # architecture_name = 'convnext_nano'
-    architecture_name = 'convnext_base'
+    # architecture_name = 'convnext_base'
     # architecture_name = 'convnext_large'
 
     # architecture_name = "convnextv2_base.fcmae"
@@ -43,7 +43,7 @@ def main():
     # architecture_name = 'vit_base_patch16_clip_224.openai'
     # architecture_name = 'vit_so400m_siglip'
 
-    # architecture_name = 'beit3_base_patch16'
+    architecture_name = 'beit3_base_patch16'
 
     # architecture_name = 'efficientformerv2_s0'
     # architecture_name = 'efficientformerv2_l'
