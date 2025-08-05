@@ -18,7 +18,7 @@ layer_decay: 0.25
 weight_decay: 0.1
 dropout_prob: 0.5
 training_mode: "full" # maxvit s
-
+scheduler_kwargs: {}
 
 # parameters below here don't change / do much
 

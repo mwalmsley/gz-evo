@@ -35,15 +35,9 @@ stochastic_depth: 0.0
 # deep finetune with decay
 
 training_mode: full
-
+scheduler_kwargs: {}
 
 # parameters below here don't change / do much
 
 max_epochs: 5000  
-always_train_batchnorm: False
 check_val_every_n_epoch: 1
-# only does something if cosine_schedule is True
-cosine_schedule: False
-warmup_epochs: 0
-max_cosine_epochs: 100
-max_learning_rate_reduction_factor: 0.01

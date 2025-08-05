@@ -198,6 +198,7 @@ def prepare_experiment(cfg, token=None):
         layer_decay=cfg.learner.layer_decay,
         weight_decay=cfg.learner.weight_decay,
         head_dropout_prob=cfg.learner.dropout_prob,
+        scheduler_kwargs=cfg.learner.scheduler_kwargs
 
         # always_train_batchnorm=cfg.learner.always_train_batchnorm,
         
