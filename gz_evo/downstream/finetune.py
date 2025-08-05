@@ -145,8 +145,13 @@ def main(cfg):
     )
     trainer.fit(model, datamodule)
 
+    logging.info("Finetuning complete")
+
+    torch.distributed.destroy_process_group()
+
     # if on rank zero process (might not work with distributed training)
     if trainer.is_global_zero:
+        logging.info("Training finished, now testing the best model")
         # get new trainer to avoid distributed datamodule
         trainer = finetune.get_trainer(
             save_dir,
@@ -161,7 +166,7 @@ def main(cfg):
         trainer.test(model=model, datamodule=datamodule)#, ckpt_path="best")
         save_predictions(model, datamodule, trainer, save_dir)
 
-    logging.info("Finetuning complete")
+
 
 
 

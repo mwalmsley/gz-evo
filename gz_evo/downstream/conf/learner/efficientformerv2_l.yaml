@@ -7,7 +7,7 @@ normalize: False
 
 batch_size: 128
 patience: 6
-stochastic_depth: 0.4
+stochastic_depth: 0.05  # reduced vs other models
 
 # deep finetune with decay
 learning_rate: 0.00001  # 1e-5

@@ -149,9 +149,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # LEARNER="vit_base"
 
-# LEARNER="efficientformerv2_l"
+LEARNER="efficientformerv2_l"
 
-LEARNER="convnextv2_base"
+# LEARNER="convnextv2_base"
 
 echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
@@ -170,7 +170,7 @@ do
     do
         echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset, divisor ${DIVISOR}"
 
-        srun $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
+        srun --wait 50000 $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
         ++learner.normalize=False \
         ++learner.training_mode=full \
