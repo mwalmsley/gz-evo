@@ -112,11 +112,11 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # dies with nan immediately, even without any training
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/pegxszsz/checkpoints/last.ckpt"
 
-LEARNER="vit_so400m_siglip"
+# LEARNER="vit_so400m_siglip"
 # vanilla vitso trained for several days on 16 A100, looks well-converged
 # ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/ff3a5esc/checkpoints/model.ckpt"
-# vitso + 3 layer decoder, only partially trained so far
-ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/4vfhdqzi/checkpoints/model.ckpt"
+# vitso + 3 layer decoder
+# ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results/pretrain/4vfhdqzi/checkpoints/model.ckpt"
 
 
 
@@ -124,7 +124,14 @@ ENCODER_HUB_PATH="local_hybrid:/share/nas2/walml/repos/zoobot-foundation/results
 
 # LEARNER="convnext_pico" # not on HF
 # LEARNER="convnext_base"
+
 # LEARNER="maxvit_rmlp_small_rw_224"
+# ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
+
+# new with v4
+LEARNER="maxvit_base"
+ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch=23-step=12432.ckpt"
+
 # LEARNER="resnet50"
 # TODO for learner in..."jwst"
 # for DATASET in "decals10" "is-lsb" "which-lsb"  "gz_rings"
