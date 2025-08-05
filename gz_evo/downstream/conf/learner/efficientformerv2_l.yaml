@@ -7,13 +7,13 @@ normalize: False
 
 batch_size: 128
 patience: 6
-stochastic_depth: 0.95  # experiment
+stochastic_depth: 0.  # has no effect for efficientformer
 
 # deep finetune with decay
 learning_rate: 0.00001  # 1e-5, same as other models, late stage training is unstable above this
 layer_decay: 0.25
-weight_decay: 0.1
-dropout_prob: 0.5
+weight_decay: 0.
+dropout_prob: 0.
 training_mode: "full"
 
 # or linear
