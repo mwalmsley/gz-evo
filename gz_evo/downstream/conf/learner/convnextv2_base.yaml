@@ -1,4 +1,4 @@
-encoder_hub_path: local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/convnextv2_base.fcmae_ft_in22k_in1k_534895718_1753971487/checkpoints/epoch=23-step=12432.ckpt
+encoder_hub_path: local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/convnextv2_base.fcmae_ft_in22k_in1k_534895718_1753971487/checkpoints/epoch=51-step=26936.ckpt
 architecture_name: convnextv2_base.fcmae_ft_in22k_in1k
 from_scratch: False
 channels: 3  # used for augs
