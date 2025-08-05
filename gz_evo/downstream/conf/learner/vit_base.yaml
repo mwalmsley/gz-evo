@@ -5,9 +5,9 @@ channels: 3  # used for augs
 input_size: 224  # used for augs
 normalize: False
 
-batch_size: 256
+batch_size: 128
 patience: 6
-stochastic_depth: 0.4
+stochastic_depth: 0.6
 
 # deep finetune with decay
 learning_rate: 0.00001  # 1e-5
