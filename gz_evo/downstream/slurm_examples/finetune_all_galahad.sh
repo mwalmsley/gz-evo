@@ -139,6 +139,9 @@ ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/baselines/regression/ma
 
 # DIVISOR=1
 
+echo GPUS $GPUS
+echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
+
 for DATASET in "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
@@ -151,7 +154,7 @@ do
     for DIVISOR in 1 #2 4 8 16 32 64
 
     do
-        echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset"
+        echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset, divisor ${DIVISOR}"
 
         srun $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
