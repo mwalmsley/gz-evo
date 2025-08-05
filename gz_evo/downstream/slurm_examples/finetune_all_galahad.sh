@@ -147,9 +147,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # LEARNER="beit3_base"
 
-LEARNER="vit_base"
+# LEARNER="vit_base"
 
-# LEARNER="efficientformerv2_l"
+LEARNER="efficientformerv2_l"
 
 # LEARNER="convnextv2_base"
 

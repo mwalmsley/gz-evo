@@ -7,10 +7,10 @@ normalize: False
 
 batch_size: 128
 patience: 6
-stochastic_depth: 0.05  # reduced vs other models - but seems to have little effect
+stochastic_depth: 0.95  # experiment
 
 # deep finetune with decay
-learning_rate: 0.0001  # 1e-4, increased vs other models
+learning_rate: 0.00001  # 1e-5, same as other models, late stage training is unstable above this
 layer_decay: 0.25
 weight_decay: 0.1
 dropout_prob: 0.5
