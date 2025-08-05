@@ -125,14 +125,14 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 
 # LEARNER="convnext_pico" # not on HF
-LEARNER="convnext_base"
-ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"  # v1 model, for replication
+# LEARNER="convnext_base"
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"  # v1 model, for replication
 
 # LEARNER="maxvit_rmlp_small_rw_224"
 # ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
 
-# LEARNER="maxvit_base"
-# ENCODER_HUB_PATH=hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base  # used for review version, replicating now
+LEARNER="maxvit_base"
+ENCODER_HUB_PATH=hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base  # used for review version, replicating now
 # equals sign in the path confuses hydra, escape it
 # ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch\=23-step\=12432.ckpt"
 
@@ -165,8 +165,6 @@ do
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
         ++learner.training_mode=full \
-        ++learner.batch_size=128 \
-        ++learner.learning_rate=0.001 \
         ++dataset=${DATASET} \
         +hardware=galahad \
         ++hardware.devices=$GPUS \
@@ -180,7 +178,8 @@ do
 
 done
 
-
+        # ++learner.batch_size=128 \
+        # ++learner.learning_rate=0.001 \
 
 
         # ++learner.layer_decay=0.5 \
