@@ -125,9 +125,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 
 # LEARNER="convnext_pico" # not on HF
-LEARNER="convnext_base"
+# LEARNER="convnext_base"
 # ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"  # v1 model, for replication
-ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/convnext_base_534895718_1753972238/checkpoints/epoch\=63-step\=33024.ckpt"  # v4 model, for replication
+# ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/convnext_base_534895718_1753972238/checkpoints/epoch\=63-step\=33024.ckpt"  # v4 model, for replication
 # v4 model, not that good at regression
 
 # LEARNER="maxvit_rmlp_small_rw_224"
@@ -145,11 +145,13 @@ ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regress
 
 # DIVISOR=1
 
+LEARNER="beit3_base"
+
 echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 
-for DATASET in "gz_euclid"
-# for DATASET in "euclid_strong_lens_expert_judges"
+# for DATASET in "gz_euclid"
+for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
@@ -164,7 +166,6 @@ do
 
         srun $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
-        ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
         ++learner.training_mode=full \
         ++dataset=${DATASET} \
@@ -175,6 +176,9 @@ do
         ++debug=False \
         ++pretrained=True \
         ++divisor=$DIVISOR
+
+
+        # ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
 
     done
 
