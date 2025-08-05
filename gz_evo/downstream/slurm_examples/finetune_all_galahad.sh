@@ -131,9 +131,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
 
 LEARNER="maxvit_base"
-ENCODER_HUB_PATH=hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base  # used for review version, replicating now
+# ENCODER_HUB_PATH=hf_hub:mwalmsley/baseline-encoder-regression-maxvit_base  # used for review version, replicating now
 # equals sign in the path confuses hydra, escape it
-# ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch\=23-step\=12432.ckpt"
+ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch\=23-step\=12432.ckpt"
 
 # LEARNER="resnet50"
 # TODO for learner in..."jwst"
