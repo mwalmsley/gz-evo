@@ -1,4 +1,4 @@
-encoder_hub_path: local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/regression/beit3_base_patch16_534895718_1753972305/checkpoints/epoch\=23-step\=12432.ckpt
+encoder_hub_path: local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/regression/beit3_base_patch16_534895718_1753972305/checkpoints/epoch=23-step=12432.ckpt
 architecture_name: beit3_base_patch16_224
 from_scratch: False
 channels: 3  # used for augs
