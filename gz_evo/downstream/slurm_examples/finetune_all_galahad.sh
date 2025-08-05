@@ -147,11 +147,11 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # LEARNER="beit3_base"
 
-LEARNER="vit_base"
+# LEARNER="vit_base"
 
 # LEARNER="efficientformerv2_l"
 
-# LEARNER="convnextv2_base"
+LEARNER="convnextv2_base"
 
 echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
