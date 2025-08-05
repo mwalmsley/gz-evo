@@ -132,6 +132,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # new with v4
 LEARNER="maxvit_base"
+# equals sign in the path confuses hydra, use override in quotes only
 ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch=23-step=12432.ckpt"
 
 # LEARNER="resnet50"
@@ -160,7 +161,7 @@ do
 
         srun $PYTHON $REPO_DIR/gz_evo/downstream/finetune.py \
         +learner=$LEARNER \
-        ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
+        ++learner.encoder_hub_path="$ENCODER_HUB_PATH" \
         ++learner.normalize=False \
         ++learner.training_mode=head_only \
         ++learner.batch_size=128 \
