@@ -163,7 +163,7 @@ do
         +learner=$LEARNER \
         ++learner.encoder_hub_path=$ENCODER_HUB_PATH \
         ++learner.normalize=False \
-        ++learner.training_mode=head_only \
+        ++learner.training_mode=full \
         ++learner.batch_size=128 \
         ++learner.learning_rate=0.001 \
         ++dataset=${DATASET} \
