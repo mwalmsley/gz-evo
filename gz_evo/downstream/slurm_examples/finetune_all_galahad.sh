@@ -126,7 +126,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 # LEARNER="convnext_pico" # not on HF
 LEARNER="convnext_base"
-ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"  # v1 model, for replication
+# ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"  # v1 model, for replication
+ENCODER_HUB_PATH="/share/nas2/walml/repos/gz-evo/results/baselines/regression/convnext_base_534895718_1753972238/checkpoints/epoch=63-step=33024.ckpt"  # v4 model, for replication
+# v4 model, not that good at regression
 
 # LEARNER="maxvit_rmlp_small_rw_224"
 # ENCODER_HUB_PATH="local:/share/nas2/walml/gz-evo/results/downstream/dnb_debug/jiruf12f/checkpoints/12.ckpt"
