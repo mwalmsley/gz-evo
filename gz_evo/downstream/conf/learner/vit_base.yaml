@@ -1,0 +1,30 @@
+encoder_hub_path: local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/vit_base_patch16_clip_224.openai_534895718_1753972438/checkpoints/epoch=25-step=13416.ckpt
+architecture_name: vit_base_patch16_clip_224.openai
+from_scratch: False
+channels: 3  # used for augs
+input_size: 224  # used for augs
+normalize: False
+
+batch_size: 256
+patience: 6
+stochastic_depth: 0.4
+
+# deep finetune with decay
+learning_rate: 0.00001  # 1e-5
+layer_decay: 0.25
+weight_decay: 0.1
+dropout_prob: 0.5
+training_mode: "full"
+
+# or linear
+# learning_rate: 0.0001  # 1e-4
+# layer_decay: 0.25  # no effect
+# weight_decay: 0.1
+# dropout_prob: 0.5
+# training_mode: "head_only"
+
+
+# parameters below here don't change / do much
+
+max_epochs: 5000  
+check_val_every_n_epoch: 1
