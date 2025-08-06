@@ -17,6 +17,8 @@ dataset: !
 
 divisor: 1
 
+log_every_n_steps: 50  # overriden for the smallest dataset, which-lsb
+
 # choose pretraining style
 
 # pretrained: astro

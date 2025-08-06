@@ -145,7 +145,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 DIVISOR=1
 
-# LEARNER="beit3_base"
+LEARNER="beit3_base"
 
 # LEARNER="vit_base"
 
@@ -153,7 +153,7 @@ DIVISOR=1
 
 # LEARNER="efficientformerv2_l"
 
-LEARNER="vit_so400m_siglip"
+# LEARNER="vit_so400m_siglip"
 
 
 echo GPUS $GPUS
@@ -163,7 +163,7 @@ echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 # for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
-for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
+for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "is-lsb" "which-lsb" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
 
 do

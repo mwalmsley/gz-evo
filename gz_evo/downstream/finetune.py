@@ -139,6 +139,7 @@ def main(cfg):
         max_epochs=2 if cfg.debug else cfg.learner.max_epochs,
         enable_progress_bar=True,  # temp
         check_val_every_n_epoch=cfg.learner.check_val_every_n_epoch,
+        log_every_n_steps=cfg.log_every_n_steps,
         logger=logger,
         patience=cfg.learner.patience,
         overfit_batches=4 if cfg.debug else 0
@@ -200,13 +201,6 @@ def prepare_experiment(cfg, token=None):
         head_dropout_prob=cfg.learner.dropout_prob,
         scheduler_kwargs=cfg.learner.scheduler_kwargs
 
-        # always_train_batchnorm=cfg.learner.always_train_batchnorm,
-        
-        # optional scheduler params
-        # cosine_schedule=cfg.learner.cosine_schedule,
-        # warmup_epochs=cfg.learner.warmup_epochs,
-        # max_cosine_epochs=cfg.learner.max_cosine_epochs,
-        # max_learning_rate_reduction_factor=cfg.learner.max_learning_rate_reduction_factor,
         # overrides
         # from_scratch=cfg.from_scratch,
         # visualize_images=cfg.visualize_images,
@@ -368,6 +362,10 @@ def apply_dataset_specific_overrides(cfg):
         if cfg.dataset == "which-lsb":
             logging.warning("overriding patience for which-lsb linear finetune, setting 50")
             cfg.learner.patience = 50
+
+    if cfg.dataset == "which-lsb":
+        cfg.log_every_n_steps = 1  # only one batch for some models!
+        
 
     # if cfg.learner.architecture_name == "convnext_nano":
         # Normalize(mean=tensor([0.5000, 0.5000, 0.5000]), std=tensor([0.5000, 0.5000, 0.5000]))
