@@ -1,16 +1,21 @@
 #!/bin/bash
 #SBATCH --constraint=A100
 #SBATCH --time=10-23
-#SBATCH --mem=30G
+#SBATCH --mem=60G
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=8
-#SBATCH --ntasks-per-node=2
+#SBATCH --cpus-per-task=16
+#SBATCH --ntasks-per-node=1
+#SBATCH --exclusive
 
-GPUS=2
+GPUS=1
 
-#### SBATCH --exclusive
-#### SBATCH --cpus-per-task=16
-#### SBATCH --ntasks-per-node=1
+### SBATCH --cpus-per-task=8
+### SBATCH --ntasks-per-node=2
+
+# GPUS=2
+
+###
+
 
 # GPUS=1
 # NUM_NODES=1
