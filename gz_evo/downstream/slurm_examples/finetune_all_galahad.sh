@@ -138,7 +138,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # equals sign in the path confuses hydra, escape it
 # ENCODER_HUB_PATH="local:/share/nas2/walml/repos/gz-evo/results/baselines/regression/maxvit_base_534895718_1753972557/checkpoints/epoch\=23-step\=12432.ckpt"
 
-LEARNER="resnet50"
+# LEARNER="resnet50"
 # TODO for learner in..."jwst"
 # for DATASET in "decals10" "is-lsb" "which-lsb"  "gz_rings"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings" 
@@ -153,6 +153,7 @@ DIVISOR=1
 
 # LEARNER="efficientformerv2_l"
 
+LEARNER="vit_so400m_siglip"
 
 
 echo GPUS $GPUS
