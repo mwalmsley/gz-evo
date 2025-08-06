@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --constraint=A100
 #SBATCH --time=10-23
-#SBATCH --mem=80G
+#SBATCH --mem=40G
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
 #SBATCH --ntasks-per-node=2
@@ -149,11 +149,11 @@ DIVISOR=1
 
 # LEARNER="vit_base"
 
-# LEARNER="convnextv2_base"
+LEARNER="convnextv2_base"
 
 # LEARNER="efficientformerv2_l"
 
-LEARNER="vit_so400m_siglip"
+# LEARNER="vit_so400m_siglip"
 
 
 echo GPUS $GPUS
