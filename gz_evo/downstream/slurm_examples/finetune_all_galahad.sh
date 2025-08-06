@@ -160,7 +160,7 @@ echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 
 # for DATASET in "gz_euclid"
-for DATASET in "gz_rings" "which-lsb" 
+for DATASET in "which-lsb" "gz_rings" 
 # for DATASET in "which-lsb" 
 # for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
