@@ -145,9 +145,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 DIVISOR=1
 
-LEARNER="beit3_base"  # redoing with higher learning rate
+# LEARNER="beit3_base"  # redoing with higher learning rate
 
-# LEARNER="vit_base"
+LEARNER="vit_base"
 
 # LEARNER="convnextv2_base"
 
