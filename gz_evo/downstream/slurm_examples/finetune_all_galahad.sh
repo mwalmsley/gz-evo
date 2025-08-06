@@ -160,10 +160,11 @@ echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 
 # for DATASET in "gz_euclid"
+for DATASET in "gz_rings"
 # for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
-for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "is-lsb" "which-lsb" "gz_rings"  
+# for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "is-lsb" "which-lsb" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
 
 do
