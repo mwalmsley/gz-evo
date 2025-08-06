@@ -149,9 +149,9 @@ DIVISOR=1
 
 # LEARNER="vit_base"
 
-LEARNER="convnextv2_base"
+# LEARNER="convnextv2_base"
 
-# LEARNER="efficientformerv2_l"
+LEARNER="efficientformerv2_l"
 
 
 
