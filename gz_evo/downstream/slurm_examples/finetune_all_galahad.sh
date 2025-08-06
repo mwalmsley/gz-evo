@@ -145,9 +145,9 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 DIVISOR=1
 
-LEARNER="beit3_base"
+# LEARNER="beit3_base"
 
-# LEARNER="vit_base"
+LEARNER="vit_base"
 
 # LEARNER="efficientformerv2_l"
 
