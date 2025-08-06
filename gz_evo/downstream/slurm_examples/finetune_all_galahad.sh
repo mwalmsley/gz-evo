@@ -64,7 +64,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_nano"
 # ENCODER_HUB_PATH="hf_hub:timm/convnext_nano.in12k"  # override for imagenet timm weights
 
-# LEARNER="convnext_base"
+LEARNER="convnext_base"
 # ENCODER_HUB_PATH="hf_hub:mwalmsley/baseline-encoder-regression-convnext_base"
 
 # LEARNER="maxvit_tiny_rw_224"  # only regression, not evo prepared
@@ -145,7 +145,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 
 DIVISOR=1
 
-LEARNER="beit3_base"
+# LEARNER="beit3_base"  # redoing with higher learning rate
 
 # LEARNER="vit_base"
 
