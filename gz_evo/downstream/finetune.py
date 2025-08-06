@@ -364,6 +364,7 @@ def apply_dataset_specific_overrides(cfg):
             cfg.learner.patience = 50
 
     if cfg.dataset == "which-lsb":
+        logging.warning("overriding batch size and log_steps for which-lsb")
         cfg.log_every_n_steps = 1  # only one batch for some models!
         cfg.learner.batch_size = min(cfg.learner.batch_size, 32)  # 32 is the max for this dataset, only 508 examples!
 

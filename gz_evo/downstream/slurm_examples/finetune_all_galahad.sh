@@ -1,21 +1,16 @@
 #!/bin/bash
 #SBATCH --constraint=A100
 #SBATCH --time=10-23
-#SBATCH --mem=60G
+#SBATCH --mem=30G
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=16
-#SBATCH --ntasks-per-node=1
-#SBATCH --exclusive
+#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=2
 
-GPUS=1
+GPUS=2
 
-### SBATCH --cpus-per-task=8
-### SBATCH --ntasks-per-node=2
-
-# GPUS=2
-
-###
-
+#### SBATCH --exclusive
+#### SBATCH --cpus-per-task=16
+#### SBATCH --ntasks-per-node=1
 
 # GPUS=1
 # NUM_NODES=1
@@ -156,17 +151,17 @@ DIVISOR=1
 
 # LEARNER="convnextv2_base"
 
-LEARNER="efficientformerv2_l"
+# LEARNER="efficientformerv2_l"
 
-# LEARNER="vit_so400m_siglip"
+LEARNER="vit_so400m_siglip"
 
 
 echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 
 # for DATASET in "gz_euclid"
-# for DATASET in "gz_rings" "which-lsb" 
-for DATASET in "which-lsb" 
+for DATASET in "gz_rings" "which-lsb" 
+# for DATASET in "which-lsb" 
 # for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
