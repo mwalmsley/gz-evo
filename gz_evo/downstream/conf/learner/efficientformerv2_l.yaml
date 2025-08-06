@@ -5,15 +5,15 @@ channels: 3  # used for augs
 input_size: 224  # used for augs
 normalize: False
 
-batch_size: 128
+batch_size: 64  # smaller batches
 patience: 6
 stochastic_depth: 0.  # has no effect for efficientformer
 
 # deep finetune with decay
 learning_rate: 0.00001  # 1e-5, same as other models, late stage training is unstable above this
-layer_decay: 0.25
-weight_decay: 0.
-dropout_prob: 0.
+layer_decay: 0.1  # add more decay
+weight_decay: 0.05
+dropout_prob: 0.5
 training_mode: "full"
 scheduler_kwargs: {}
 
