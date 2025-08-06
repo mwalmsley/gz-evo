@@ -143,7 +143,7 @@ echo HF_TOKEN_PATH $HF_TOKEN_PATH
 # for DATASET in "decals10" "is-lsb" "which-lsb"  "gz_rings"
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings" 
 
-# DIVISOR=1
+DIVISOR=1
 
 LEARNER="beit3_base"
 
@@ -157,15 +157,16 @@ echo GPUS $GPUS
 echo SLURM_CPUS_PER_TASK $SLURM_CPUS_PER_TASK
 
 # for DATASET in "gz_euclid"
-for DATASET in "euclid_strong_lens_expert_judges"
+# for DATASET in "euclid_strong_lens_expert_judges"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid"
 # for DATASET in "euclid_strong_lens_expert_judges" "gz_euclid" "which-lsb"
-# for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
+for DATASET in "euclid_strong_lens_expert_judges" "is-lsb" "which-lsb" "gz_euclid" "gz_rings"  
 # for DATASET in "euclid_strong_lens_expert_judges" "is-lsb"  # these smaller datasets need extra runs
 
 do
 
     for DIVISOR in 1 #2 4 8 16 32 64
+    # for LEARNER in "convnextv2_base" "beit3_base" "vit_base" "efficientformerv2_l"
 
     do
         echo "Finetuning ${ENCODER_HUB_PATH} on ${DATASET} dataset, divisor ${DIVISOR}"
